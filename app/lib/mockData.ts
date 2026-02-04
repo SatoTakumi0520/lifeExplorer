@@ -1,4 +1,6 @@
-export const INITIAL_TEMPLATES = [
+import type { PersonaTemplate, SocialPost } from './types';
+
+export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   {
     id: 1,
     name: 'Steve Jobs',
@@ -97,7 +99,7 @@ export const INITIAL_TEMPLATES = [
   },
 ];
 
-export const INITIAL_SOCIAL_FEED = [
+export const INITIAL_SOCIAL_FEED: SocialPost[] = [
   {
     id: 101,
     user: 'Anna K.',
