@@ -1,19 +1,16 @@
 "use client";
 
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '../lib/supabase';
 
 type AuthModalProps = {
   onClose: () => void;
   onAuthSuccess: () => void;
+  initialMode?: 'signin' | 'signup';
 };
 
-export const AuthModal = ({ onClose, onAuthSuccess }: AuthModalProps) => {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: AuthModalProps) => {
+  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,49 +28,66 @@ export const AuthModal = ({ onClose, onAuthSuccess }: AuthModalProps) => {
   };
 
   return (
-    <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
-      <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
-        <h3 className="text-xl font-serif font-bold text-stone-800 mb-2">
-          {mode === 'signin' ? 'Welcome Back' : 'Join Life OS'}
-        </h3>
-        <p className="text-stone-400 text-xs mb-6">
-          {mode === 'signin' ? 'Login to sync your routine' : 'Create an account to start'}
-        </p>
-        <form onSubmit={handleAuth} className="space-y-4">
-          <div>
-            <label className="text-[10px] font-bold text-stone-400 uppercase">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-stone-50 rounded-xl border border-stone-200"
-              required
-            />
-          </div>
-          <div>
-            <label className="text-[10px] font-bold text-stone-400 uppercase">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-stone-50 rounded-xl border border-stone-200"
-              required
-            />
-          </div>
-          {error && <p className="text-red-500 text-xs">{error}</p>}
-          <button type="submit" className="w-full py-3 bg-stone-800 text-white rounded-xl font-bold">
-            {mode === 'signin' ? 'Log In' : 'Sign Up'}
+    <div
+      className="absolute inset-0 z-50 bg-stone-900/40 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-[#FDFCF8] w-full rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-300">
+        {/* ドラッグハンドル */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-stone-200 rounded-full" />
+        </div>
+
+        <div className="px-6 pb-10 pt-4">
+          <h3 className="text-2xl font-serif font-bold text-stone-800 mb-1">
+            {mode === 'signin' ? 'Welcome Back' : 'Join Life OS'}
+          </h3>
+          <p className="text-stone-400 text-xs mb-6">
+            {mode === 'signin' ? 'Login to sync your routine' : 'Create an account to start'}
+          </p>
+
+          <form onSubmit={handleAuth} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
+                required
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs">{error}</p>}
+            <button
+              type="submit"
+              className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-sm hover:bg-stone-700 transition-all mt-2"
+            >
+              {mode === 'signin' ? 'Log In' : 'Sign Up'}
+            </button>
+          </form>
+
+          <button
+            onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
+            className="w-full mt-4 py-2 text-xs text-stone-400 hover:text-stone-700 transition-colors font-medium"
+          >
+            {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
+            <span className="text-stone-700 font-bold underline underline-offset-2">
+              {mode === 'signin' ? 'Sign Up' : 'Log In'}
+            </span>
           </button>
-        </form>
-        <button
-          onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-          className="w-full mt-4 text-xs text-stone-400 hover:text-stone-600"
-        >
-          {mode === 'signin' ? 'No account? Sign up' : 'Have an account? Log in'}
-        </button>
-        <button onClick={onClose} className="w-full mt-2 text-xs text-stone-300">
-          Close
-        </button>
+        </div>
       </div>
     </div>
   );

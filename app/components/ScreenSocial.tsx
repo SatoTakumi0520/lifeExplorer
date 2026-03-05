@@ -1,9 +1,19 @@
 "use client";
 
 import React, { useMemo, useState } from 'react';
-import { Sun } from 'lucide-react';
-import { INITIAL_SOCIAL_FEED } from '../lib/mockData';
+import { Heart } from 'lucide-react';
+import { INITIAL_SOCIAL_FEED, SOCIAL_CATEGORIES } from '../lib/mockData';
 import { Screen, SocialPost } from '../lib/types';
+import { timeToMinutes } from '../lib/utils';
+
+// ミニタイムライン: タスクを5am-10pm(1020分)の割合でカラーブロック表示
+const MINI_START = 300;  // 5:00
+const MINI_RANGE = 1020; // 17h
+const typeBarColor: Record<string, string> = {
+  nature: 'bg-amber-400',
+  mind:   'bg-blue-400',
+  work:   'bg-violet-400',
+};
 
 type ScreenSocialProps = {
   go: (screen: Screen) => void;
@@ -17,25 +27,7 @@ export const ScreenSocial = ({ go, setSelectedUser, socialFeed }: ScreenSocialPr
   const categoryData: Record<string, SocialPost[]> = useMemo(
     () => ({
       Recommended: [...socialFeed, ...INITIAL_SOCIAL_FEED],
-      Business: [
-        {
-          id: 101,
-          user: 'Takeshi M.',
-          role: 'CEO',
-          title: '経営者の朝5時起床ルーティン',
-          likes: 312,
-          avatar: '💼',
-          routine: [
-            { time: '05:00', title: 'News Check', thought: '日経新聞とWSJ...', type: 'work' },
-            { time: '06:00', title: 'Strategic Planning', thought: '戦略を練る...', type: 'work' },
-          ],
-        },
-        { id: 102, user: 'Yuki T.', role: 'Consultant', title: '週7MTGを乗り切る集中術', likes: 189, avatar: '📊', routine: [] },
-      ],
-      Creative: [
-        { id: 201, user: 'Sakura N.', role: 'Illustrator', title: 'アイデアが湧く散歩', likes: 428, avatar: '🎨', routine: [] },
-      ],
-      Wellness: [{ id: 301, user: 'Mika S.', role: 'Yoga Teacher', title: '心身を整える朝', likes: 521, avatar: '🧘', routine: [] }],
+      ...SOCIAL_CATEGORIES,
     }),
     [socialFeed]
   );
@@ -82,22 +74,40 @@ export const ScreenSocial = ({ go, setSelectedUser, socialFeed }: ScreenSocialPr
                 </div>
                 <div>
                   <div className="text-sm font-bold text-stone-800">{post.user}</div>
-                  <div className="text-[10px] text-stone-400 uppercase tracking-wider">{post.role}</div>
+                  <div className="text-xs text-stone-400 uppercase tracking-wider">{post.role}</div>
                 </div>
               </div>
-              <div className="px-3 py-1 bg-stone-50 rounded-full text-xs text-stone-500 font-mono group-hover:bg-green-50 group-hover:text-green-700 transition-colors">
-                Try
+              <div className="px-3 py-1 bg-stone-50 rounded-full text-xs text-stone-500 font-bold group-hover:bg-green-50 group-hover:text-green-700 transition-colors">
+                Try →
               </div>
             </div>
-            <h3 className="font-bold text-lg text-stone-800 mb-2 leading-tight group-hover:text-green-800 transition-colors">
+            <h3 className="font-bold text-base text-stone-800 mb-3 leading-snug group-hover:text-green-800 transition-colors">
               {post.title}
             </h3>
-            <div className="flex items-center gap-4 text-xs text-stone-400">
-              <span className="flex items-center gap-1">
-                <Sun size={12} /> 朝型
-              </span>
-              <span className="flex items-center gap-1">⏱ {post.routine?.length || 3}h</span>
-              <span className="flex items-center gap-1 text-pink-400">♥ {post.likes}</span>
+
+            {/* ミニタイムライン */}
+            {post.routine && post.routine.length > 0 && (
+              <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
+                {post.routine.map((task, i) => {
+                  const start = timeToMinutes(task.time);
+                  const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
+                  const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
+                  const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
+                  return (
+                    <div
+                      key={i}
+                      className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
+                      style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }}
+                    />
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 text-xs text-stone-400">
+              <span className="text-xs text-stone-400 uppercase tracking-wide">{post.role}</span>
+              <span className="text-stone-200">·</span>
+              <span className="flex items-center gap-1"><Heart size={11} className="text-pink-400" /> {post.likes}</span>
             </div>
           </div>
         ))}

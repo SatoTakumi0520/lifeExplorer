@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Session } from '@supabase/supabase-js';
+import { ChevronLeft, ChevronRight, LogOut, X } from 'lucide-react';
 import { Screen } from '../lib/types';
 
 type ScreenSettingsProps = {
   go: (screen: Screen) => void;
-  session: any;
+  session: Session | null;
+  onSignOut: () => void;
 };
 
-export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
+export const ScreenSettings = ({ go, session, onSignOut }: ScreenSettingsProps) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [morningReminder, setMorningReminder] = useState('07:00');
   const [darkMode, setDarkMode] = useState(false);
@@ -32,7 +34,7 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
 
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="p-4">
-          <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3">Account</h3>
+          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Account</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <button onClick={() => setShowEditProfile(true)} className="w-full p-4 flex items-center gap-4 border-b border-stone-50 hover:bg-stone-50 transition-colors">
               <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center text-2xl">🌱</div>
@@ -49,7 +51,7 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
               </div>
               <ChevronRight size={18} className="text-stone-300" />
             </button>
-            <div className="p-4 flex items-center justify-between">
+            <div className="p-4 flex items-center justify-between border-b border-stone-50">
               <div>
                 <h4 className="font-bold text-sm text-stone-800">Public Profile</h4>
                 <p className="text-xs text-stone-400">Allow others to see your routine</p>
@@ -61,11 +63,18 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
                 <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${publicProfile ? 'right-1' : 'left-1'}`} />
               </button>
             </div>
+            <button
+              onClick={onSignOut}
+              className="w-full p-4 flex items-center gap-3 hover:bg-stone-50 transition-colors"
+            >
+              <LogOut size={16} className="text-stone-400" />
+              <h4 className="font-bold text-sm text-stone-600">Sign Out</h4>
+            </button>
           </div>
         </div>
 
         <div className="p-4">
-          <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3">Notifications</h3>
+          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Notifications</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <div className="p-4 flex items-center justify-between border-b border-stone-50">
               <div>
@@ -95,7 +104,7 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
         </div>
 
         <div className="p-4">
-          <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3">Appearance</h3>
+          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Appearance</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <div className="p-4 flex items-center justify-between">
               <div>
@@ -113,7 +122,7 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
         </div>
 
         <div className="p-4">
-          <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3">Data</h3>
+          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Data</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <button className="w-full p-4 flex items-center justify-between border-b border-stone-50 hover:bg-stone-50 transition-colors">
               <h4 className="font-bold text-sm text-stone-800">Export My Data</h4>
@@ -127,7 +136,7 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
         </div>
 
         <div className="p-4">
-          <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-3">Danger Zone</h3>
+          <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider mb-3">Danger Zone</h3>
           <div className="bg-white rounded-2xl border border-red-100 overflow-hidden">
             <button className="w-full p-4 flex items-center justify-between hover:bg-red-50 transition-colors">
               <div>
@@ -141,7 +150,7 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
 
         <div className="p-4 text-center">
           <p className="text-xs text-stone-300">Life OS v1.0.0</p>
-          <p className="text-[10px] text-stone-300 mt-1">Made with care</p>
+          <p className="text-xs text-stone-300 mt-1">Made with care</p>
         </div>
       </div>
 
@@ -162,28 +171,28 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 block">Display Name</label>
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Display Name</label>
                 <input
                   type="text"
                   value={profileName}
                   onChange={(e) => setProfileName(e.target.value)}
-                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-800"
+                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 block">Bio</label>
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Bio</label>
                 <textarea
                   value={profileBio}
                   onChange={(e) => setProfileBio(e.target.value)}
                   placeholder="Tell others about yourself..."
-                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-800 h-24 resize-none"
+                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm h-24 resize-none focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 block">Timezone</label>
-                <select className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-800">
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Timezone</label>
+                <select className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors">
                   <option>Asia/Tokyo (GMT+9)</option>
                   <option>America/New_York (GMT-5)</option>
                   <option>Europe/London (GMT+0)</option>
@@ -214,25 +223,25 @@ export const ScreenSettings = ({ go, session }: ScreenSettingsProps) => {
 
             <div className="space-y-4">
               <div>
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 block">Current Email</label>
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Current Email</label>
                 <div className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-500">{email}</div>
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 block">New Email</label>
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">New Email</label>
                 <input
                   type="email"
                   placeholder="Enter new email address"
-                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-800"
+                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 block">Confirm Password</label>
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Confirm Password</label>
                 <input
                   type="password"
                   placeholder="Enter your password to confirm"
-                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-800"
+                  className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
 
