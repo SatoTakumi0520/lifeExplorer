@@ -4,13 +4,19 @@ import React, { useState } from 'react';
 import { ArrowRight, Plus, X } from 'lucide-react';
 import { PersonaTemplate, RoutineTask, Screen } from '../lib/types';
 
+const typeLeftBorder: Record<string, string> = {
+  nature: 'border-l-amber-400',
+  mind:   'border-l-blue-400',
+  work:   'border-l-violet-400',
+};
+
 type ScreenEditProps = {
   go: (screen: Screen) => void;
   myRoutine: RoutineTask[];
   personaTemplates: PersonaTemplate[];
   copyTaskFromTemplate: (task: RoutineTask) => void;
   removeCopiedTask: (task: RoutineTask) => void;
-  deleteTaskFromRoutine: (index: number) => void;
+  deleteTaskFromRoutine: (id: string | number) => void;
   setShowAddTask: (show: boolean) => void;
 };
 
@@ -41,7 +47,7 @@ export const ScreenEdit = ({
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="py-6 px-4 bg-white border-b border-stone-50">
-          <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3">Templates</h3>
+          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Templates</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
             {personaTemplates.map((persona) => (
               <div
@@ -57,7 +63,7 @@ export const ScreenEdit = ({
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${persona.color}`}>{persona.name.charAt(0)}</div>
                   <span className="text-xs font-bold text-stone-700 truncate">{persona.name}</span>
                 </div>
-                <div className="text-[10px] text-stone-500">{persona.title}</div>
+                <div className="text-xs text-stone-500">{persona.title}</div>
               </div>
             ))}
           </div>
@@ -73,9 +79,9 @@ export const ScreenEdit = ({
               <button onClick={() => setSelectedTemplate(null)} className="text-xs text-stone-400 hover:text-stone-600 px-3 py-1 bg-white rounded-full border border-stone-200">閉じる</button>
             </div>
             <div className="flex border-b border-stone-100">
-              <div className="flex-1 px-4 py-2 bg-orange-50/50"><span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">{selectedTemplate.name}</span></div>
+              <div className="flex-1 px-4 py-2 bg-orange-50/50"><span className="text-xs font-bold text-orange-600 uppercase tracking-wider">{selectedTemplate.name}</span></div>
               <div className="w-10" />
-              <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-[10px] font-bold text-green-600 uppercase tracking-wider">My Routine</span></div>
+              <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-xs font-bold text-green-600 uppercase tracking-wider">My Routine</span></div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {[...new Set([...selectedTemplate.routine.map((routine) => routine.time), ...myRoutine.map((routine) => routine.time)])]
@@ -85,7 +91,7 @@ export const ScreenEdit = ({
                   const myTasks = myRoutine.filter((routine) => routine.time === time);
                   const added = tplTask && isAdded(tplTask);
                   return (
-                    <div key={idx} className="flex border-b border-stone-50">
+                    <div key={time} className="flex border-b border-stone-50">
                       <div className="flex-1 p-3 bg-orange-50/30">
                         {tplTask ? (
                           <div className="bg-white p-3 rounded-xl border border-orange-100 shadow-sm">
@@ -110,7 +116,7 @@ export const ScreenEdit = ({
                       </div>
                       <div className="flex-1 p-3 bg-green-50/30">
                         {myTasks.map((task, index) => (
-                          <div key={index} className="bg-white p-3 rounded-xl border border-green-100 shadow-sm mb-1">
+                          <div key={task.id ?? index} className="bg-white p-3 rounded-xl border border-green-100 shadow-sm mb-1">
                             <div className="font-bold text-xs text-green-700 mb-1">{task.time}</div>
                             <div className="text-xs font-bold text-stone-800">{task.title}</div>
                           </div>
@@ -123,14 +129,14 @@ export const ScreenEdit = ({
           </div>
         ) : (
           <div className="p-4 space-y-4">
-            <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3">My Routine</h3>
+            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">My Routine</h3>
             {myRoutine.map((item, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm flex justify-between items-center">
+              <div key={item.id ?? idx} className={`bg-white p-4 rounded-xl border border-stone-200 border-l-[3px] shadow-sm flex justify-between items-center ${typeLeftBorder[item.type ?? 'work'] ?? 'border-l-stone-300'}`}>
                 <div>
                   <div className="font-bold text-sm text-stone-800">{item.time} {item.title}</div>
                   <div className="text-xs text-stone-400">{item.thought}</div>
                 </div>
-                <button onClick={() => deleteTaskFromRoutine(idx)} className="text-stone-300 hover:text-red-500"><X size={16} /></button>
+                <button onClick={() => deleteTaskFromRoutine(item.id!)} className="text-stone-300 hover:text-red-500"><X size={16} /></button>
               </div>
             ))}
             <button

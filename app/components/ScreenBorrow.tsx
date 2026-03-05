@@ -49,9 +49,9 @@ export const ScreenBorrow = ({
         </button>
       </div>
       <div className="flex border-b border-stone-100">
-        <div className="flex-1 px-4 py-2 bg-orange-50/50 text-center text-xs font-bold text-orange-600">{borrowingUser.user}</div>
+        <div className="flex-1 px-4 py-2 bg-orange-50/50 text-center text-xs font-bold text-orange-600 uppercase tracking-wider truncate">{borrowingUser.user}</div>
         <div className="w-10" />
-        <div className="flex-1 px-4 py-2 bg-green-50/50 text-center text-xs font-bold text-green-600">My Routine</div>
+        <div className="flex-1 px-4 py-2 bg-green-50/50 text-center text-xs font-bold text-green-600 uppercase tracking-wider">My Routine</div>
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
         {allTimes.map((time, idx) => {
@@ -59,7 +59,7 @@ export const ScreenBorrow = ({
           const myTasks = myRoutine.filter((routine) => routine.time === time);
           const added = userTask && isAdded(userTask);
           return (
-            <div key={idx} className="flex border-b border-stone-50">
+            <div key={time} className="flex border-b border-stone-50">
               <div className="flex-1 p-3 bg-orange-50/30">
                 {userTask ? (
                   <div className="bg-white p-3 rounded-xl border border-orange-100">
@@ -84,7 +84,7 @@ export const ScreenBorrow = ({
               </div>
               <div className="flex-1 p-3 bg-green-50/30">
                 {myTasks.map((task, index) => (
-                  <div key={index} className="bg-white p-3 rounded-xl border border-green-100 mb-1">
+                  <div key={task.id ?? index} className="bg-white p-3 rounded-xl border border-green-100 mb-1">
                     <div className="text-xs font-bold text-green-700">{task.time}</div>
                     <div className="font-bold text-sm">{task.title}</div>
                   </div>

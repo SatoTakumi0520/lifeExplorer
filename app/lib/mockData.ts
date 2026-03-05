@@ -99,6 +99,30 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   },
 ];
 
+export const SOCIAL_CATEGORIES: Record<string, SocialPost[]> = {
+  Business: [
+    {
+      id: 201,
+      user: 'Takeshi M.',
+      role: 'CEO',
+      title: '経営者の朝5時起床ルーティン',
+      likes: 312,
+      avatar: '💼',
+      routine: [
+        { time: '05:00', title: 'News Check', thought: '日経新聞とWSJ...', type: 'work' },
+        { time: '06:00', title: 'Strategic Planning', thought: '戦略を練る...', type: 'work' },
+      ],
+    },
+    { id: 202, user: 'Yuki T.', role: 'Consultant', title: '週7MTGを乗り切る集中術', likes: 189, avatar: '📊', routine: [] },
+  ],
+  Creative: [
+    { id: 301, user: 'Sakura N.', role: 'Illustrator', title: 'アイデアが湧く散歩', likes: 428, avatar: '🎨', routine: [] },
+  ],
+  Wellness: [
+    { id: 401, user: 'Mika S.', role: 'Yoga Teacher', title: '心身を整える朝', likes: 521, avatar: '🧘', routine: [] },
+  ],
+};
+
 export const INITIAL_SOCIAL_FEED: SocialPost[] = [
   {
     id: 101,
