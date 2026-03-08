@@ -5,13 +5,17 @@ import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { RoutineTask } from '../lib/types';
 import { formatDate } from '../lib/utils';
+import { MOCK_MY_ROUTINE } from '../lib/mockData';
+
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
 export const useRoutine = (session: Session | null) => {
-  const [myRoutine, setMyRoutine] = useState<RoutineTask[]>([]);
+  const [myRoutine, setMyRoutine] = useState<RoutineTask[]>(IS_DEMO ? MOCK_MY_ROUTINE : []);
   const [loadingRoutine, setLoadingRoutine] = useState(false);
   const [targetDate, setTargetDate] = useState(new Date());
 
   const fetchUserRoutine = useCallback(async (userId: string, date: Date) => {
+    if (IS_DEMO) return; // デモモード中はSupabaseフェッチをスキップ
     setLoadingRoutine(true);
     const { data } = await supabase
       .from('user_tasks')
@@ -38,6 +42,7 @@ export const useRoutine = (session: Session | null) => {
   // session オブジェクト自体は onAuthStateChange 毎に参照が変わるため
   // user.id（文字列）を依存配列にして不要な重複フェッチを防ぐ
   useEffect(() => {
+    if (IS_DEMO) return; // デモモード中はモックデータを維持
     const userId = session?.user.id;
     if (userId) {
       fetchUserRoutine(userId, targetDate);

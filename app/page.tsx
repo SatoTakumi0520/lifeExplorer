@@ -43,9 +43,12 @@ export default function App() {
   const go = (screen: Screen) => setCurrentScreen(screen);
 
   // ログイン済みユーザはTOP画面をスキップしてHOMEへ自動遷移
+  // 開発環境では未ログインでもHOMEへ自動遷移（モックデータで動作確認可能）
   useEffect(() => {
-    if (!loading && session && currentScreen === 'TOP') {
-      setCurrentScreen('HOME');
+    if (!loading && currentScreen === 'TOP') {
+      if (session || process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+        setCurrentScreen('HOME');
+      }
     }
   }, [session, loading]);
 
@@ -104,7 +107,7 @@ export default function App() {
         />
       )}
       {currentScreen === 'SOCIAL' && <ScreenSocial go={go} setSelectedUser={setSelectedUser} socialFeed={socialFeed} />}
-      {currentScreen === 'PROFILE' && <ScreenProfile go={go} />}
+      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
           go={go}
