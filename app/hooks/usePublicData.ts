@@ -3,13 +3,16 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { PersonaTemplate, SocialPost } from '../lib/types';
-import { INITIAL_TEMPLATES } from '../lib/mockData';
+import { INITIAL_TEMPLATES, INITIAL_SOCIAL_FEED } from '../lib/mockData';
+
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
 export const usePublicData = () => {
   const [personaTemplates, setPersonaTemplates] = useState<PersonaTemplate[]>(INITIAL_TEMPLATES);
-  const [socialFeed, setSocialFeed] = useState<SocialPost[]>([]);
+  const [socialFeed, setSocialFeed] = useState<SocialPost[]>(INITIAL_SOCIAL_FEED);
 
   useEffect(() => {
+    if (IS_DEMO) return; // デモモード中はモックデータを維持
     const fetchPublicData = async () => {
       const { data: routines } = await supabase.from('routines').select(`*, routine_items(*)`);
       if (routines) {

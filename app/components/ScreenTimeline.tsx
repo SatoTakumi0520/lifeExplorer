@@ -5,7 +5,7 @@ import { BookOpen, ChevronLeft, ChevronRight, Coffee, Edit3, Sun } from 'lucide-
 import { formatDate, timeToMinutes } from '../lib/utils';
 import { RoutineTask, Screen, SocialPost } from '../lib/types';
 
-// タイプ別スタイル定義
+/* ─── タイプ別スタイル ────────────────────────────────────────────── */
 const typeLeftBorder: Record<string, string> = {
   nature: 'border-l-amber-400',
   mind:   'border-l-blue-400',
@@ -16,7 +16,13 @@ const typeIconColor: Record<string, string> = {
   mind:   'text-blue-500',
   work:   'text-violet-500',
 };
+const typeBg: Record<string, string> = {
+  nature: 'bg-amber-50/60',
+  mind:   'bg-blue-50/60',
+  work:   'bg-violet-50/60',
+};
 
+/* ─── レイアウト計算（重なりレーン） ─────────────────────────────── */
 const calculateTaskLayout = (tasks: RoutineTask[]): { lane: number; totalLanes: number }[] => {
   if (tasks.length === 0) return [];
   const n = tasks.length;
@@ -25,10 +31,8 @@ const calculateTaskLayout = (tasks: RoutineTask[]): { lane: number; totalLanes: 
     const end = t.endTime ? timeToMinutes(t.endTime) : start + 60;
     return Math.max(end, start + 1);
   };
-
   const indices = Array.from({ length: n }, (_, i) => i)
     .sort((a, b) => timeToMinutes(tasks[a].time) - timeToMinutes(tasks[b].time));
-
   const lane = new Array<number>(n).fill(-1);
   const laneEnd: number[] = [];
   for (const i of indices) {
@@ -41,7 +45,6 @@ const calculateTaskLayout = (tasks: RoutineTask[]): { lane: number; totalLanes: 
     lane[i] = assigned;
     laneEnd[assigned] = getEnd(tasks[i]);
   }
-
   const totalLanes = tasks.map((_, i) => {
     const startI = timeToMinutes(tasks[i].time);
     const endI = getEnd(tasks[i]);
@@ -54,10 +57,41 @@ const calculateTaskLayout = (tasks: RoutineTask[]): { lane: number; totalLanes: 
     }
     return max + 1;
   });
-
   return tasks.map((_, i) => ({ lane: lane[i], totalLanes: totalLanes[i] }));
 };
 
+/* ─── 時間ラベル生成 ─────────────────────────────────────────────── */
+const PIXELS_PER_HOUR = 80;
+const TIMELINE_START  = 300;  // 5:00 AM
+const TIMELINE_END    = 1320; // 10:00 PM
+
+const hourMarkers = Array.from({ length: 18 }, (_, i) => {
+  const hour = 5 + i;
+  const top  = (hour * 60 - TIMELINE_START) * (PIXELS_PER_HOUR / 60);
+  const h12  = hour === 12 ? 12 : hour > 12 ? hour - 12 : hour;
+  const suffix = hour === 5 ? 'am' : hour === 12 ? 'pm' : hour === 13 ? 'pm' : '';
+  const label  = `${h12}${suffix}`;
+  const isMajor = hour % 3 === 0;
+  return { hour, top, label, isMajor };
+});
+
+/* ─── 時間帯ゾーン背景 ───────────────────────────────────────────── */
+const timeZones = [
+  { from: 300,  to: 720,  gradient: 'from-amber-50/30 to-amber-50/10' },   // 朝 5–12
+  { from: 720,  to: 1080, gradient: 'from-sky-50/20 to-sky-50/10' },        // 午後 12–18
+  { from: 1080, to: 1320, gradient: 'from-violet-50/20 to-violet-50/5' },   // 夜 18–22
+];
+
+/* ─── 所要時間フォーマット ───────────────────────────────────────── */
+const formatDuration = (minutes: number) => {
+  if (minutes <= 0) return null;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m}m`;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+};
+
+/* ─── Props ──────────────────────────────────────────────────────── */
 type ScreenTimelineProps = {
   go: (screen: Screen) => void;
   targetDate: Date;
@@ -70,6 +104,7 @@ type ScreenTimelineProps = {
   loadingRoutine?: boolean;
 };
 
+/* ─── Component ──────────────────────────────────────────────────── */
 export const ScreenTimeline = ({
   go,
   targetDate,
@@ -81,11 +116,11 @@ export const ScreenTimeline = ({
   setBorrowingUser,
   loadingRoutine,
 }: ScreenTimelineProps) => {
-  const dayInfo = formatDate(targetDate);
-  const isToday = new Date().toDateString() === targetDate.toDateString();
-  const routine = isOther && selectedUser ? selectedUser.routine : myRoutine;
+  const dayInfo  = formatDate(targetDate);
+  const isToday  = new Date().toDateString() === targetDate.toDateString();
+  const routine  = isOther && selectedUser ? selectedUser.routine : myRoutine;
 
-  // 現在時刻（今日の場合のみ1分ごとに更新）
+  /* 現在時刻（今日のみ1分更新） */
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     if (!isToday) return;
@@ -93,22 +128,32 @@ export const ScreenTimeline = ({
     return () => clearInterval(id);
   }, [isToday]);
 
-  const PIXELS_PER_HOUR = 80;
-  const TIMELINE_START = 300; // 5:00 AM
-  const DEFAULT_END = 1320;   // 10:00 PM
-  const latestMinute = routine.length > 0
+  const latestMinute   = routine.length > 0
     ? Math.max(...routine.map(t => timeToMinutes(t.endTime ?? t.time)))
-    : DEFAULT_END;
-  const containerHeight = (Math.max(latestMinute, DEFAULT_END) - TIMELINE_START + 60) * (PIXELS_PER_HOUR / 60);
-  const layouts = calculateTaskLayout(routine);
+    : TIMELINE_END;
+  const containerHeight = (Math.max(latestMinute, TIMELINE_END) - TIMELINE_START + 60) * (PIXELS_PER_HOUR / 60);
+  const layouts        = calculateTaskLayout(routine);
 
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const currentTimeTop = (currentMinutes - TIMELINE_START) * (PIXELS_PER_HOUR / 60);
 
+  /* ヘッダー統計 */
+  const totalTasks = routine.length;
+  const totalMin   = routine.reduce((acc, t) => {
+    const end = t.endTime ? timeToMinutes(t.endTime) : timeToMinutes(t.time) + 60;
+    return acc + Math.max(end - timeToMinutes(t.time), 0);
+  }, 0);
+  const statsText = totalTasks > 0
+    ? `${totalTasks} task${totalTasks > 1 ? 's' : ''} · ${formatDuration(totalMin)}`
+    : null;
+
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">
-      <div className="p-4 sticky top-0 bg-[#FDFCF8]/95 backdrop-blur z-20 border-b border-stone-100">
-        <div className="flex items-center justify-between mb-4">
+
+      {/* ── ヘッダー ── */}
+      <div className="px-4 pt-4 pb-3 sticky top-0 bg-[#FDFCF8]/95 backdrop-blur z-20 border-b border-stone-100">
+        {/* 上段：ロゴ / 編集ボタン */}
+        <div className="flex items-center justify-between mb-3">
           {isOther ? (
             <button
               onClick={() => go('SOCIAL')}
@@ -117,13 +162,16 @@ export const ScreenTimeline = ({
               <ChevronLeft size={14} /> BACK
             </button>
           ) : (
-            <span className="flex items-center gap-1 text-xs font-bold text-stone-400 tracking-widest uppercase">
+            <span className="text-xs font-bold text-stone-300 tracking-[0.18em] uppercase select-none">
               Life OS
             </span>
           )}
           {!isOther && (
-            <button onClick={() => go('EDIT')} className="p-2 bg-white rounded-full border border-stone-200 text-stone-600 hover:text-green-700 shadow-sm">
-              <Edit3 size={18} />
+            <button
+              onClick={() => go('EDIT')}
+              className="p-2 bg-white rounded-full border border-stone-200 text-stone-500 hover:text-green-700 shadow-sm transition-colors"
+            >
+              <Edit3 size={16} />
             </button>
           )}
           {isOther && (
@@ -132,95 +180,189 @@ export const ScreenTimeline = ({
                 if (setBorrowingUser) setBorrowingUser(selectedUser ?? null);
                 go('BORROW');
               }}
-              className="px-4 py-1.5 bg-green-700 text-white rounded-full text-xs font-bold shadow-lg"
+              className="px-4 py-1.5 bg-green-700 text-white rounded-full text-xs font-bold shadow-md"
             >
               Borrow
             </button>
           )}
         </div>
+
+        {/* 下段：日付ナビ */}
         <div className="flex items-center justify-between">
-          <button onClick={() => shiftDate(-1)} className="p-2 hover:bg-stone-100 rounded-full">
-            <ChevronLeft size={24} />
+          <button
+            onClick={() => shiftDate(-1)}
+            className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 rounded-full transition-colors"
+          >
+            <ChevronLeft size={20} className="text-stone-500" />
           </button>
-          <div className="flex flex-col items-center">
-            <h2 className="text-xl font-serif font-bold text-stone-800 flex items-center gap-2">
+
+          <div className="flex flex-col items-center gap-0.5">
+            <h2 className="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">
               {isOther && selectedUser ? (
                 <>
-                  <span className="text-2xl">{selectedUser.avatar}</span> {selectedUser.user.split(' ')[0]}'s Day
+                  <span className="text-xl">{selectedUser.avatar}</span>
+                  {selectedUser.user.split(' ')[0]}'s Day
                 </>
               ) : (
                 <>
-                  {dayInfo.dow}, {dayInfo.month} {dayInfo.day} {isToday && <span className="w-2 h-2 rounded-full bg-green-500" />}
+                  {dayInfo.dow}, {dayInfo.month} {dayInfo.day}
+                  {isToday && (
+                    <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                  )}
                 </>
               )}
             </h2>
-            {!isOther && <p className="text-xs text-stone-400">{loadingRoutine ? 'Syncing...' : 'My Ideal Day'}</p>}
+            {!isOther && (
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs text-stone-400">
+                  {loadingRoutine ? 'Syncing…' : 'My Ideal Day'}
+                </p>
+                {statsText && !loadingRoutine && (
+                  <>
+                    <span className="text-stone-200 text-xs">·</span>
+                    <p className="text-xs text-stone-300">{statsText}</p>
+                  </>
+                )}
+              </div>
+            )}
           </div>
-          <button onClick={() => shiftDate(1)} className="p-2 hover:bg-stone-100 rounded-full">
-            <ChevronRight size={24} />
+
+          <button
+            onClick={() => shiftDate(1)}
+            className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 rounded-full transition-colors"
+          >
+            <ChevronRight size={20} className="text-stone-500" />
           </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-24 pt-4 relative">
-        {routine.length === 0 ? (
-          <div className="text-center py-8 text-stone-300 text-xs">No tasks yet</div>
-        ) : (
-          <div className="relative" style={{ height: `${containerHeight}px` }}>
-            {/* タイムライン縦線 */}
-            <div className="absolute left-[46px] top-0 bottom-0 w-[1px] bg-stone-200" />
+      {/* ── タイムライン本体 ── */}
+      <div className="flex-1 overflow-y-auto pb-24 relative">
+        {/* 上部フェード */}
+        <div className="sticky top-0 h-3 bg-gradient-to-b from-[#FDFCF8] to-transparent z-10 pointer-events-none" />
 
-            {/* 現在時刻ライン */}
+        <div className="px-4 pt-1 pb-4">
+          <div className="relative" style={{ height: `${containerHeight}px` }}>
+
+            {/* ── 時間帯ゾーン背景 ── */}
+            {timeZones.map(({ from, to, gradient }) => {
+              const zTop = (from - TIMELINE_START) * (PIXELS_PER_HOUR / 60);
+              const zH   = (to - from) * (PIXELS_PER_HOUR / 60);
+              return (
+                <div
+                  key={from}
+                  className={`absolute left-[47px] right-0 bg-gradient-to-b ${gradient} pointer-events-none rounded-r-lg`}
+                  style={{ top: `${zTop}px`, height: `${zH}px` }}
+                />
+              );
+            })}
+
+            {/* ── 時間グリッド ── */}
+            {hourMarkers.map(({ hour, top, label, isMajor }) => (
+              <div
+                key={hour}
+                className="absolute left-0 right-0 flex items-center pointer-events-none"
+                style={{ top: `${top}px` }}
+              >
+                <div className="w-[46px] text-right pr-2.5 select-none">
+                  <span className="text-[10px] font-mono text-stone-300 leading-none">{label}</span>
+                </div>
+                <div className={`flex-1 h-px ${isMajor ? 'bg-stone-200' : 'bg-stone-100'}`} />
+              </div>
+            ))}
+
+            {/* ── 現在時刻ライン ── */}
             {isToday && currentTimeTop > 0 && currentTimeTop < containerHeight && (
               <div
                 className="absolute left-0 right-0 flex items-center pointer-events-none z-10"
                 style={{ top: `${currentTimeTop}px` }}
               >
                 <div className="w-[46px]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0 -ml-1.5 ring-2 ring-white shadow-sm" />
-                <div className="flex-1 h-px bg-red-400 opacity-70" />
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0 -ml-1.5 ring-2 ring-[#FDFCF8] shadow-sm" />
+                <div className="flex-1 h-px bg-red-400 opacity-80" />
               </div>
             )}
 
+            {/* ── タスクカード ── */}
             {routine.map((item, idx) => {
               const start = timeToMinutes(item.time);
-              const top = (start - 300) * (80 / 60);
+              const top   = (start - TIMELINE_START) * (PIXELS_PER_HOUR / 60);
               if (top < 0) return null;
+
+              const endMin    = item.endTime ? timeToMinutes(item.endTime) : start + 60;
+              const durationM = endMin - start;
+              const heightPx  = Math.max(durationM * (PIXELS_PER_HOUR / 60) - 4, 44);
+              const duration  = formatDuration(durationM);
+
               const { lane, totalLanes } = layouts[idx];
               const borderClass = typeLeftBorder[item.type ?? 'work'] ?? 'border-l-stone-300';
-              const iconClass = typeIconColor[item.type ?? 'work'] ?? 'text-stone-400';
+              const iconClass   = typeIconColor[item.type ?? 'work'] ?? 'text-stone-400';
+              const bgClass     = typeBg[item.type ?? 'work'] ?? '';
+
+              // 正時はグリッドラベルが担当。非正時のみタスク用ラベルを表示
+              const [tH, tM] = item.time.split(':').map(Number);
+              const taskLabel = (lane === 0 && tM !== 0)
+                ? `${tH > 12 ? tH - 12 : tH}:${String(tM).padStart(2, '0')}`
+                : null;
+
               return (
                 <React.Fragment key={item.id ?? idx}>
-                  {lane === 0 && (
+                  {taskLabel && (
                     <div
-                      className="absolute w-10 text-right text-xs font-mono text-stone-400 pt-1 pointer-events-none"
-                      style={{ top: `${top}px`, left: 0 }}
+                      className="absolute w-10 text-right pointer-events-none"
+                      style={{ top: `${top + 2}px`, left: 0 }}
                     >
-                      {item.time}
+                      <span className="text-[10px] font-mono text-stone-400 leading-none">{taskLabel}</span>
                     </div>
                   )}
                   <div
                     onClick={() => setSelectedTask({ ...item, isOther })}
-                    className={`absolute cursor-pointer group px-3 pt-3 pb-2 rounded-xl border border-stone-100 border-l-[3px] shadow-sm bg-white hover:shadow-md hover:border-l-[3px] transition-all ${borderClass}`}
+                    className={`absolute cursor-pointer overflow-hidden rounded-xl border border-stone-100/80 border-l-[3px] shadow-sm hover:shadow-md transition-all ${borderClass} ${bgClass}`}
                     style={{
-                      top: `${top}px`,
-                      left: `calc(56px + ${lane / totalLanes} * (100% - 56px))`,
-                      width: `calc((100% - 56px) / ${totalLanes} - ${totalLanes > 1 ? 3 : 0}px)`,
+                      top:    `${top}px`,
+                      height: `${heightPx}px`,
+                      left:   `calc(56px + ${lane / totalLanes} * (100% - 56px))`,
+                      width:  `calc((100% - 56px) / ${totalLanes} - ${totalLanes > 1 ? 4 : 0}px)`,
                     }}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      {item.type === 'nature' && <Sun size={12} className={iconClass} />}
-                      {item.type === 'mind' && <BookOpen size={12} className={iconClass} />}
-                      {item.type === 'work' && <Coffee size={12} className={iconClass} />}
-                      <div className="font-bold text-sm text-stone-800 truncate">{item.title}</div>
+                    <div className="px-3 pt-2.5 pb-2 h-full flex flex-col">
+                      <div className="flex items-center gap-1.5 mb-1 min-w-0">
+                        {item.type === 'nature' && <Sun      size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'mind'   && <BookOpen size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'work'   && <Coffee   size={11} className={`${iconClass} flex-shrink-0`} />}
+                        <span className="font-bold text-sm text-stone-800 truncate leading-tight">{item.title}</span>
+                      </div>
+                      {heightPx >= 58 && item.thought && (
+                        <p className="text-xs text-stone-400 line-clamp-1 flex-1 leading-snug">{item.thought}</p>
+                      )}
+                      {heightPx >= 52 && duration && (
+                        <span className="text-[10px] font-mono text-stone-300 mt-auto pt-1 leading-none">{duration}</span>
+                      )}
                     </div>
-                    <div className="text-xs text-stone-400 line-clamp-1">{item.thought}</div>
                   </div>
                 </React.Fragment>
               );
             })}
+
+            {/* ── 空の状態（9AM付近に固定表示） ── */}
+            {routine.length === 0 && (
+              <div
+                className="absolute left-[56px] right-0 flex flex-col items-center gap-3 pointer-events-none"
+                style={{ top: `${(9 * 60 - TIMELINE_START) * (PIXELS_PER_HOUR / 60)}px` }}
+              >
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-white/90 border border-stone-100 rounded-2xl shadow-sm">
+                  <div className="w-6 h-6 rounded-lg bg-stone-100 flex items-center justify-center flex-shrink-0">
+                    <Edit3 size={12} className="text-stone-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-stone-500">No tasks yet</p>
+                    <p className="text-[10px] text-stone-300">Tap ✎ to build your day</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

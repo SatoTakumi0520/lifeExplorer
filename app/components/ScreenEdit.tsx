@@ -3,6 +3,15 @@
 import React, { useState } from 'react';
 import { ArrowRight, Plus, X } from 'lucide-react';
 import { PersonaTemplate, RoutineTask, Screen } from '../lib/types';
+import { timeToMinutes } from '../lib/utils';
+
+const fmtDur = (min: number): string | null => {
+  if (min <= 0) return null;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  if (h === 0) return `${m}m`;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+};
 
 const typeLeftBorder: Record<string, string> = {
   nature: 'border-l-amber-400',
@@ -128,20 +137,61 @@ export const ScreenEdit = ({
             </div>
           </div>
         ) : (
-          <div className="p-4 space-y-4">
+          <div className="p-4">
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">My Routine</h3>
-            {myRoutine.map((item, idx) => (
-              <div key={item.id ?? idx} className={`bg-white p-4 rounded-xl border border-stone-200 border-l-[3px] shadow-sm flex justify-between items-center ${typeLeftBorder[item.type ?? 'work'] ?? 'border-l-stone-300'}`}>
-                <div>
-                  <div className="font-bold text-sm text-stone-800">{item.time} {item.title}</div>
-                  <div className="text-xs text-stone-400">{item.thought}</div>
-                </div>
-                <button onClick={() => deleteTaskFromRoutine(item.id!)} className="text-stone-300 hover:text-red-500"><X size={16} /></button>
-              </div>
-            ))}
+            <div className="space-y-0">
+              {myRoutine.map((item, idx) => {
+                const prevItem = myRoutine[idx - 1];
+                const gapMin = prevItem
+                  ? timeToMinutes(item.time) - (prevItem.endTime ? timeToMinutes(prevItem.endTime) : timeToMinutes(prevItem.time) + 60)
+                  : null;
+                const durationMin = item.endTime
+                  ? timeToMinutes(item.endTime) - timeToMinutes(item.time)
+                  : 60;
+                const duration = fmtDur(durationMin);
+
+                return (
+                  <React.Fragment key={item.id ?? idx}>
+                    {/* 空き時間コネクタ */}
+                    {gapMin !== null && (
+                      <div className="flex items-stretch gap-0 ml-4 my-0.5">
+                        <div className="flex flex-col items-center w-6 flex-shrink-0">
+                          <div className={`w-px flex-1 ${gapMin > 0 ? 'border-l-2 border-dashed border-stone-200' : 'bg-stone-200'}`} />
+                        </div>
+                        {gapMin > 0 && (
+                          <span className="text-[10px] text-stone-300 font-mono self-center pl-2 py-1">
+                            {fmtDur(gapMin)} free
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {/* タスクカード */}
+                    <div className={`bg-white rounded-xl border border-stone-200 border-l-[3px] shadow-sm flex items-center gap-3 px-4 py-3 ${typeLeftBorder[item.type ?? 'work'] ?? 'border-l-stone-300'}`}>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-baseline gap-2 mb-0.5">
+                          <span className="text-xs font-mono text-stone-400">{item.time}</span>
+                          <span className="font-bold text-sm text-stone-800 truncate">{item.title}</span>
+                        </div>
+                        {item.thought && (
+                          <div className="text-xs text-stone-400 truncate">{item.thought}</div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {duration && (
+                          <span className="text-[10px] font-mono text-stone-300 bg-stone-50 px-1.5 py-0.5 rounded">{duration}</span>
+                        )}
+                        <button onClick={() => deleteTaskFromRoutine(item.id!)} className="text-stone-300 hover:text-red-400 transition-colors">
+                          <X size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
+            </div>
             <button
               onClick={() => setShowAddTask(true)}
-              className="w-full py-4 border-2 border-dashed border-stone-200 rounded-xl text-stone-400 hover:border-green-300 hover:text-green-600 transition-all flex items-center justify-center gap-2 font-bold text-sm"
+              className="w-full mt-3 py-4 border-2 border-dashed border-stone-200 rounded-xl text-stone-400 hover:border-green-300 hover:text-green-600 transition-all flex items-center justify-center gap-2 font-bold text-sm"
             >
               <Plus size={16} /> Add Task
             </button>
