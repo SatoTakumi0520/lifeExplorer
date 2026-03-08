@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Life Explorer
 
-## Getting Started
+他者のルーティンを「借りて」自分の理想の一日を探すライフスタイルアプリ。
 
-First, run the development server:
+## セットアップ
+
+### 1. 依存パッケージのインストール
+
+```bash
+npm install
+```
+
+### 2. 環境変数の設定
+
+```bash
+cp .env.example .env.local
+```
+
+`.env.example` をコピーするだけで **デモモード**（ログイン不要・モックデータ）で動作します。
+
+### 3. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) をブラウザで開いてください。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 動作モード
 
-## Learn More
+### デモモード（推奨・ローカル開発用）
+`.env.local` に以下を設定：
+```
+NEXT_PUBLIC_DEMO_MODE=true
+```
+- Supabaseへの接続をスキップ
+- モックデータでアプリ全体を確認可能
+- ログイン不要
 
-To learn more about Next.js, take a look at the following resources:
+### 通常モード（Supabase連携）
+`NEXT_PUBLIC_DEMO_MODE` を削除または `false` に設定することで、Supabase認証・DBと連携します。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 技術スタック
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 15** (App Router)
+- **React 19**
+- **TypeScript**
+- **Tailwind CSS v4**
+- **Supabase** (認証・DB)
