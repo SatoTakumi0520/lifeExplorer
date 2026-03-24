@@ -19,7 +19,7 @@ export const ScreenSettings = ({ go, session, onSignOut }: ScreenSettingsProps) 
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showEditEmail, setShowEditEmail] = useState(false);
   const [profileName, setProfileName] = useState('My Garden');
-  const [profileBio, setProfileBio] = useState('Life OS enthusiast');
+  const [profileBio, setProfileBio] = useState('Life Explorer enthusiast');
   const [email] = useState(session?.user?.email || 'user@example.com');
 
   return (
@@ -149,7 +149,7 @@ export const ScreenSettings = ({ go, session, onSignOut }: ScreenSettingsProps) 
         </div>
 
         <div className="p-4 text-center">
-          <p className="text-xs text-stone-300">Life OS v1.0.0</p>
+          <p className="text-xs text-stone-300">Life Explorer v1.0.0</p>
           <p className="text-xs text-stone-300 mt-1">Made with care</p>
         </div>
       </div>
