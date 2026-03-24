@@ -40,7 +40,7 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
 
         <div className="px-6 pb-10 pt-4">
           <h3 className="text-2xl font-serif font-bold text-stone-800 mb-1">
-            {mode === 'signin' ? 'Welcome Back' : 'Join Life OS'}
+            {mode === 'signin' ? 'Welcome Back' : 'Join Life Explorer'}
           </h3>
           <p className="text-stone-400 text-xs mb-6">
             {mode === 'signin' ? 'Login to sync your routine' : 'Create an account to start'}

@@ -156,14 +156,14 @@ export const ScreenTimeline = ({
         <div className="flex items-center justify-between mb-3">
           {isOther ? (
             <button
-              onClick={() => go('SOCIAL')}
+              onClick={() => go('EXPLORE')}
               className="flex items-center gap-1 text-xs font-bold text-stone-400 tracking-widest uppercase hover:text-stone-800"
             >
               <ChevronLeft size={14} /> BACK
             </button>
           ) : (
             <span className="text-xs font-bold text-stone-300 tracking-[0.18em] uppercase select-none">
-              Life OS
+              Life Explorer
             </span>
           )}
           {!isOther && (

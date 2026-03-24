@@ -1,4 +1,6 @@
-export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'SOCIAL' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS';
+export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'EXPLORE' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS';
+
+export type PersonaCategory = 'morning' | 'wellness' | 'business' | 'creative' | 'minimalist' | 'student';
 
 export type RoutineType = 'nature' | 'mind' | 'work';
 
@@ -17,6 +19,7 @@ export type PersonaTemplate = {
   name: string;
   title: string;
   color: string;
+  category?: PersonaCategory;
   routine: RoutineTask[];
 };
 

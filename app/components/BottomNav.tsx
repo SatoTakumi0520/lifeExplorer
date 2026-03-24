@@ -11,7 +11,7 @@ type BottomNavProps = {
 
 const tabs = [
   { screen: 'HOME' as Screen, icon: Calendar, activeScreens: ['HOME', 'OTHER_HOME'], activeClass: 'bg-green-50 text-green-700' },
-  { screen: 'SOCIAL' as Screen, icon: Sparkles, activeScreens: ['SOCIAL'], activeClass: 'bg-orange-50 text-orange-600' },
+  { screen: 'EXPLORE' as Screen, icon: Sparkles, activeScreens: ['EXPLORE'], activeClass: 'bg-orange-50 text-orange-600' },
   { screen: 'PROFILE' as Screen, icon: User, activeScreens: ['PROFILE', 'SETTINGS'], activeClass: 'bg-stone-100 text-stone-800' },
 ];
 
