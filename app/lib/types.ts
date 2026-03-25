@@ -1,6 +1,6 @@
 export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'EXPLORE' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS';
 
-export type PersonaCategory = 'morning' | 'wellness' | 'business' | 'creative' | 'minimalist' | 'student';
+export type PersonaCategory = 'morning' | 'wellness' | 'business' | 'creative' | 'minimalist' | 'student' | 'custom';
 
 export type RoutineType = 'nature' | 'mind' | 'work';
 

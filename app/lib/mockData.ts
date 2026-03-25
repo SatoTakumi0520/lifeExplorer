@@ -363,6 +363,7 @@ export const PERSONA_CATEGORY_LABELS: Record<string, string> = {
   creative: 'クリエイティブ',
   minimalist: 'ミニマリスト',
   student: '学び',
+  custom: '見つけた日常',
 };
 
 // ─── Legacy Social data (Phase 2で使用) ─────────────────────────────
