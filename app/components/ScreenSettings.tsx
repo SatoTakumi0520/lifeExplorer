@@ -2,17 +2,24 @@
 
 import React, { useState } from 'react';
 import { Session } from '@supabase/supabase-js';
-import { ChevronLeft, ChevronRight, LogOut, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LogOut, X, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { Screen } from '../lib/types';
+import type { AIProvider, UserSettings } from '../hooks/useSettings';
 
 type ScreenSettingsProps = {
   go: (screen: Screen) => void;
   session: Session | null;
   onSignOut: () => void;
+  aiSettings?: UserSettings;
+  aiSaving?: boolean;
+  onSaveAISettings?: (updates: Partial<UserSettings>) => void;
 };
 
-export const ScreenSettings = ({ go, session, onSignOut }: ScreenSettingsProps) => {
+export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings }: ScreenSettingsProps) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState('');
+  const [showAISetup, setShowAISetup] = useState(false);
   const [morningReminder, setMorningReminder] = useState('07:00');
   const [darkMode, setDarkMode] = useState(false);
   const [publicProfile, setPublicProfile] = useState(true);
@@ -71,6 +78,51 @@ export const ScreenSettings = ({ go, session, onSignOut }: ScreenSettingsProps) 
               <h4 className="font-bold text-sm text-stone-600">Sign Out</h4>
             </button>
           </div>
+        </div>
+
+        {/* ── AI Settings ── */}
+        <div className="p-4">
+          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <Sparkles size={12} className="text-orange-500" /> AI Settings
+          </h3>
+          <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+            {/* Provider */}
+            <div className="p-4 border-b border-stone-50">
+              <h4 className="font-bold text-sm text-stone-800 mb-2">AI Provider</h4>
+              <div className="flex gap-2">
+                {(['anthropic', 'openai'] as AIProvider[]).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => onSaveAISettings?.({ ai_provider: p })}
+                    className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${
+                      aiSettings?.ai_provider === p
+                        ? 'bg-stone-800 text-white border-stone-800'
+                        : 'bg-white text-stone-500 border-stone-200 hover:border-stone-400'
+                    }`}
+                  >
+                    {p === 'anthropic' ? 'Claude (Anthropic)' : 'OpenAI'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* API Key */}
+            <button
+              onClick={() => setShowAISetup(true)}
+              className="w-full p-4 flex items-center justify-between hover:bg-stone-50 transition-colors"
+            >
+              <div className="text-left">
+                <h4 className="font-bold text-sm text-stone-800">API Key</h4>
+                <p className="text-xs text-stone-400">
+                  {aiSettings?.ai_api_key_encrypted ? '✓ 設定済み' : '未設定 — タップして設定'}
+                </p>
+              </div>
+              <ChevronRight size={18} className="text-stone-300" />
+            </button>
+          </div>
+          <p className="text-[10px] text-stone-300 mt-2 px-1">
+            AIペルソナ生成にはAPIキーが必要です。キーはサーバー側で安全に管理されます。
+          </p>
         </div>
 
         <div className="p-4">
@@ -206,6 +258,71 @@ export const ScreenSettings = ({ go, session, onSignOut }: ScreenSettingsProps) 
               className="w-full mt-6 py-4 bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors"
             >
               Save Profile
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showAISetup && (
+        <div className="absolute inset-0 z-50 bg-stone-900/20 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200">
+          <div className="bg-[#FDFCF8] w-full rounded-t-3xl border-t border-stone-100 shadow-2xl p-6 animate-in slide-in-from-bottom-10">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-stone-800">API Key Setup</h3>
+              <button onClick={() => setShowAISetup(false)} className="p-2 bg-stone-100 rounded-full text-stone-400 hover:text-stone-800">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">
+                  {aiSettings?.ai_provider === 'openai' ? 'OpenAI' : 'Anthropic'} API Key
+                </label>
+                <div className="relative">
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    value={apiKeyInput}
+                    onChange={(e) => setApiKeyInput(e.target.value)}
+                    placeholder={aiSettings?.ai_provider === 'openai' ? 'sk-...' : 'sk-ant-...'}
+                    className="w-full p-3 pr-10 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm font-mono focus:outline-none focus:border-stone-400 transition-colors"
+                  />
+                  <button
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                  >
+                    {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                <p className="text-xs text-amber-700 font-bold mb-1">APIキーの取得方法</p>
+                <p className="text-xs text-amber-600">
+                  {aiSettings?.ai_provider === 'openai'
+                    ? 'platform.openai.com → API Keys → Create new secret key'
+                    : 'console.anthropic.com → API Keys → Create Key'}
+                </p>
+              </div>
+
+              {aiSettings?.ai_api_key_encrypted && (
+                <div className="bg-green-50 border border-green-100 rounded-xl p-3">
+                  <p className="text-xs text-green-700">✓ 現在APIキーが設定されています。新しいキーを入力すると上書きされます。</p>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => {
+                if (apiKeyInput.trim()) {
+                  onSaveAISettings?.({ ai_api_key_encrypted: apiKeyInput.trim() });
+                  setApiKeyInput('');
+                }
+                setShowAISetup(false);
+              }}
+              disabled={!apiKeyInput.trim() && !aiSettings?.ai_api_key_encrypted}
+              className="w-full mt-6 py-4 bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {aiSaving ? 'Saving...' : 'Save API Key'}
             </button>
           </div>
         </div>

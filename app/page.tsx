@@ -15,6 +15,7 @@ import { TaskDetailModal } from './components/TaskDetailModal';
 import { useAuth } from './hooks/useAuth';
 import { usePublicData } from './hooks/usePublicData';
 import { useRoutine } from './hooks/useRoutine';
+import { useSettings } from './hooks/useSettings';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 
 export default function App() {
@@ -39,6 +40,7 @@ export default function App() {
     copyTaskFromTemplate,
     removeCopiedTask,
   } = useRoutine(session);
+  const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings } = useSettings(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -123,6 +125,9 @@ export default function App() {
           go={go}
           session={session}
           onSignOut={async () => { await signOut(); go('TOP'); }}
+          aiSettings={aiSettings}
+          aiSaving={aiSaving}
+          onSaveAISettings={saveAISettings}
         />
       )}
 
