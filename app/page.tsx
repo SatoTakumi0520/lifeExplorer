@@ -8,13 +8,14 @@ import { ScreenBorrow } from './components/ScreenBorrow';
 import { ScreenEdit } from './components/ScreenEdit';
 import { ScreenProfile } from './components/ScreenProfile';
 import { ScreenSettings } from './components/ScreenSettings';
-import { ScreenSocial } from './components/ScreenSocial';
+import { ScreenExplore } from './components/ScreenExplore';
 import { ScreenTimeline } from './components/ScreenTimeline';
 import { ScreenTop } from './components/ScreenTop';
 import { TaskDetailModal } from './components/TaskDetailModal';
 import { useAuth } from './hooks/useAuth';
 import { usePublicData } from './hooks/usePublicData';
 import { useRoutine } from './hooks/useRoutine';
+import { useSettings } from './hooks/useSettings';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 
 export default function App() {
@@ -39,6 +40,7 @@ export default function App() {
     copyTaskFromTemplate,
     removeCopiedTask,
   } = useRoutine(session);
+  const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings } = useSettings(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -58,7 +60,7 @@ export default function App() {
       <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#FDFCF8] flex flex-col items-center justify-center shadow-2xl border-x border-stone-200">
         <div className="flex items-center gap-2 text-stone-500 mb-4">
           <div className="w-8 h-1 bg-stone-800" />
-          <span className="font-bold tracking-widest text-xs uppercase">Life OS</span>
+          <span className="font-bold tracking-widest text-xs uppercase">Life Explorer</span>
         </div>
         <p className="text-4xl font-serif font-bold text-stone-900">🌱</p>
       </div>
@@ -106,7 +108,7 @@ export default function App() {
           setShowAddTask={setShowAddTask}
         />
       )}
-      {currentScreen === 'SOCIAL' && <ScreenSocial go={go} setSelectedUser={setSelectedUser} socialFeed={socialFeed} />}
+      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} />}
       {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
@@ -123,6 +125,9 @@ export default function App() {
           go={go}
           session={session}
           onSignOut={async () => { await signOut(); go('TOP'); }}
+          aiSettings={aiSettings}
+          aiSaving={aiSaving}
+          onSaveAISettings={saveAISettings}
         />
       )}
 

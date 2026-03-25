@@ -163,21 +163,21 @@ const features = [
     icon: <RoutineIcon />,
     label: '01',
     title: 'My Routine',
-    desc: 'Build your ideal daily schedule',
+    desc: '理想の一日をデザインする',
     iconBg: 'bg-green-100 text-green-700',
   },
   {
     icon: <BorrowIcon />,
     label: '02',
     title: 'Borrow a Day',
-    desc: "Try someone else's life for a day",
+    desc: '誰かの一日を借りて、新しい自分を試す',
     iconBg: 'bg-amber-100 text-amber-700',
   },
   {
     icon: <CatalogIcon />,
     label: '03',
-    title: 'Catalog',
-    desc: '200+ routines from real people',
+    title: 'Explore',
+    desc: '25+のライフスタイルから自分に合うものを発見',
     iconBg: 'bg-violet-100 text-violet-700',
   },
 ];
@@ -196,7 +196,7 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
     <div className="pt-14 px-8 z-10 relative">
       <div className="flex items-center gap-2">
         <div className="w-6 h-0.5 bg-stone-800" />
-        <span className="font-bold tracking-[0.2em] text-[10px] uppercase text-stone-500">Life OS</span>
+        <span className="font-bold tracking-[0.2em] text-[10px] uppercase text-stone-500">Life Explorer</span>
       </div>
     </div>
 
@@ -208,7 +208,8 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
         <br />New Self.
       </h1>
       <p className="text-stone-400 text-sm leading-relaxed">
-        今日は、ちょっと違う一日を借りてみる。
+        誰かのライフスタイルを借りて、<br />
+        まだ知らない自分に出会おう。
       </p>
     </div>
 
