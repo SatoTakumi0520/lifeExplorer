@@ -16,7 +16,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   // ── Business ──
   {
     id: 1,
-    name: 'Steve Jobs',
+    name: 'Zen Thinker',
     title: '禅と創造性',
     color: 'bg-stone-800 text-white',
     category: 'business',
@@ -29,7 +29,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   },
   {
     id: 3,
-    name: 'Elon Musk',
+    name: 'Hyper Scheduler',
     title: '5分刻みの超集中',
     color: 'bg-blue-100 text-blue-800',
     category: 'business',
@@ -42,7 +42,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   },
   {
     id: 4,
-    name: 'Tim Cook',
+    name: 'Discipline Leader',
     title: '4時45分の規律',
     color: 'bg-slate-100 text-slate-800',
     category: 'business',
@@ -83,7 +83,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   // ── Creative ──
   {
     id: 2,
-    name: 'Haruki M.',
+    name: 'Running Novelist',
     title: '走る小説家',
     color: 'bg-orange-100 text-orange-800',
     category: 'creative',
@@ -137,7 +137,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   // ── Wellness ──
   {
     id: 5,
-    name: 'Oprah',
+    name: 'Gratitude Seeker',
     title: '感謝と内省',
     color: 'bg-purple-100 text-purple-800',
     category: 'wellness',
@@ -191,7 +191,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   // ── Morning ──
   {
     id: 16,
-    name: 'Robin Sharma',
+    name: 'Early Riser',
     title: '5AM Club',
     color: 'bg-yellow-100 text-yellow-800',
     category: 'morning',
@@ -219,7 +219,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   // ── Minimalist ──
   {
     id: 6,
-    name: 'Naval',
+    name: 'Deep Reader',
     title: '思考と読書の技法',
     color: 'bg-teal-100 text-teal-800',
     category: 'minimalist',
@@ -232,7 +232,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
   },
   {
     id: 7,
-    name: 'Yoshida S.',
+    name: 'Tea Ritualist',
     title: '茶道に学ぶ余白',
     color: 'bg-amber-100 text-amber-800',
     category: 'minimalist',

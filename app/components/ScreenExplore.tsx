@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Sparkles, Search, Loader2 } from 'lucide-react';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
@@ -45,13 +45,32 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
   const categories = useMemo(() => Object.entries(PERSONA_CATEGORY_LABELS), []);
 
-  // キュレーション済み + 生成済みを統合
-  const allTemplates = useMemo(() => [...personaTemplates, ...generatedPersonas], [personaTemplates, generatedPersonas]);
+  // シャッフル用のシード（マウント時に1回だけ決定、画面を開き直すたびに変わる）
+  const shuffleSeed = useRef(Date.now());
+
+  // キュレーション済みをシャッフル（seeded shuffle で安定表示、開き直すと変わる）
+  const shuffledTemplates = useMemo(() => {
+    const seed = shuffleSeed.current;
+    const arr = [...personaTemplates];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(((Math.sin(seed + i) + 1) / 2) * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [personaTemplates]);
+
+  const DISPLAY_LIMIT = 10;
 
   const filteredTemplates = useMemo(() => {
-    if (activeCategory === 'all') return allTemplates;
-    return allTemplates.filter((t) => t.category === activeCategory);
-  }, [allTemplates, activeCategory]);
+    // 生成済みペルソナは常に先頭に表示
+    const curated = activeCategory === 'all'
+      ? shuffledTemplates.slice(0, DISPLAY_LIMIT)
+      : shuffledTemplates.filter((t) => t.category === activeCategory);
+    const generated = activeCategory === 'all' || activeCategory === 'custom'
+      ? generatedPersonas
+      : [];
+    return [...generated, ...curated];
+  }, [shuffledTemplates, generatedPersonas, activeCategory]);
 
   const canGenerate = IS_DEMO || hasApiKey;
 
