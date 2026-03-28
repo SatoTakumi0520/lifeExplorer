@@ -30,7 +30,7 @@ function generateMockPersona(prompt: string): PersonaTemplate {
     name: prompt.slice(0, 20),
     title: `${prompt.slice(0, 15)}のルーティン`,
     color,
-    category: 'custom' as any,
+    category: 'custom',
     routine: MOCK_TASKS.default,
   };
 }
@@ -89,7 +89,7 @@ export async function generatePersona(prompt: string): Promise<GeneratePersonaRe
         name: persona.name,
         title: persona.title,
         color: persona.color || 'bg-stone-100 text-stone-800',
-        category: 'custom' as any,
+        category: 'custom',
         routine: persona.routine,
       },
     };

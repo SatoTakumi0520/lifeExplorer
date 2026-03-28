@@ -40,7 +40,7 @@ export default function App() {
     copyTaskFromTemplate,
     removeCopiedTask,
   } = useRoutine(session);
-  const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings } = useSettings(session);
+  const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -108,7 +108,7 @@ export default function App() {
           setShowAddTask={setShowAddTask}
         />
       )}
-      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} />}
+      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} />}
       {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
