@@ -49,9 +49,11 @@ export default function App() {
 
   // ログイン済みユーザはTOP画面をスキップ
   // オンボーディング未完了 → ONBOARDING、完了済み → HOME
+  // デモモードではTOPを表示せず直接遷移（本番ではsession必須）
   useEffect(() => {
     if (!loading && !onboardingLoading && currentScreen === 'TOP') {
-      if (session || process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      const isAuthenticated = session || process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+      if (isAuthenticated) {
         setCurrentScreen(onboardingComplete ? 'HOME' : 'ONBOARDING');
       }
     }
@@ -146,7 +148,8 @@ export default function App() {
           onClose={() => setShowAuthModal(false)}
           onAuthSuccess={() => {
             setShowAuthModal(false);
-            go('HOME');
+            // TOP画面に戻し、useEffectでonboarding状態に応じてルーティング
+            setCurrentScreen('TOP');
           }}
           initialMode={authModalMode}
         />
