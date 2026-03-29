@@ -16,6 +16,8 @@ import { useAuth } from './hooks/useAuth';
 import { usePublicData } from './hooks/usePublicData';
 import { useRoutine } from './hooks/useRoutine';
 import { useSettings } from './hooks/useSettings';
+import { useOnboarding } from './hooks/useOnboarding';
+import { ScreenOnboarding } from './components/ScreenOnboarding';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 
 export default function App() {
@@ -41,18 +43,19 @@ export default function App() {
     removeCopiedTask,
   } = useRoutine(session);
   const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
+  const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, loading: onboardingLoading } = useOnboarding(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
-  // ログイン済みユーザはTOP画面をスキップしてHOMEへ自動遷移
-  // 開発環境では未ログインでもHOMEへ自動遷移（モックデータで動作確認可能）
+  // ログイン済みユーザはTOP画面をスキップ
+  // オンボーディング未完了 → ONBOARDING、完了済み → HOME
   useEffect(() => {
-    if (!loading && currentScreen === 'TOP') {
+    if (!loading && !onboardingLoading && currentScreen === 'TOP') {
       if (session || process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
-        setCurrentScreen('HOME');
+        setCurrentScreen(onboardingComplete ? 'HOME' : 'ONBOARDING');
       }
     }
-  }, [session, loading]);
+  }, [session, loading, onboardingLoading, onboardingComplete]);
 
   // セッション確認中はスプラッシュ画面を表示
   if (loading) {
@@ -108,7 +111,13 @@ export default function App() {
           setShowAddTask={setShowAddTask}
         />
       )}
-      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} />}
+      {currentScreen === 'ONBOARDING' && (
+        <ScreenOnboarding
+          onComplete={(prefs) => { saveOnboarding(prefs); go('HOME'); }}
+          onSkip={() => { skipOnboarding(); go('HOME'); }}
+        />
+      )}
+      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} />}
       {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
@@ -131,7 +140,7 @@ export default function App() {
         />
       )}
 
-      {currentScreen !== 'TOP' && <BottomNav go={go} currentScreen={currentScreen} />}
+      {currentScreen !== 'TOP' && currentScreen !== 'ONBOARDING' && <BottomNav go={go} currentScreen={currentScreen} />}
       {showAuthModal && (
         <AuthModal
           onClose={() => setShowAuthModal(false)}

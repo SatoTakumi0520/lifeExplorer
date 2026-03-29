@@ -177,7 +177,7 @@ const features = [
     icon: <CatalogIcon />,
     label: '03',
     title: 'Explore',
-    desc: '25+のライフスタイルから自分に合うものを発見',
+    desc: '75+のライフスタイルから自分に合うものを発見',
     iconBg: 'bg-violet-100 text-violet-700',
   },
 ];

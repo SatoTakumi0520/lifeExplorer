@@ -21,6 +21,8 @@ type ScreenExploreProps = {
   setSelectedUser: (user: SocialPost) => void;
   personaTemplates: PersonaTemplate[];
   hasApiKey: boolean;
+  preferredCategories?: PersonaCategory[];
+  lifestyleRhythm?: 'morning' | 'night' | 'balanced' | null;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -36,7 +38,7 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
@@ -59,18 +61,37 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     return arr;
   }, [personaTemplates]);
 
-  const DISPLAY_LIMIT = 10;
+  const DISPLAY_LIMIT = 12;
+
+  // 生活リズムでブーストするカテゴリ
+  const boostedCategories = useMemo(() => {
+    const cats = new Set(preferredCategories);
+    if (lifestyleRhythm === 'morning') cats.add('morning');
+    if (lifestyleRhythm === 'night') cats.add('nightowl');
+    return cats;
+  }, [preferredCategories, lifestyleRhythm]);
 
   const filteredTemplates = useMemo(() => {
-    // 生成済みペルソナは常に先頭に表示
-    const curated = activeCategory === 'all'
-      ? shuffledTemplates.slice(0, DISPLAY_LIMIT)
-      : shuffledTemplates.filter((t) => t.category === activeCategory);
     const generated = activeCategory === 'all' || activeCategory === 'custom'
       ? generatedPersonas
       : [];
-    return [...generated, ...curated];
-  }, [shuffledTemplates, generatedPersonas, activeCategory]);
+
+    if (activeCategory !== 'all') {
+      const curated = shuffledTemplates.filter((t) => t.category === activeCategory);
+      return [...generated, ...curated];
+    }
+
+    // 「すべて」タブ: 嗜好カテゴリ優先表示
+    if (boostedCategories.size > 0) {
+      const preferred = shuffledTemplates.filter((t) => t.category && boostedCategories.has(t.category));
+      const others = shuffledTemplates.filter((t) => !t.category || !boostedCategories.has(t.category));
+      const preferredLimit = Math.ceil(DISPLAY_LIMIT * 0.7);
+      const othersLimit = DISPLAY_LIMIT - Math.min(preferred.length, preferredLimit);
+      return [...generated, ...preferred.slice(0, preferredLimit), ...others.slice(0, othersLimit)];
+    }
+
+    return [...generated, ...shuffledTemplates.slice(0, DISPLAY_LIMIT)];
+  }, [shuffledTemplates, generatedPersonas, activeCategory, boostedCategories]);
 
   const canGenerate = IS_DEMO || hasApiKey;
 
@@ -98,6 +119,16 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
       case 'minimalist': return 'bg-stone-100 text-stone-700';
       case 'student': return 'bg-violet-100 text-violet-700';
       case 'custom': return 'bg-rose-100 text-rose-700';
+      case 'fitness': return 'bg-red-100 text-red-700';
+      case 'cooking': return 'bg-amber-100 text-amber-700';
+      case 'reading': return 'bg-indigo-100 text-indigo-700';
+      case 'nightowl': return 'bg-slate-700 text-slate-100';
+      case 'productivity': return 'bg-blue-100 text-blue-700';
+      case 'parenting': return 'bg-pink-100 text-pink-700';
+      case 'travel': return 'bg-emerald-100 text-emerald-700';
+      case 'spiritual': return 'bg-purple-100 text-purple-700';
+      case 'digital': return 'bg-cyan-100 text-cyan-700';
+      case 'social': return 'bg-orange-100 text-orange-700';
       default: return 'bg-stone-100 text-stone-600';
     }
   };
