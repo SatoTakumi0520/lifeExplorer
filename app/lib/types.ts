@@ -1,6 +1,16 @@
-export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'EXPLORE' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS';
+export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'EXPLORE' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS' | 'ONBOARDING';
 
-export type PersonaCategory = 'morning' | 'wellness' | 'business' | 'creative' | 'minimalist' | 'student' | 'custom';
+export type PersonaCategory =
+  | 'morning' | 'wellness' | 'business' | 'creative' | 'minimalist' | 'student'
+  | 'fitness' | 'cooking' | 'reading' | 'nightowl' | 'productivity'
+  | 'parenting' | 'travel' | 'spiritual' | 'digital' | 'social'
+  | 'custom';
+
+export type OnboardingPreferences = {
+  completed: boolean;
+  selectedCategories: PersonaCategory[];
+  lifestyleRhythm: 'morning' | 'night' | 'balanced' | null;
+};
 
 export type RoutineType = 'nature' | 'mind' | 'work';
 
