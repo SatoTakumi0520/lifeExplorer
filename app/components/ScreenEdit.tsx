@@ -47,16 +47,16 @@ export const ScreenEdit = ({
         <button onClick={() => {
           setSelectedTemplate(null);
           go('HOME');
-        }} className="text-stone-400 hover:text-stone-800 text-sm font-bold">Cancel</button>
-        <h2 className="font-bold text-stone-800">Routine Editor</h2>
+        }} className="text-stone-400 hover:text-stone-800 text-sm font-bold">キャンセル</button>
+        <h2 className="font-bold text-stone-800">ルーティン編集</h2>
         <button onClick={() => {
           setSelectedTemplate(null);
           go('HOME');
-        }} className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors">Done</button>
+        }} className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors">完了</button>
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="py-6 px-4 bg-white border-b border-stone-50">
-          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Templates</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">テンプレート</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
             {personaTemplates.map((persona) => (
               <div
@@ -90,7 +90,7 @@ export const ScreenEdit = ({
             <div className="flex border-b border-stone-100">
               <div className="flex-1 px-4 py-2 bg-orange-50/50"><span className="text-xs font-bold text-orange-600 uppercase tracking-wider">{selectedTemplate.name}</span></div>
               <div className="w-10" />
-              <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-xs font-bold text-green-600 uppercase tracking-wider">My Routine</span></div>
+              <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-xs font-bold text-green-600 tracking-wider">マイルーティン</span></div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {[...new Set([...selectedTemplate.routine.map((routine) => routine.time), ...myRoutine.map((routine) => routine.time)])]
@@ -138,7 +138,7 @@ export const ScreenEdit = ({
           </div>
         ) : (
           <div className="p-4">
-            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">My Routine</h3>
+            <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">マイルーティン</h3>
             <div className="space-y-0">
               {myRoutine.map((item, idx) => {
                 const prevItem = myRoutine[idx - 1];
@@ -160,7 +160,7 @@ export const ScreenEdit = ({
                         </div>
                         {gapMin > 0 && (
                           <span className="text-[10px] text-stone-300 font-mono self-center pl-2 py-1">
-                            {fmtDur(gapMin)} free
+                            {fmtDur(gapMin)} 空き
                           </span>
                         )}
                       </div>
@@ -193,7 +193,7 @@ export const ScreenEdit = ({
               onClick={() => setShowAddTask(true)}
               className="w-full mt-3 py-4 border-2 border-dashed border-stone-200 rounded-xl text-stone-400 hover:border-green-300 hover:text-green-600 transition-all flex items-center justify-center gap-2 font-bold text-sm"
             >
-              <Plus size={16} /> Add Task
+              <Plus size={16} /> タスクを追加
             </button>
           </div>
         )}

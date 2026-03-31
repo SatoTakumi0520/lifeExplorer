@@ -11,9 +11,9 @@ type TaskDetailModalProps = {
 };
 
 const typeConfig: Record<string, { icon: React.ReactNode; bgClass: string; label: string }> = {
-  nature: { icon: <Sun size={20} className="text-amber-500" />,  bgClass: 'bg-amber-50',  label: 'Nature' },
-  mind:   { icon: <BookOpen size={20} className="text-blue-500" />, bgClass: 'bg-blue-50', label: 'Mind'   },
-  work:   { icon: <Coffee size={20} className="text-violet-500" />, bgClass: 'bg-violet-50', label: 'Work' },
+  nature: { icon: <Sun size={20} className="text-amber-500" />,  bgClass: 'bg-amber-50',  label: '自然' },
+  mind:   { icon: <BookOpen size={20} className="text-blue-500" />, bgClass: 'bg-blue-50', label: '思考'   },
+  work:   { icon: <Coffee size={20} className="text-violet-500" />, bgClass: 'bg-violet-50', label: '仕事' },
 };
 
 export const TaskDetailModal = ({ task, onClose, onDelete }: TaskDetailModalProps) => {
@@ -39,7 +39,7 @@ export const TaskDetailModal = ({ task, onClose, onDelete }: TaskDetailModalProp
                 {typeInfo.icon}
               </div>
               <div>
-                <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">Schedule</div>
+                <div className="text-xs font-bold text-stone-400 tracking-wide">スケジュール</div>
                 <div className="text-base font-mono font-bold text-stone-800">
                   {task.time}{task.endTime ? ` — ${task.endTime}` : ''}
                 </div>
@@ -71,7 +71,7 @@ export const TaskDetailModal = ({ task, onClose, onDelete }: TaskDetailModalProp
               onClick={onClose}
               className="flex-1 py-3.5 bg-stone-900 text-white rounded-2xl font-bold text-sm hover:bg-stone-700 transition-all"
             >
-              Close
+              閉じる
             </button>
             {!task.isOther && onDelete && (
               <button

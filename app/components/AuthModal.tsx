@@ -40,15 +40,15 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
 
         <div className="px-6 pb-10 pt-4">
           <h3 className="text-2xl font-serif font-bold text-stone-800 mb-1">
-            {mode === 'signin' ? 'Welcome Back' : 'Join Life Explorer'}
+            {mode === 'signin' ? 'おかえりなさい' : 'Life Explorer をはじめよう'}
           </h3>
           <p className="text-stone-400 text-xs mb-6">
-            {mode === 'signin' ? 'Login to sync your routine' : 'Create an account to start'}
+            {mode === 'signin' ? 'ルーティンを同期するにはログインしてください' : 'アカウントを作成してはじめましょう'}
           </p>
 
           <form onSubmit={handleAuth} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Email</label>
+              <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">メールアドレス</label>
               <input
                 type="email"
                 value={email}
@@ -59,7 +59,7 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Password</label>
+              <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">パスワード</label>
               <input
                 type="password"
                 value={password}
@@ -74,7 +74,7 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
               type="submit"
               className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-sm hover:bg-stone-700 transition-all mt-2"
             >
-              {mode === 'signin' ? 'Log In' : 'Sign Up'}
+              {mode === 'signin' ? 'ログイン' : 'アカウント作成'}
             </button>
           </form>
 
@@ -82,9 +82,9 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
             onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
             className="w-full mt-4 py-2 text-xs text-stone-400 hover:text-stone-700 transition-colors font-medium"
           >
-            {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
+            {mode === 'signin' ? 'アカウントをお持ちでない方は ' : 'すでにアカウントをお持ちの方は '}
             <span className="text-stone-700 font-bold underline underline-offset-2">
-              {mode === 'signin' ? 'Sign Up' : 'Log In'}
+              {mode === 'signin' ? 'アカウント作成' : 'ログイン'}
             </span>
           </button>
         </div>

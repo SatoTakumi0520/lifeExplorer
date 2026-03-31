@@ -35,9 +35,9 @@ export const ScreenBorrow = ({
           }}
           className="text-stone-400 font-bold text-sm"
         >
-          Back
+          戻る
         </button>
-        <h2 className="font-bold text-stone-800">Borrow Routine</h2>
+        <h2 className="font-bold text-stone-800">ルーティンを借りる</h2>
         <button
           onClick={() => {
             setBorrowingUser(null);
@@ -45,13 +45,13 @@ export const ScreenBorrow = ({
           }}
           className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg"
         >
-          Done
+          完了
         </button>
       </div>
       <div className="flex border-b border-stone-100">
         <div className="flex-1 px-4 py-2 bg-orange-50/50 text-center text-xs font-bold text-orange-600 uppercase tracking-wider truncate">{borrowingUser.user}</div>
         <div className="w-10" />
-        <div className="flex-1 px-4 py-2 bg-green-50/50 text-center text-xs font-bold text-green-600 uppercase tracking-wider">My Routine</div>
+        <div className="flex-1 px-4 py-2 bg-green-50/50 text-center text-xs font-bold text-green-600 tracking-wider">マイルーティン</div>
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
         {allTimes.map((time, idx) => {
