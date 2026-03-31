@@ -10,9 +10,9 @@ type AddTaskModalProps = {
 };
 
 const typeConfig = [
-  { value: 'nature' as const, label: 'Nature', icon: Sun,      activeClass: 'bg-amber-500 text-white',  inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
-  { value: 'mind'   as const, label: 'Mind',   icon: BookOpen, activeClass: 'bg-blue-500 text-white',   inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
-  { value: 'work'   as const, label: 'Work',   icon: Coffee,   activeClass: 'bg-violet-500 text-white', inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'nature' as const, label: '自然', icon: Sun,      activeClass: 'bg-amber-500 text-white',  inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'mind'   as const, label: '思考',   icon: BookOpen, activeClass: 'bg-blue-500 text-white',   inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'work'   as const, label: '仕事',   icon: Coffee,   activeClass: 'bg-violet-500 text-white', inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
 ];
 
 const inputClass = 'w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors';
@@ -35,7 +35,7 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
         </div>
 
         <div className="px-6 pb-10 pt-4">
-          <h3 className="font-bold text-lg text-stone-800 mb-5">Add Task</h3>
+          <h3 className="font-bold text-lg text-stone-800 mb-5">タスクを追加</h3>
 
           {/* タイプ選択 */}
           <div className="flex gap-2 mb-5">
@@ -56,7 +56,7 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
           {/* 時間 */}
           <div className="flex gap-3 mb-4">
             <div className="flex-1">
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-1.5 block">Start</label>
+              <label className="text-xs font-bold text-stone-400 tracking-wide mb-1.5 block">開始</label>
               <input
                 type="time"
                 value={task.time}
@@ -65,7 +65,7 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
               />
             </div>
             <div className="flex-1">
-              <label className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-1.5 block">End</label>
+              <label className="text-xs font-bold text-stone-400 tracking-wide mb-1.5 block">終了</label>
               <input
                 type="time"
                 value={task.endTime}
@@ -77,10 +77,10 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
 
           {/* タイトル */}
           <div className="mb-4">
-            <label className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-1.5 block">Title</label>
+            <label className="text-xs font-bold text-stone-400 tracking-wide mb-1.5 block">タイトル</label>
             <input
               type="text"
-              placeholder="What are you doing?"
+              placeholder="何をしますか？"
               value={task.title}
               onChange={(e) => setTask({ ...task, title: e.target.value })}
               className={inputClass}
@@ -89,9 +89,9 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
 
           {/* ノート */}
           <div className="mb-6">
-            <label className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-1.5 block">Note</label>
+            <label className="text-xs font-bold text-stone-400 tracking-wide mb-1.5 block">メモ</label>
             <textarea
-              placeholder="Why does this matter to you?"
+              placeholder="なぜこれが大切ですか？"
               value={task.thought}
               onChange={(e) => setTask({ ...task, thought: e.target.value })}
               className={`${inputClass} h-20 resize-none`}
@@ -103,13 +103,13 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
             disabled={!task.title}
             className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-base hover:bg-stone-700 disabled:opacity-40 transition-all"
           >
-            Add Task
+            タスクを追加
           </button>
           <button
             onClick={onClose}
             className="w-full py-3 text-stone-400 text-sm font-medium mt-2 hover:text-stone-600 transition-colors"
           >
-            Cancel
+            キャンセル
           </button>
         </div>
       </div>

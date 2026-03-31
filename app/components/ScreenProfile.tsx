@@ -49,14 +49,14 @@ const activityColors = ['bg-stone-100', 'bg-green-200', 'bg-green-400', 'bg-gree
 
 /* ─── Static constants ─────────────────────────────────────────────── */
 
-const DOW = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const DOW = ['月', '火', '水', '木', '金', '土', '日'];
 const STREAK_DAYS = [true, true, true, false, true, true, true];
 const CURRENT_STREAK = 6;
 
 const typeConfig = {
-  nature: { label: 'Nature', color: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50' },
-  mind:   { label: 'Mind',   color: 'bg-blue-400',  text: 'text-blue-600',  bg: 'bg-blue-50'  },
-  work:   { label: 'Work',   color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50' },
+  nature: { label: '自然', color: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50' },
+  mind:   { label: '思考',   color: 'bg-blue-400',  text: 'text-blue-600',  bg: 'bg-blue-50'  },
+  work:   { label: '仕事',   color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50' },
 } as const;
 
 /* ─── Component ────────────────────────────────────────────────────── */
@@ -91,7 +91,7 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
             <div>
               <h2 className="text-xl font-bold text-stone-900">{displayName}</h2>
               <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 bg-green-50 border border-green-100 rounded-full text-[10px] font-bold text-green-700 uppercase tracking-wide">
-                Sprouting
+                成長中
               </span>
             </div>
           </div>
@@ -106,9 +106,9 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-2">
           {[
-            { value: '12',                                  label: 'Days Logged' },
-            { value: String(BORROW_HISTORY.length),         label: 'Tried'       },
-            { value: String(MY_PUBLIC_STATS.borrowCount),   label: 'Lent to'     },
+            { value: '12',                                  label: '記録日数' },
+            { value: String(BORROW_HISTORY.length),         label: '試した数'       },
+            { value: String(MY_PUBLIC_STATS.borrowCount),   label: '貸した数'     },
           ].map(({ value, label }) => (
             <div key={label} className="flex flex-col items-center py-3 bg-stone-50 rounded-xl border border-stone-100">
               <span className="text-2xl font-bold text-stone-900 leading-none">{value}</span>
@@ -125,9 +125,9 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Flame size={15} className="text-orange-500" />
-              <h3 className="text-sm font-bold text-stone-700">Streak</h3>
+              <h3 className="text-sm font-bold text-stone-700">継続記録</h3>
             </div>
-            <span className="text-sm font-bold text-orange-500">{CURRENT_STREAK} days 🔥</span>
+            <span className="text-sm font-bold text-orange-500">{CURRENT_STREAK} 日 🔥</span>
           </div>
           <div className="flex gap-1.5">
             {STREAK_DAYS.map((active, i) => (
@@ -142,8 +142,8 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
         {/* ── Routine Balance ──────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-stone-700">Routine Balance</h3>
-            {!hasRoutine && <span className="text-[10px] text-stone-300">No tasks yet</span>}
+            <h3 className="text-sm font-bold text-stone-700">ルーティンバランス</h3>
+            {!hasRoutine && <span className="text-[10px] text-stone-300">タスクなし</span>}
           </div>
           {hasRoutine ? (
             <div className="space-y-2.5">
@@ -168,7 +168,7 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
             </div>
           ) : (
             <p className="text-xs text-stone-300 text-center py-2">
-              Add tasks to your routine to see your balance
+              タスクを追加するとバランスが表示されます
             </p>
           )}
         </div>
@@ -176,8 +176,8 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
         {/* ── Activity Calendar ───────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-stone-700">Activity</h3>
-            <span className="text-xs text-stone-400">Last 5 weeks</span>
+            <h3 className="text-sm font-bold text-stone-700">アクティビティ</h3>
+            <span className="text-xs text-stone-400">直近5週間</span>
           </div>
           <div className="grid grid-cols-7 gap-1 mb-1">
             {DOW.map((d, i) => (
@@ -190,19 +190,19 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
             ))}
           </div>
           <div className="flex items-center justify-end gap-1.5 mt-3">
-            <span className="text-[10px] text-stone-300">Less</span>
+            <span className="text-[10px] text-stone-300">少</span>
             {activityColors.map((c, i) => (
               <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
             ))}
-            <span className="text-[10px] text-stone-300">More</span>
+            <span className="text-[10px] text-stone-300">多</span>
           </div>
         </div>
 
         {/* ── Borrow History ───────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-stone-700">Borrow History</h3>
-            <span className="text-xs text-stone-400">{BORROW_HISTORY.length} tried</span>
+            <h3 className="text-sm font-bold text-stone-700">借用履歴</h3>
+            <span className="text-xs text-stone-400">{BORROW_HISTORY.length} 件試した</span>
           </div>
           {BORROW_HISTORY.length > 0 ? (
             <div className="space-y-2">
@@ -223,13 +223,13 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
               ))}
             </div>
           ) : (
-            <p className="text-xs text-stone-300 text-center py-4">No borrowed routines yet</p>
+            <p className="text-xs text-stone-300 text-center py-4">まだ借りたルーティンはありません</p>
           )}
         </div>
 
         {/* ── My Public Routine ────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
-          <h3 className="text-sm font-bold text-stone-700 mb-3">My Public Routine</h3>
+          <h3 className="text-sm font-bold text-stone-700 mb-3">公開ルーティン</h3>
           <div className="flex items-center gap-3 p-3 bg-green-50/50 border border-green-100 rounded-xl">
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
               <Users size={17} className="text-green-600" />
@@ -237,7 +237,7 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-bold text-stone-700">{MY_PUBLIC_STATS.title}</div>
               <div className="text-[10px] text-stone-400 mt-0.5">
-                <span className="font-bold text-green-600">{MY_PUBLIC_STATS.borrowCount}</span> people borrowed this
+                <span className="font-bold text-green-600">{MY_PUBLIC_STATS.borrowCount}</span> 人が借りました
               </div>
             </div>
             <button

@@ -139,6 +139,8 @@ export default function App() {
           aiSettings={aiSettings}
           aiSaving={aiSaving}
           onSaveAISettings={saveAISettings}
+          onboardingPrefs={onboardingPrefs}
+          onSaveOnboarding={saveOnboarding}
         />
       )}
 

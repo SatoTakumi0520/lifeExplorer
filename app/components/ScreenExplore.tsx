@@ -186,7 +186,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 </div>
               </div>
               <div className="px-3 py-1 bg-stone-50 rounded-full text-xs text-stone-500 font-bold group-hover:bg-green-50 group-hover:text-green-700 transition-colors">
-                Try →
+                試す →
               </div>
             </div>
 
@@ -216,7 +216,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
             {/* Task count */}
             <div className="flex items-center gap-3 text-xs text-stone-400">
-              <span>{template.routine.length} tasks</span>
+              <span>{template.routine.length} タスク</span>
               <span className="text-stone-200">·</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${template.color}`}>
                 {template.category ? PERSONA_CATEGORY_LABELS[template.category] : 'Persona'}
@@ -280,7 +280,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                   onClick={() => go('SETTINGS')}
                   className="text-xs text-green-700 font-bold hover:underline"
                 >
-                  Settings で設定する →
+                  設定画面で設定する →
                 </button>
               </div>
             )}
