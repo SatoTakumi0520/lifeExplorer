@@ -1,16 +1,27 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2 } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp } from 'lucide-react';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
 import { Screen, PersonaTemplate, PersonaCategory, SocialPost } from '../lib/types';
 import { timeToMinutes } from '../lib/utils';
+import { useFavorites } from '../hooks/useFavorites';
 
 // ミニタイムライン: タスクを5am-10pm(1020分)の割合でカラーブロック表示
 const MINI_START = 300;  // 5:00
 const MINI_RANGE = 1020; // 17h
 const typeBarColor: Record<string, string> = {
+  nature: 'bg-amber-400',
+  mind:   'bg-blue-400',
+  work:   'bg-violet-400',
+};
+const typeLabel: Record<string, string> = {
+  nature: '自然',
+  mind:   '思考',
+  work:   '仕事',
+};
+const typeDotColor: Record<string, string> = {
   nature: 'bg-amber-400',
   mind:   'bg-blue-400',
   work:   'bg-violet-400',
@@ -44,6 +55,10 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
   const [generating, setGenerating] = useState(false);
   const [generatedPersonas, setGeneratedPersonas] = useState<PersonaTemplate[]>([]);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | number | null>(null);
+  const [displayLimit, setDisplayLimit] = useState(12);
+
+  const { toggle: toggleFavorite, isFavorite } = useFavorites();
 
   const categories = useMemo(() => Object.entries(PERSONA_CATEGORY_LABELS), []);
 
@@ -61,8 +76,6 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     return arr;
   }, [personaTemplates]);
 
-  const DISPLAY_LIMIT = 12;
-
   // 生活リズムでブーストするカテゴリ
   const boostedCategories = useMemo(() => {
     const cats = new Set(preferredCategories);
@@ -71,27 +84,46 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     return cats;
   }, [preferredCategories, lifestyleRhythm]);
 
+  // お気に入りペルソナ（シャッフル前に先頭へ）
+  const sortedTemplates = useMemo(() => {
+    const favs = shuffledTemplates.filter((t) => isFavorite(t.id));
+    const others = shuffledTemplates.filter((t) => !isFavorite(t.id));
+    return [...favs, ...others];
+  }, [shuffledTemplates, isFavorite]);
+
   const filteredTemplates = useMemo(() => {
     const generated = activeCategory === 'all' || activeCategory === 'custom'
       ? generatedPersonas
       : [];
 
+    if (activeCategory === 'favorites') {
+      const favs = sortedTemplates.filter((t) => isFavorite(t.id));
+      return [...generatedPersonas.filter((t) => isFavorite(t.id)), ...favs];
+    }
+
     if (activeCategory !== 'all') {
-      const curated = shuffledTemplates.filter((t) => t.category === activeCategory);
+      const curated = sortedTemplates.filter((t) => t.category === activeCategory);
       return [...generated, ...curated];
     }
 
-    // 「すべて」タブ: 嗜好カテゴリ優先表示
+    // 「すべて」タブ: 嗜好カテゴリ優先表示 + 表示数制限
     if (boostedCategories.size > 0) {
-      const preferred = shuffledTemplates.filter((t) => t.category && boostedCategories.has(t.category));
-      const others = shuffledTemplates.filter((t) => !t.category || !boostedCategories.has(t.category));
-      const preferredLimit = Math.ceil(DISPLAY_LIMIT * 0.7);
-      const othersLimit = DISPLAY_LIMIT - Math.min(preferred.length, preferredLimit);
+      const preferred = sortedTemplates.filter((t) => t.category && boostedCategories.has(t.category));
+      const others = sortedTemplates.filter((t) => !t.category || !boostedCategories.has(t.category));
+      const preferredLimit = Math.ceil(displayLimit * 0.7);
+      const othersLimit = displayLimit - Math.min(preferred.length, preferredLimit);
       return [...generated, ...preferred.slice(0, preferredLimit), ...others.slice(0, othersLimit)];
     }
 
-    return [...generated, ...shuffledTemplates.slice(0, DISPLAY_LIMIT)];
-  }, [shuffledTemplates, generatedPersonas, activeCategory, boostedCategories]);
+    return [...generated, ...sortedTemplates.slice(0, displayLimit)];
+  }, [sortedTemplates, generatedPersonas, activeCategory, boostedCategories, displayLimit, isFavorite]);
+
+  const totalCurated = useMemo(() => {
+    if (activeCategory !== 'all') return null;
+    return sortedTemplates.length;
+  }, [sortedTemplates, activeCategory]);
+
+  const canLoadMore = activeCategory === 'all' && totalCurated !== null && displayLimit < totalCurated;
 
   const canGenerate = IS_DEMO || hasApiKey;
 
@@ -133,6 +165,16 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     }
   };
 
+  const categoriesWithFav = useMemo(() => {
+    const favCount = sortedTemplates.filter((t) => isFavorite(t.id)).length + generatedPersonas.filter((t) => isFavorite(t.id)).length;
+    const base = categories.filter(([key]) => key !== 'all');
+    return [
+      ['all', 'すべて'] as [string, string],
+      ...(favCount > 0 ? [['favorites', `♡ お気に入り (${favCount})`] as [string, string]] : []),
+      ...base,
+    ];
+  }, [categories, sortedTemplates, generatedPersonas, isFavorite]);
+
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">
       {/* Header */}
@@ -145,10 +187,10 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
         {/* Category tabs */}
         <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
-          {categories.map(([key, label]) => (
+          {categoriesWithFav.map(([key, label]) => (
             <span
               key={key}
-              onClick={() => setActiveCategory(key)}
+              onClick={() => { setActiveCategory(key); setDisplayLimit(12); }}
               className={`px-4 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap cursor-pointer transition-colors ${
                 activeCategory === key
                   ? 'bg-stone-800 text-white border-stone-800'
@@ -163,72 +205,151 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
       {/* Persona cards */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
-        {filteredTemplates.map((template) => (
-          <div
-            key={template.id}
-            onClick={() => {
-              setSelectedUser(templateToSocialPost(template));
-              go('OTHER_HOME');
-            }}
-            className="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all cursor-pointer group"
-          >
-            {/* User row */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${avatarColor(template.category)}`}>
-                  {template.name.charAt(0)}
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-stone-800">{template.name}</div>
-                  <div className="text-xs text-stone-400">
-                    {template.category ? PERSONA_CATEGORY_LABELS[template.category] : ''}
+        {filteredTemplates.map((template) => {
+          const expanded = expandedId === template.id;
+          const fav = isFavorite(template.id);
+          return (
+            <div
+              key={template.id}
+              className="bg-white rounded-2xl border border-stone-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all"
+            >
+              {/* カードヘッダー（タップで展開） */}
+              <div
+                className="p-5 cursor-pointer"
+                onClick={() => setExpandedId(expanded ? null : template.id)}
+              >
+                {/* User row */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${avatarColor(template.category)}`}>
+                      {template.name.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-stone-800">{template.name}</div>
+                      <div className="text-xs text-stone-400">
+                        {template.category ? PERSONA_CATEGORY_LABELS[template.category] : ''}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {/* お気に入りボタン */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite(template.id); }}
+                      className={`p-1.5 rounded-full transition-colors ${fav ? 'text-red-500' : 'text-stone-300 hover:text-red-400'}`}
+                    >
+                      <Heart size={16} fill={fav ? 'currentColor' : 'none'} />
+                    </button>
+                    {/* 展開インジケーター */}
+                    {expanded
+                      ? <ChevronUp size={16} className="text-stone-400" />
+                      : <ChevronDown size={16} className="text-stone-400" />
+                    }
                   </div>
                 </div>
+
+                {/* Title */}
+                <h3 className="font-bold text-base text-stone-800 mb-3 leading-snug">
+                  {template.title}
+                </h3>
+
+                {/* Mini timeline */}
+                {template.routine && template.routine.length > 0 && (
+                  <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
+                    {template.routine.map((task, i) => {
+                      const start = timeToMinutes(task.time);
+                      const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
+                      const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
+                      const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
+                      return (
+                        <div
+                          key={i}
+                          className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
+                          style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Task count */}
+                <div className="flex items-center gap-3 text-xs text-stone-400">
+                  <span>{template.routine.length} タスク</span>
+                  <span className="text-stone-200">·</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${template.color}`}>
+                    {template.category ? PERSONA_CATEGORY_LABELS[template.category] : 'Persona'}
+                  </span>
+                </div>
               </div>
-              <div className="px-3 py-1 bg-stone-50 rounded-full text-xs text-stone-500 font-bold group-hover:bg-green-50 group-hover:text-green-700 transition-colors">
-                試す →
-              </div>
+
+              {/* 展開コンテンツ */}
+              {expanded && (
+                <div className="border-t border-stone-100 px-5 pb-5">
+                  <div className="pt-4 space-y-3">
+                    {template.routine.map((task, i) => (
+                      <div key={i} className="flex gap-3">
+                        <div className="flex flex-col items-center flex-shrink-0">
+                          <div className={`w-2 h-2 rounded-full mt-1 ${typeDotColor[task.type ?? 'work'] ?? 'bg-stone-300'}`} />
+                          {i < template.routine.length - 1 && (
+                            <div className="w-px flex-1 bg-stone-100 mt-1" />
+                          )}
+                        </div>
+                        <div className="flex-1 pb-2">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xs font-mono text-stone-400">{task.time}</span>
+                            <span className="text-xs font-bold text-stone-700">{task.title}</span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-auto flex-shrink-0 ${
+                              task.type === 'nature' ? 'bg-amber-50 text-amber-600' :
+                              task.type === 'mind' ? 'bg-blue-50 text-blue-600' :
+                              'bg-violet-50 text-violet-600'
+                            }`}>
+                              {typeLabel[task.type ?? 'work']}
+                            </span>
+                          </div>
+                          {task.thought && (
+                            <p className="text-xs text-stone-400 mt-1 leading-relaxed">{task.thought}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 試すボタン */}
+                  <button
+                    onClick={() => {
+                      setSelectedUser(templateToSocialPost(template));
+                      go('OTHER_HOME');
+                    }}
+                    className="w-full mt-4 py-3 bg-green-700 text-white rounded-xl text-sm font-bold hover:bg-green-800 transition-colors"
+                  >
+                    このルーティンを試す →
+                  </button>
+                </div>
+              )}
             </div>
-
-            {/* Title */}
-            <h3 className="font-bold text-base text-stone-800 mb-3 leading-snug group-hover:text-green-800 transition-colors">
-              {template.title}
-            </h3>
-
-            {/* Mini timeline */}
-            {template.routine && template.routine.length > 0 && (
-              <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
-                {template.routine.map((task, i) => {
-                  const start = timeToMinutes(task.time);
-                  const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
-                  const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
-                  const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
-                  return (
-                    <div
-                      key={i}
-                      className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
-                      style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }}
-                    />
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Task count */}
-            <div className="flex items-center gap-3 text-xs text-stone-400">
-              <span>{template.routine.length} タスク</span>
-              <span className="text-stone-200">·</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${template.color}`}>
-                {template.category ? PERSONA_CATEGORY_LABELS[template.category] : 'Persona'}
-              </span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
 
         {filteredTemplates.length === 0 && (
           <div className="text-center text-stone-300 pt-12">
-            <p className="text-sm">このカテゴリにはまだペルソナがありません</p>
+            <p className="text-sm">
+              {activeCategory === 'favorites'
+                ? 'まだお気に入りがありません。ハートをタップして追加しましょう。'
+                : 'このカテゴリにはまだペルソナがありません'}
+            </p>
           </div>
+        )}
+
+        {/* もっと見るボタン */}
+        {canLoadMore && (
+          <button
+            onClick={() => setDisplayLimit((prev) => prev + 12)}
+            className="w-full py-3.5 border border-stone-200 rounded-2xl text-sm font-bold text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-all"
+          >
+            もっと見る ({totalCurated! - displayLimit} 件)
+          </button>
+        )}
+        {activeCategory === 'all' && totalCurated !== null && displayLimit >= totalCurated && filteredTemplates.length > 0 && (
+          <p className="text-center text-xs text-stone-300 py-2">すべて表示しました</p>
         )}
 
         {/* 日常を見つけるカード */}
