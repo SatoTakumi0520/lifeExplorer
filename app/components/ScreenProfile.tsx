@@ -4,54 +4,22 @@ import React, { useMemo } from 'react';
 import { Settings, Flame, ArrowRight, Users } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 import { Screen, RoutineTask } from '../lib/types';
+import { BorrowRecord } from '../hooks/useBorrowHistory';
 
 type ScreenProfileProps = {
   go: (screen: Screen) => void;
   myRoutine: RoutineTask[];
   session: Session | null;
+  borrowHistory: BorrowRecord[];
+  streak: number;
+  last35Days: number[];
+  totalActiveDays: number;
 };
-
-/* ─── Mock data ────────────────────────────────────────────────────── */
-
-const BORROW_HISTORY = [
-  {
-    id: 1,
-    avatar: '🧘‍♀️',
-    name: 'Anna K.',
-    role: 'Yoga Instructor',
-    title: '心と体を整える朝の3時間',
-    triedCount: 3,
-    lastTried: '2日前',
-  },
-  {
-    id: 2,
-    avatar: '💼',
-    name: 'Takeshi M.',
-    role: 'CEO',
-    title: '経営者の朝5時起床ルーティン',
-    triedCount: 1,
-    lastTried: '1週間前',
-  },
-];
-
-const MY_PUBLIC_STATS = { borrowCount: 24, title: 'My Morning Flow' };
-
-/* ─── Activity calendar ────────────────────────────────────────────── */
-
-const activityData = Array.from({ length: 35 }, (_, i) => {
-  const seed = (i * 13 + 7) % 7;
-  if (seed === 0) return 0;
-  if (seed <= 2) return 1;
-  if (seed <= 4) return 2;
-  return 3;
-});
-const activityColors = ['bg-stone-100', 'bg-green-200', 'bg-green-400', 'bg-green-600'];
 
 /* ─── Static constants ─────────────────────────────────────────────── */
 
 const DOW = ['月', '火', '水', '木', '金', '土', '日'];
-const STREAK_DAYS = [true, true, true, false, true, true, true];
-const CURRENT_STREAK = 6;
+const activityColors = ['bg-stone-100', 'bg-green-200', 'bg-green-400', 'bg-green-600'];
 
 const typeConfig = {
   nature: { label: '自然', color: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50' },
@@ -59,9 +27,26 @@ const typeConfig = {
   work:   { label: '仕事',   color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50' },
 } as const;
 
+function relativeTime(isoStr: string): string {
+  const diff = Date.now() - new Date(isoStr).getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days === 0) return '今日';
+  if (days === 1) return '昨日';
+  if (days < 7) return `${days}日前`;
+  if (days < 30) return `${Math.floor(days / 7)}週間前`;
+  return `${Math.floor(days / 30)}ヶ月前`;
+}
+
+/* ─── Streak week row ──────────────────────────────────────────────── */
+
+function buildStreakWeek(streak: number): boolean[] {
+  // Last 7 days: true if within streak
+  return DOW.map((_, i) => i >= 7 - streak);
+}
+
 /* ─── Component ────────────────────────────────────────────────────── */
 
-export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) => {
+export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, streak, last35Days, totalActiveDays }: ScreenProfileProps) => {
   const displayName = session?.user?.email?.split('@')[0] ?? 'My Garden';
 
   const typeBalance = useMemo(() => {
@@ -77,6 +62,7 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
   }, [myRoutine]);
 
   const hasRoutine = myRoutine.length > 0;
+  const streakWeek = buildStreakWeek(Math.min(streak, 7));
 
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800 overflow-y-auto pb-24">
@@ -106,9 +92,9 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-2">
           {[
-            { value: '12',                                  label: '記録日数' },
-            { value: String(BORROW_HISTORY.length),         label: '試した数'       },
-            { value: String(MY_PUBLIC_STATS.borrowCount),   label: '貸した数'     },
+            { value: String(totalActiveDays), label: '記録日数' },
+            { value: String(borrowHistory.length), label: '試した数' },
+            { value: String(borrowHistory.reduce((s, r) => s + r.triedCount, 0)), label: '試した回数' },
           ].map(({ value, label }) => (
             <div key={label} className="flex flex-col items-center py-3 bg-stone-50 rounded-xl border border-stone-100">
               <span className="text-2xl font-bold text-stone-900 leading-none">{value}</span>
@@ -127,10 +113,10 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
               <Flame size={15} className="text-orange-500" />
               <h3 className="text-sm font-bold text-stone-700">継続記録</h3>
             </div>
-            <span className="text-sm font-bold text-orange-500">{CURRENT_STREAK} 日 🔥</span>
+            <span className="text-sm font-bold text-orange-500">{streak} 日 🔥</span>
           </div>
           <div className="flex gap-1.5">
-            {STREAK_DAYS.map((active, i) => (
+            {streakWeek.map((active, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1">
                 <div className={`w-full aspect-square rounded-lg ${active ? 'bg-orange-400' : 'bg-stone-100'}`} />
                 <span className="text-[9px] text-stone-300 font-bold uppercase">{DOW[i]}</span>
@@ -185,7 +171,7 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
             ))}
           </div>
           <div className="grid grid-cols-7 gap-1">
-            {activityData.map((level, i) => (
+            {last35Days.map((level, i) => (
               <div key={i} className={`aspect-square rounded-sm ${activityColors[level]}`} />
             ))}
           </div>
@@ -202,42 +188,48 @@ export const ScreenProfile = ({ go, myRoutine, session }: ScreenProfileProps) =>
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold text-stone-700">借用履歴</h3>
-            <span className="text-xs text-stone-400">{BORROW_HISTORY.length} 件試した</span>
+            <span className="text-xs text-stone-400">{borrowHistory.length} 件試した</span>
           </div>
-          {BORROW_HISTORY.length > 0 ? (
+          {borrowHistory.length > 0 ? (
             <div className="space-y-2">
-              {BORROW_HISTORY.map(item => (
-                <div key={item.id} className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-stone-100 flex items-center justify-center text-lg flex-shrink-0">
-                    {item.avatar}
+              {borrowHistory.map(item => (
+                <div key={item.personaId} className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-stone-100 flex items-center justify-center text-base font-bold text-stone-400 flex-shrink-0">
+                    {String(item.personaName).charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-stone-700 truncate">{item.title}</div>
-                    <div className="text-[10px] text-stone-400 mt-0.5">{item.name} · {item.role}</div>
+                    <div className="text-[10px] text-stone-400 mt-0.5">{item.personaName}</div>
                   </div>
                   <div className="flex flex-col items-end flex-shrink-0">
                     <span className="text-[10px] font-bold text-stone-500">{item.triedCount}x</span>
-                    <span className="text-[10px] text-stone-300">{item.lastTried}</span>
+                    <span className="text-[10px] text-stone-300">{relativeTime(item.lastBorrowedAt)}</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-xs text-stone-300 text-center py-4">まだ借りたルーティンはありません</p>
+            <p className="text-xs text-stone-300 text-center py-4">
+              Explore画面から気になるルーティンを試してみよう
+            </p>
           )}
         </div>
 
-        {/* ── My Public Routine ────────────────────────────────────── */}
+        {/* ── My Routine Summary ───────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
-          <h3 className="text-sm font-bold text-stone-700 mb-3">公開ルーティン</h3>
+          <h3 className="text-sm font-bold text-stone-700 mb-3">マイルーティン</h3>
           <div className="flex items-center gap-3 p-3 bg-green-50/50 border border-green-100 rounded-xl">
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
               <Users size={17} className="text-green-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-bold text-stone-700">{MY_PUBLIC_STATS.title}</div>
+              <div className="text-xs font-bold text-stone-700">
+                {hasRoutine ? `${myRoutine.length} タスク登録済み` : 'タスク未登録'}
+              </div>
               <div className="text-[10px] text-stone-400 mt-0.5">
-                <span className="font-bold text-green-600">{MY_PUBLIC_STATS.borrowCount}</span> 人が借りました
+                {hasRoutine
+                  ? `自然 ${typeBalance.nature}% · 思考 ${typeBalance.mind}% · 仕事 ${typeBalance.work}%`
+                  : 'Editからタスクを追加しよう'}
               </div>
             </div>
             <button
