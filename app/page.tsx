@@ -17,6 +17,8 @@ import { usePublicData } from './hooks/usePublicData';
 import { useRoutine } from './hooks/useRoutine';
 import { useSettings } from './hooks/useSettings';
 import { useOnboarding } from './hooks/useOnboarding';
+import { useBorrowHistory } from './hooks/useBorrowHistory';
+import { useActivityStreak } from './hooks/useActivityStreak';
 import { ScreenOnboarding } from './components/ScreenOnboarding';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 
@@ -44,6 +46,8 @@ export default function App() {
   } = useRoutine(session);
   const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
   const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, loading: onboardingLoading } = useOnboarding(session);
+  const { history: borrowHistory, recordBorrow } = useBorrowHistory();
+  const { streak, last35Days, totalActiveDays } = useActivityStreak();
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -119,8 +123,8 @@ export default function App() {
           onSkip={() => { skipOnboarding(); go('HOME'); }}
         />
       )}
-      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} />}
-      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} />}
+      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} />}
+      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} streak={streak} last35Days={last35Days} totalActiveDays={totalActiveDays} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
           go={go}

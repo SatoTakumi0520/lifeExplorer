@@ -34,6 +34,7 @@ type ScreenExploreProps = {
   hasApiKey: boolean;
   preferredCategories?: PersonaCategory[];
   lifestyleRhythm?: 'morning' | 'night' | 'balanced' | null;
+  recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -49,7 +50,7 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
@@ -316,6 +317,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                   {/* 試すボタン */}
                   <button
                     onClick={() => {
+                      recordBorrow?.({ id: template.id, name: template.name, title: template.title, category: template.category });
                       setSelectedUser(templateToSocialPost(template));
                       go('OTHER_HOME');
                     }}
