@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { fetchEvents, EventItem } from '../lib/eventService';
 
-export function useEvents() {
+export function useEvents(prefecture: string | null = null) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +11,7 @@ export function useEvents() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchEvents()
+    fetchEvents(prefecture)
       .then((data) => {
         if (!cancelled) {
           setEvents(data);
@@ -25,7 +25,7 @@ export function useEvents() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [prefecture]);
 
   return { events, loading, error };
 }

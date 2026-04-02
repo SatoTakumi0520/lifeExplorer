@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, LogOut, X, Sparkles, Eye, EyeOff } from 'luc
 import { Screen, PersonaCategory, OnboardingPreferences } from '../lib/types';
 import type { AIProvider, UserSettings } from '../hooks/useSettings';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
+import { JAPAN_PREFECTURES } from '../lib/eventService';
 
 type ScreenSettingsProps = {
   go: (screen: Screen) => void;
@@ -143,6 +144,24 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                   </button>
                 ))}
               </div>
+            </div>
+            {/* 都道府県 */}
+            <div>
+              <h4 className="font-bold text-sm text-stone-800 mb-1">お住まいの地域</h4>
+              <p className="text-[11px] text-stone-400 mb-2">設定するとお近くのイベントが優先表示されます</p>
+              <select
+                value={onboardingPrefs?.prefecture ?? ''}
+                onChange={(e) => {
+                  if (!onboardingPrefs || !onSaveOnboarding) return;
+                  onSaveOnboarding({ ...onboardingPrefs, prefecture: e.target.value || null });
+                }}
+                className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 focus:outline-none focus:border-stone-400 transition-colors"
+              >
+                <option value="">未設定（全国のイベントを表示）</option>
+                {JAPAN_PREFECTURES.map((pref) => (
+                  <option key={pref} value={pref}>{pref}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin } from 'lucide-react';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
-import { Screen, PersonaTemplate, PersonaCategory, SocialPost } from '../lib/types';
+import { Screen, PersonaTemplate, PersonaCategory, SocialPost, RoutineTask } from '../lib/types';
 import { timeToMinutes } from '../lib/utils';
 import { useFavorites } from '../hooks/useFavorites';
 import { useEvents } from '../hooks/useEvents';
@@ -29,8 +29,6 @@ const typeDotColor: Record<string, string> = {
   work:   'bg-violet-400',
 };
 
-import { RoutineTask } from '../lib/types';
-
 type ScreenExploreProps = {
   go: (screen: Screen) => void;
   setSelectedUser: (user: SocialPost) => void;
@@ -40,6 +38,7 @@ type ScreenExploreProps = {
   lifestyleRhythm?: 'morning' | 'night' | 'balanced' | null;
   recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
   onAddEventToRoutine?: (task: RoutineTask) => void;
+  prefecture?: string | null;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -55,9 +54,9 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const { events, loading: eventsLoading } = useEvents();
+  const { events, loading: eventsLoading } = useEvents(prefecture ?? null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
   const [addedEventIds, setAddedEventIds] = useState<Set<string>>(new Set());
   const [prompt, setPrompt] = useState('');
@@ -424,7 +423,9 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
             <div className="flex items-center gap-2 px-1">
               <CalendarDays size={14} className="text-stone-400" />
               <h3 className="text-sm font-bold text-stone-600">今週のイベント</h3>
-              <span className="text-[10px] text-stone-300 ml-auto">東京都周辺</span>
+              <span className="text-[10px] text-stone-300 ml-auto">
+                {prefecture ? `${prefecture}周辺 · オンライン` : '全国 · オンライン'}
+              </span>
             </div>
             {eventsLoading ? (
               <div className="flex items-center justify-center py-8 gap-2 text-stone-300">
@@ -445,8 +446,17 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                         onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 mt-0.5 ${catInfo.bg} ${catInfo.color}`}>
-                            {catInfo.label}
+                          <div className="flex flex-col gap-1 flex-shrink-0 mt-0.5">
+                            <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${catInfo.bg} ${catInfo.color}`}>
+                              {catInfo.label}
+                            </div>
+                            {event.isOnline ? (
+                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600">オンライン</div>
+                            ) : prefecture && event.prefecture === prefecture ? (
+                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700">近くで開催</div>
+                            ) : (
+                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-50 text-stone-400">{event.prefecture}</div>
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-stone-800 leading-snug">{event.title}</p>
