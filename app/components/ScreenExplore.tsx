@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin } from 'lucide-react';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
 import { Screen, PersonaTemplate, PersonaCategory, SocialPost } from '../lib/types';
 import { timeToMinutes } from '../lib/utils';
 import { useFavorites } from '../hooks/useFavorites';
+import { useEvents } from '../hooks/useEvents';
+import { EVENT_CATEGORY_LABELS } from '../lib/eventService';
 
 // ミニタイムライン: タスクを5am-10pm(1020分)の割合でカラーブロック表示
 const MINI_START = 300;  // 5:00
@@ -27,6 +29,8 @@ const typeDotColor: Record<string, string> = {
   work:   'bg-violet-400',
 };
 
+import { RoutineTask } from '../lib/types';
+
 type ScreenExploreProps = {
   go: (screen: Screen) => void;
   setSelectedUser: (user: SocialPost) => void;
@@ -35,6 +39,7 @@ type ScreenExploreProps = {
   preferredCategories?: PersonaCategory[];
   lifestyleRhythm?: 'morning' | 'night' | 'balanced' | null;
   recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
+  onAddEventToRoutine?: (task: RoutineTask) => void;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -50,8 +55,11 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const { events, loading: eventsLoading } = useEvents();
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
+  const [addedEventIds, setAddedEventIds] = useState<Set<string>>(new Set());
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
   const [generatedPersonas, setGeneratedPersonas] = useState<PersonaTemplate[]>([]);
@@ -405,6 +413,103 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 >
                   設定画面で設定する →
                 </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── 今週のイベント ──────────────────────────────────────── */}
+        {activeCategory === 'all' && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 px-1">
+              <CalendarDays size={14} className="text-stone-400" />
+              <h3 className="text-sm font-bold text-stone-600">今週のイベント</h3>
+              <span className="text-[10px] text-stone-300 ml-auto">東京都周辺</span>
+            </div>
+            {eventsLoading ? (
+              <div className="flex items-center justify-center py-8 gap-2 text-stone-300">
+                <Loader2 size={16} className="animate-spin" />
+                <span className="text-xs">イベントを取得中...</span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {events.map((event) => {
+                  const catInfo = EVENT_CATEGORY_LABELS[event.category] ?? EVENT_CATEGORY_LABELS['culture'];
+                  const isExpanded = expandedEventId === event.id;
+                  const isAdded = addedEventIds.has(event.id);
+                  return (
+                    <div key={event.id} className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+                      {/* ヘッダー（タップで展開） */}
+                      <div
+                        className="p-4 cursor-pointer"
+                        onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 mt-0.5 ${catInfo.bg} ${catInfo.color}`}>
+                            {catInfo.label}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-stone-800 leading-snug">{event.title}</p>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1.5">
+                              <span className="text-[11px] text-stone-400 font-mono">{event.date}{event.time ? ` ${event.time}〜` : ''}</span>
+                              {event.duration && <span className="text-[11px] text-stone-300">{event.duration}</span>}
+                              <span className="flex items-center gap-0.5 text-[11px] text-stone-400">
+                                <MapPin size={10} className="flex-shrink-0" />
+                                {event.location}
+                              </span>
+                              {event.price && (
+                                <span className={`text-[11px] font-bold ${event.price === '無料' ? 'text-green-600' : 'text-stone-500'}`}>
+                                  {event.price}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex-shrink-0 text-stone-300 ml-1">
+                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 展開エリア */}
+                      {isExpanded && (
+                        <div className="border-t border-stone-100 px-4 pb-4 pt-3 space-y-3">
+                          {event.description && (
+                            <p className="text-xs text-stone-500 leading-relaxed">{event.description}</p>
+                          )}
+                          {/* ルーティン提案 */}
+                          <div className="bg-stone-50 rounded-xl p-3">
+                            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wide mb-1.5">ルーティン提案</p>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono font-bold text-stone-600">
+                                {event.routineSuggestion.time}{event.routineSuggestion.endTime ? ` — ${event.routineSuggestion.endTime}` : ''}
+                              </span>
+                              <span className="text-xs text-stone-700 font-bold">{event.routineSuggestion.title}</span>
+                            </div>
+                            {event.routineSuggestion.thought && (
+                              <p className="text-[11px] text-stone-400 mt-1 italic">"{event.routineSuggestion.thought}"</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (!isAdded && onAddEventToRoutine) {
+                                onAddEventToRoutine(event.routineSuggestion);
+                                setAddedEventIds(prev => new Set([...prev, event.id]));
+                              }
+                            }}
+                            disabled={isAdded || !onAddEventToRoutine}
+                            className={`w-full py-3 rounded-xl text-sm font-bold transition-all ${
+                              isAdded
+                                ? 'bg-green-50 text-green-600 border border-green-200 cursor-default'
+                                : 'bg-stone-900 text-white hover:bg-stone-700'
+                            }`}
+                          >
+                            {isAdded ? '✓ ルーティンに追加済み' : 'ルーティンに追加する'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
