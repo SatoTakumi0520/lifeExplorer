@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AddTaskModal } from './components/AddTaskModal';
 import { AuthModal } from './components/AuthModal';
 import { BottomNav } from './components/BottomNav';
+import { ErrorBanner, useNetworkError } from './components/ErrorBanner';
 import { ScreenBorrow } from './components/ScreenBorrow';
 import { ScreenEdit } from './components/ScreenEdit';
 import { ScreenProfile } from './components/ScreenProfile';
@@ -37,6 +38,8 @@ export default function App() {
   const {
     myRoutine,
     loadingRoutine,
+    routineError,
+    clearRoutineError,
     targetDate,
     shiftDate,
     handleAddTask,
@@ -44,10 +47,11 @@ export default function App() {
     copyTaskFromTemplate,
     removeCopiedTask,
   } = useRoutine(session);
+  const isOffline = useNetworkError();
   const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
   const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, loading: onboardingLoading } = useOnboarding(session);
-  const { history: borrowHistory, recordBorrow } = useBorrowHistory();
-  const { streak, last35Days, totalActiveDays } = useActivityStreak();
+  const { history: borrowHistory, recordBorrow } = useBorrowHistory(session);
+  const { streak, last35Days, totalActiveDays } = useActivityStreak(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -149,6 +153,16 @@ export default function App() {
       )}
 
       {currentScreen !== 'TOP' && currentScreen !== 'ONBOARDING' && <BottomNav go={go} currentScreen={currentScreen} />}
+      {isOffline && (
+        <ErrorBanner
+          message="オフラインです。インターネット接続を確認してください。"
+          onDismiss={() => {}}
+          autoDismissMs={999999}
+        />
+      )}
+      {!isOffline && routineError && (
+        <ErrorBanner message={routineError} onDismiss={clearRoutineError} />
+      )}
       {showAuthModal && (
         <AuthModal
           onClose={() => setShowAuthModal(false)}

@@ -286,6 +286,30 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
           </div>
         </div>
 
+        <div className="p-4">
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">法的情報</h3>
+          <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full p-4 flex items-center justify-between border-b border-stone-50 hover:bg-stone-50 transition-colors"
+            >
+              <h4 className="font-bold text-sm text-stone-800">プライバシーポリシー</h4>
+              <ChevronRight size={18} className="text-stone-300" />
+            </a>
+            <a
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full p-4 flex items-center justify-between hover:bg-stone-50 transition-colors"
+            >
+              <h4 className="font-bold text-sm text-stone-800">利用規約</h4>
+              <ChevronRight size={18} className="text-stone-300" />
+            </a>
+          </div>
+        </div>
+
         <div className="p-4 text-center">
           <p className="text-xs text-stone-300">Life Explorer v1.0.0</p>
           <p className="text-xs text-stone-300 mt-1">丁寧につくりました</p>
