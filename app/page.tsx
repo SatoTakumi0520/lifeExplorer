@@ -46,8 +46,8 @@ export default function App() {
   } = useRoutine(session);
   const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
   const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, loading: onboardingLoading } = useOnboarding(session);
-  const { history: borrowHistory, recordBorrow } = useBorrowHistory();
-  const { streak, last35Days, totalActiveDays } = useActivityStreak();
+  const { history: borrowHistory, recordBorrow } = useBorrowHistory(session);
+  const { streak, last35Days, totalActiveDays } = useActivityStreak(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
