@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Plus, X } from 'lucide-react';
 import { PersonaTemplate, RoutineTask, Screen } from '../lib/types';
+import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { timeToMinutes } from '../lib/utils';
 
 const fmtDur = (min: number): string | null => {
@@ -39,7 +40,13 @@ export const ScreenEdit = ({
   setShowAddTask,
 }: ScreenEditProps) => {
   const [selectedTemplate, setSelectedTemplate] = useState<PersonaTemplate | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   const isAdded = (tplTask: RoutineTask) => myRoutine.find((task) => task.time === tplTask.time && task.title === tplTask.title);
+
+  const availableCategories: string[] = ['all', ...Array.from(new Set(personaTemplates.flatMap(p => p.category ? [p.category] : [])))];
+  const filteredTemplates = filterCategory === 'all'
+    ? personaTemplates
+    : personaTemplates.filter(p => p.category === filterCategory);
 
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">
@@ -55,24 +62,40 @@ export const ScreenEdit = ({
         }} className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors">完了</button>
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
-        <div className="py-6 px-4 bg-white border-b border-stone-50">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">テンプレート</h3>
-          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-            {personaTemplates.map((persona) => (
+        <div className="pt-4 bg-white border-b border-stone-50">
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-2 px-4">テンプレート</h3>
+          {/* Category filter tabs */}
+          <div className="flex gap-2 overflow-x-auto pb-2 px-4 no-scrollbar">
+            {availableCategories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => { setFilterCategory(cat); setSelectedTemplate(null); }}
+                className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+                  filterCategory === cat
+                    ? 'bg-stone-800 text-white'
+                    : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                }`}
+              >
+                {PERSONA_CATEGORY_LABELS[cat] ?? cat}
+              </button>
+            ))}
+          </div>
+          {/* Template cards */}
+          <div className="flex gap-3 overflow-x-auto py-3 px-4 no-scrollbar">
+            {filteredTemplates.map((persona) => (
               <div
                 key={persona.id}
                 onClick={() => setSelectedTemplate(selectedTemplate?.id === persona.id ? null : persona)}
-                className={`flex flex-col gap-2 cursor-pointer group min-w-[120px] p-3 rounded-xl border transition-colors ${
+                className={`flex flex-col gap-1.5 cursor-pointer min-w-[110px] p-3 rounded-xl border transition-colors ${
                   selectedTemplate?.id === persona.id
                     ? 'bg-green-50 border-green-300'
                     : 'bg-stone-50 border-stone-100 hover:border-stone-300'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${persona.color}`}>{persona.name.charAt(0)}</div>
-                  <span className="text-xs font-bold text-stone-700 truncate">{persona.name}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${persona.color}`}>
+                  {persona.title.charAt(0)}
                 </div>
-                <div className="text-xs text-stone-500">{persona.title}</div>
+                <div className="text-xs font-bold text-stone-700 leading-tight line-clamp-2">{persona.title}</div>
               </div>
             ))}
           </div>
@@ -82,13 +105,13 @@ export const ScreenEdit = ({
           <div className="flex-1 flex flex-col">
             <div className="p-4 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold ${selectedTemplate.color}`}>{selectedTemplate.name.charAt(0)}</div>
-                <h3 className="text-sm font-bold text-stone-700">{selectedTemplate.name}と比較中</h3>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold ${selectedTemplate.color}`}>{selectedTemplate.title.charAt(0)}</div>
+                <h3 className="text-sm font-bold text-stone-700">「{selectedTemplate.title}」と比較中</h3>
               </div>
               <button onClick={() => setSelectedTemplate(null)} className="text-xs text-stone-400 hover:text-stone-600 px-3 py-1 bg-white rounded-full border border-stone-200">閉じる</button>
             </div>
             <div className="flex border-b border-stone-100">
-              <div className="flex-1 px-4 py-2 bg-orange-50/50"><span className="text-xs font-bold text-orange-600 uppercase tracking-wider">{selectedTemplate.name}</span></div>
+              <div className="flex-1 px-4 py-2 bg-orange-50/50"><span className="text-xs font-bold text-orange-600 tracking-wider">{selectedTemplate.title}</span></div>
               <div className="w-10" />
               <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-xs font-bold text-green-600 tracking-wider">マイルーティン</span></div>
             </div>
