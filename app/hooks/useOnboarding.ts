@@ -39,7 +39,7 @@ export function useOnboarding(session: Session | null) {
       try {
         const { data } = await supabase
           .from('user_settings')
-          .select('onboarding_completed, preferred_categories, lifestyle_rhythm')
+          .select('onboarding_completed, preferred_categories, lifestyle_rhythm, prefecture')
           .eq('user_id', session.user.id)
           .single();
 
