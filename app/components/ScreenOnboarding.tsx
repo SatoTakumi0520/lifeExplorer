@@ -50,6 +50,7 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
       completed: true,
       selectedCategories,
       lifestyleRhythm,
+      prefecture: null,
     });
   };
 
