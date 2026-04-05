@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { Session } from '@supabase/supabase-js';
-import { ChevronLeft, ChevronRight, LogOut, X, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LogOut, X, Sparkles, Eye, EyeOff, Bell, BellOff, Send } from 'lucide-react';
 import { Screen, PersonaCategory, OnboardingPreferences } from '../lib/types';
 import type { AIProvider, UserSettings } from '../hooks/useSettings';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { JAPAN_PREFECTURES } from '../lib/eventService';
+import { usePushNotification } from '../hooks/usePushNotification';
 
 type ScreenSettingsProps = {
   go: (screen: Screen) => void;
@@ -20,11 +21,14 @@ type ScreenSettingsProps = {
 };
 
 export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings, onboardingPrefs, onSaveOnboarding }: ScreenSettingsProps) => {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { supported, permission, settings: notifSettings, loading: notifLoading, subscribe, unsubscribe, sendTestNotification } = usePushNotification(session);
+  const [reminderTime, setReminderTime] = useState(
+    `${String(notifSettings.reminderHour).padStart(2, '0')}:${String(notifSettings.reminderMinute).padStart(2, '0')}`,
+  );
+  const [testSent, setTestSent] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showAISetup, setShowAISetup] = useState(false);
-  const [morningReminder, setMorningReminder] = useState('07:00');
   const [darkMode, setDarkMode] = useState(false);
   const [publicProfile, setPublicProfile] = useState(true);
   const [showEditProfile, setShowEditProfile] = useState(false);
@@ -212,32 +216,71 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         </div>
 
         <div className="p-4">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">通知</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3 flex items-center gap-1.5">
+            <Bell size={12} className="text-stone-400" /> 通知
+          </h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
-            <div className="p-4 flex items-center justify-between border-b border-stone-50">
-              <div>
-                <h4 className="font-bold text-sm text-stone-800">プッシュ通知</h4>
-                <p className="text-xs text-stone-400">ルーティンのリマインダーを受け取る</p>
+            {!supported ? (
+              <div className="p-4">
+                <p className="text-xs text-stone-400">このブラウザはプッシュ通知に対応していません。</p>
               </div>
-              <button
-                onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                className={`w-12 h-7 rounded-full transition-colors relative ${notificationsEnabled ? 'bg-green-500' : 'bg-stone-200'}`}
-              >
-                <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${notificationsEnabled ? 'right-1' : 'left-1'}`} />
-              </button>
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-sm text-stone-800">朝のリマインダー</h4>
-                <p className="text-xs text-stone-400">毎日のルーティン開始通知</p>
-              </div>
-              <input
-                type="time"
-                value={morningReminder}
-                onChange={(e) => setMorningReminder(e.target.value)}
-                className="text-sm font-mono text-green-700 bg-stone-50 px-3 py-1.5 rounded-lg border border-stone-200"
-              />
-            </div>
+            ) : (
+              <>
+                <div className="p-4 flex items-center justify-between border-b border-stone-50">
+                  <div className="flex items-center gap-3">
+                    {notifSettings.enabled ? <Bell size={16} className="text-green-600" /> : <BellOff size={16} className="text-stone-300" />}
+                    <div>
+                      <h4 className="font-bold text-sm text-stone-800">朝のリマインダー</h4>
+                      <p className="text-xs text-stone-400">
+                        {permission === 'denied' ? '⚠️ 通知がブロックされています' : 'ルーティン開始の通知を受け取る'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    disabled={notifLoading || permission === 'denied'}
+                    onClick={async () => {
+                      if (notifSettings.enabled) {
+                        await unsubscribe();
+                      } else {
+                        const [h, m] = reminderTime.split(':').map(Number);
+                        await subscribe({ enabled: true, reminderHour: h, reminderMinute: m });
+                      }
+                    }}
+                    className={`w-12 h-7 rounded-full transition-colors relative disabled:opacity-50 ${notifSettings.enabled ? 'bg-green-500' : 'bg-stone-200'}`}
+                  >
+                    <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${notifSettings.enabled ? 'right-1' : 'left-1'}`} />
+                  </button>
+                </div>
+                <div className="p-4 flex items-center justify-between border-b border-stone-50">
+                  <div>
+                    <h4 className="font-bold text-sm text-stone-800">通知時刻</h4>
+                    <p className="text-xs text-stone-400">毎朝この時刻にリマインダーを送信</p>
+                  </div>
+                  <input
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                    disabled={!notifSettings.enabled}
+                    className="text-sm font-mono text-green-700 bg-stone-50 px-3 py-1.5 rounded-lg border border-stone-200 disabled:opacity-40"
+                  />
+                </div>
+                {notifSettings.enabled && permission === 'granted' && (
+                  <button
+                    onClick={async () => {
+                      await sendTestNotification();
+                      setTestSent(true);
+                      setTimeout(() => setTestSent(false), 3000);
+                    }}
+                    className="w-full p-4 flex items-center gap-3 hover:bg-stone-50 transition-colors"
+                  >
+                    <Send size={15} className="text-stone-400" />
+                    <span className="text-sm font-bold text-stone-600">
+                      {testSent ? '✓ テスト通知を送信しました' : 'テスト通知を送信'}
+                    </span>
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </div>
 
