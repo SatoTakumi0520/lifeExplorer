@@ -19,6 +19,7 @@ import { useSettings } from './hooks/useSettings';
 import { useOnboarding } from './hooks/useOnboarding';
 import { useBorrowHistory } from './hooks/useBorrowHistory';
 import { useActivityStreak } from './hooks/useActivityStreak';
+import { usePublicRoutines } from './hooks/usePublicRoutines';
 import { ScreenOnboarding } from './components/ScreenOnboarding';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 
@@ -48,6 +49,7 @@ export default function App() {
   const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, loading: onboardingLoading } = useOnboarding(session);
   const { history: borrowHistory, recordBorrow } = useBorrowHistory();
   const { streak, last35Days, totalActiveDays } = useActivityStreak();
+  const { publicRoutines, isPublished, publish: publishRoutine, unpublish: unpublishRoutine, toggleLike } = usePublicRoutines(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -123,8 +125,8 @@ export default function App() {
           onSkip={() => { skipOnboarding(); go('HOME'); }}
         />
       )}
-      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onAddEventToRoutine={handleAddTask} prefecture={onboardingPrefs.prefecture} />}
-      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} streak={streak} last35Days={last35Days} totalActiveDays={totalActiveDays} />}
+      {currentScreen === 'EXPLORE' && <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onAddEventToRoutine={handleAddTask} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} />}
+      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} streak={streak} last35Days={last35Days} totalActiveDays={totalActiveDays} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
           go={go}

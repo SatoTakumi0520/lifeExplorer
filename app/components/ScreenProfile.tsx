@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useMemo } from 'react';
-import { Settings, Flame, ArrowRight, Users } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Settings, Flame, ArrowRight, Users, Globe, Lock, Edit2 } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 import { Screen, RoutineTask } from '../lib/types';
 import { BorrowRecord } from '../hooks/useBorrowHistory';
+import type { PublicRoutine } from '../hooks/usePublicRoutines';
 
 type ScreenProfileProps = {
   go: (screen: Screen) => void;
@@ -14,6 +15,9 @@ type ScreenProfileProps = {
   streak: number;
   last35Days: number[];
   totalActiveDays: number;
+  isPublished: boolean;
+  onPublish: (title: string) => void;
+  onUnpublish: () => void;
 };
 
 /* ─── Static constants ─────────────────────────────────────────────── */
@@ -46,8 +50,9 @@ function buildStreakWeek(streak: number): boolean[] {
 
 /* ─── Component ────────────────────────────────────────────────────── */
 
-export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, streak, last35Days, totalActiveDays }: ScreenProfileProps) => {
+export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, streak, last35Days, totalActiveDays, isPublished, onPublish, onUnpublish }: ScreenProfileProps) => {
   const displayName = session?.user?.email?.split('@')[0] ?? 'My Garden';
+  const [publishTitle, setPublishTitle] = useState('');
 
   const typeBalance = useMemo(() => {
     const total = myRoutine.length;
@@ -240,6 +245,60 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, streak, l
             </button>
           </div>
         </div>
+
+        {/* ── Publish Section ──────────────────────────────────────── */}
+        {session && (
+          <div className={`rounded-2xl border shadow-sm p-4 ${isPublished ? 'bg-green-50 border-green-100' : 'bg-white border-stone-100'}`}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                {isPublished ? <Globe size={15} className="text-green-600" /> : <Lock size={15} className="text-stone-400" />}
+                <h3 className="text-sm font-bold text-stone-700">みんなに公開</h3>
+              </div>
+              {isPublished && (
+                <span className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">公開中</span>
+              )}
+            </div>
+
+            {isPublished ? (
+              <div className="space-y-2">
+                <p className="text-xs text-stone-500">あなたのルーティンがExploreに掲載されています。</p>
+                <button
+                  onClick={onUnpublish}
+                  className="w-full py-2 text-xs font-bold text-stone-500 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
+                >
+                  公開を取り下げる
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-stone-400">
+                  {hasRoutine ? 'マイルーティンをみんなに公開してみましょう。' : 'タスクを登録してから公開できます。'}
+                </p>
+                {hasRoutine && (
+                  <>
+                    <div className="flex items-center gap-2 bg-white border border-stone-100 rounded-xl px-3 py-2">
+                      <Edit2 size={12} className="text-stone-300 flex-shrink-0" />
+                      <input
+                        type="text"
+                        value={publishTitle}
+                        onChange={e => setPublishTitle(e.target.value)}
+                        placeholder="タイトル（例：早起きエンジニアの朝）"
+                        className="flex-1 text-xs text-stone-700 bg-transparent outline-none placeholder:text-stone-300"
+                        maxLength={30}
+                      />
+                    </div>
+                    <button
+                      onClick={() => onPublish(publishTitle || `${displayName}の一日`)}
+                      className="w-full py-2.5 text-xs font-bold text-white bg-stone-800 rounded-xl hover:bg-stone-700 transition-colors"
+                    >
+                      公開する
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
       </div>
     </div>

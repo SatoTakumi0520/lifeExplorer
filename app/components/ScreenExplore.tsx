@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users } from 'lucide-react';
+import type { PublicRoutine } from '../hooks/usePublicRoutines';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
 import { Screen, PersonaTemplate, PersonaCategory, SocialPost, RoutineTask } from '../lib/types';
@@ -39,6 +40,8 @@ type ScreenExploreProps = {
   recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
   onAddEventToRoutine?: (task: RoutineTask) => void;
   prefecture?: string | null;
+  publicRoutines?: PublicRoutine[];
+  onToggleLike?: (routineId: string) => void;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -54,7 +57,7 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture, publicRoutines = [], onToggleLike }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const { events, loading: eventsLoading } = useEvents(prefecture ?? null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
@@ -178,10 +181,11 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     const base = categories.filter(([key]) => key !== 'all');
     return [
       ['all', 'すべて'] as [string, string],
+      ...(publicRoutines.length > 0 ? [['community', `👥 みんなの一日 (${publicRoutines.length})`] as [string, string]] : []),
       ...(favCount > 0 ? [['favorites', `♡ お気に入り (${favCount})`] as [string, string]] : []),
       ...base,
     ];
-  }, [categories, sortedTemplates, generatedPersonas, isFavorite]);
+  }, [categories, sortedTemplates, generatedPersonas, isFavorite, publicRoutines.length]);
 
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">
@@ -213,7 +217,100 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
       {/* Persona cards */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
-        {filteredTemplates.map((template) => {
+
+        {/* ── みんなの一日（コミュニティ）タブ ───────────────────── */}
+        {activeCategory === 'community' && (
+          <>
+            {publicRoutines.length === 0 ? (
+              <div className="text-center text-stone-300 pt-12">
+                <Users size={32} className="mx-auto mb-3 opacity-30" />
+                <p className="text-sm">まだ公開されているルーティンがありません</p>
+                <p className="text-xs mt-1">プロフィール画面から自分のルーティンを公開してみましょう</p>
+              </div>
+            ) : (
+              publicRoutines.map((r) => {
+                const expanded = expandedId === r.id;
+                return (
+                  <div key={r.id} className="bg-white rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-all">
+                    <div className="p-5 cursor-pointer" onClick={() => setExpandedId(expanded ? null : r.id)}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-100 to-emerald-50 border border-green-200 flex items-center justify-center text-sm font-bold text-green-700">
+                            {r.displayName.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold text-stone-800">{r.displayName}</div>
+                            <div className="text-xs text-stone-400">
+                              {r.category ? PERSONA_CATEGORY_LABELS[r.category] ?? r.category : 'ライフスタイル'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onToggleLike?.(r.id); }}
+                            className={`flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${r.isLikedByMe ? 'text-red-500 bg-red-50' : 'text-stone-300 hover:text-red-400'}`}
+                          >
+                            <Heart size={14} fill={r.isLikedByMe ? 'currentColor' : 'none'} />
+                            <span className="text-xs font-bold">{r.likesCount}</span>
+                          </button>
+                          {expanded ? <ChevronUp size={16} className="text-stone-400" /> : <ChevronDown size={16} className="text-stone-400" />}
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-base text-stone-800 mb-3 leading-snug">{r.title}</h3>
+                      {r.routineTasks.length > 0 && (
+                        <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
+                          {r.routineTasks.map((task, i) => {
+                            const start = timeToMinutes(task.time);
+                            const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
+                            const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
+                            const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
+                            return (
+                              <div key={i} className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
+                                style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }} />
+                            );
+                          })}
+                        </div>
+                      )}
+                      <div className="text-xs text-stone-400">{r.routineTasks.length} タスク</div>
+                    </div>
+                    {expanded && (
+                      <div className="border-t border-stone-100 px-5 pb-5">
+                        <div className="pt-4 space-y-3">
+                          {r.routineTasks.map((task, i) => (
+                            <div key={i} className="flex gap-3">
+                              <div className="flex flex-col items-center flex-shrink-0">
+                                <div className={`w-2 h-2 rounded-full mt-1 ${typeDotColor[task.type ?? 'work'] ?? 'bg-stone-300'}`} />
+                                {i < r.routineTasks.length - 1 && <div className="w-px flex-1 bg-stone-100 mt-1" />}
+                              </div>
+                              <div className="flex-1 pb-2">
+                                <div className="flex items-baseline gap-2">
+                                  <span className="text-xs font-mono text-stone-400">{task.time}</span>
+                                  <span className="text-xs font-bold text-stone-700">{task.title}</span>
+                                </div>
+                                {task.thought && <p className="text-xs text-stone-400 mt-1 leading-relaxed">{task.thought}</p>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelectedUser({ id: r.id, user: r.displayName, title: r.title, likes: r.likesCount, avatar: '', routine: r.routineTasks });
+                            go('OTHER_HOME');
+                          }}
+                          className="w-full mt-4 py-3 bg-green-700 text-white rounded-xl text-sm font-bold hover:bg-green-800 transition-colors"
+                        >
+                          このルーティンを試す →
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </>
+        )}
+
+        {activeCategory !== 'community' && filteredTemplates.map((template) => {
           const expanded = expandedId === template.id;
           const fav = isFavorite(template.id);
           return (
@@ -338,7 +435,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           );
         })}
 
-        {filteredTemplates.length === 0 && (
+        {activeCategory !== 'community' && filteredTemplates.length === 0 && (
           <div className="text-center text-stone-300 pt-12">
             <p className="text-sm">
               {activeCategory === 'favorites'
