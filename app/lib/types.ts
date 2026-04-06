@@ -10,6 +10,7 @@ export type OnboardingPreferences = {
   completed: boolean;
   selectedCategories: PersonaCategory[];
   lifestyleRhythm: 'morning' | 'night' | 'balanced' | null;
+  prefecture: string | null; // 例: '東京都' | '大阪府' | null(未設定)
 };
 
 export type RoutineType = 'nature' | 'mind' | 'work';

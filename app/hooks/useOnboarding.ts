@@ -12,6 +12,7 @@ const DEFAULT_PREFERENCES: OnboardingPreferences = {
   completed: false,
   selectedCategories: [],
   lifestyleRhythm: null,
+  prefecture: null,
 };
 
 export function useOnboarding(session: Session | null) {
@@ -38,7 +39,7 @@ export function useOnboarding(session: Session | null) {
       try {
         const { data } = await supabase
           .from('user_settings')
-          .select('onboarding_completed, preferred_categories, lifestyle_rhythm')
+          .select('onboarding_completed, preferred_categories, lifestyle_rhythm, prefecture')
           .eq('user_id', session.user.id)
           .single();
 
@@ -47,6 +48,7 @@ export function useOnboarding(session: Session | null) {
             completed: data.onboarding_completed ?? false,
             selectedCategories: (data.preferred_categories ?? []) as PersonaCategory[],
             lifestyleRhythm: data.lifestyle_rhythm ?? null,
+            prefecture: data.prefecture ?? null,
           });
         }
       } catch { /* no settings row yet */ }
@@ -76,6 +78,7 @@ export function useOnboarding(session: Session | null) {
         onboarding_completed: true,
         preferred_categories: completed.selectedCategories,
         lifestyle_rhythm: completed.lifestyleRhythm,
+        prefecture: completed.prefecture,
       }, { onConflict: 'user_id' });
   }, [session?.user?.id]);
 
