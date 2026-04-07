@@ -25,6 +25,7 @@ export const usePublicData = () => {
             likes: routine.likes_count,
             avatar: '👤',
             color: routine.theme_color,
+            category: routine.category,
             routine: routine.routine_items
               .map((item: any) => ({
                 time: item.start_time,
@@ -37,7 +38,14 @@ export const usePublicData = () => {
           }));
         const dbTemplates = format(routines.filter((r) => r.is_template));
         const dbFeed = format(routines.filter((r) => !r.is_template));
-        if (dbTemplates.length > 0) setPersonaTemplates(dbTemplates);
+        // キュレーション済みの INITIAL_TEMPLATES を常にベースにして、
+        // DB 側の追加テンプレートがあれば末尾にマージする（ID 重複は除外）
+        const dbIds = new Set(dbTemplates.map((t) => t.id));
+        const mergedTemplates = [
+          ...INITIAL_TEMPLATES.filter((t) => !dbIds.has(t.id)),
+          ...dbTemplates,
+        ];
+        setPersonaTemplates(mergedTemplates);
         setSocialFeed(dbFeed);
       }
     };
