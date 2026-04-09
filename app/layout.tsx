@@ -12,10 +12,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://life-explorer.vercel.app';
+
 export const metadata: Metadata = {
   title: "Life Explorer",
-  description: "さまざまなライフスタイルを探索・実践するアプリ",
+  description: "誰かのライフスタイルを借りて、まだ知らない自分に出会おう。ルーティン探索・実践アプリ",
   manifest: "/manifest.json",
+  metadataBase: new URL(APP_URL),
+  openGraph: {
+    title: "Life Explorer",
+    description: "誰かのライフスタイルを借りて、まだ知らない自分に出会おう",
+    siteName: "Life Explorer",
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Life Explorer",
+    description: "誰かのライフスタイルを借りて、まだ知らない自分に出会おう",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

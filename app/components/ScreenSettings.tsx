@@ -8,6 +8,7 @@ import type { AIProvider, UserSettings } from '../hooks/useSettings';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { JAPAN_PREFECTURES } from '../lib/eventService';
 import { usePushNotification } from '../hooks/usePushNotification';
+import { useDarkMode } from '../hooks/useDarkMode';
 
 type ScreenSettingsProps = {
   go: (screen: Screen) => void;
@@ -21,7 +22,7 @@ type ScreenSettingsProps = {
 };
 
 export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings, onboardingPrefs, onSaveOnboarding }: ScreenSettingsProps) => {
-  const { supported, permission, settings: notifSettings, loading: notifLoading, subscribe, unsubscribe, sendTestNotification } = usePushNotification(session);
+  const { supported, permission, settings: notifSettings, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, isIOS, isStandalone } = usePushNotification(session);
   const [reminderTime, setReminderTime] = useState(
     `${String(notifSettings.reminderHour).padStart(2, '0')}:${String(notifSettings.reminderMinute).padStart(2, '0')}`,
   );
@@ -29,7 +30,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showAISetup, setShowAISetup] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const { darkMode, toggle: toggleDarkMode } = useDarkMode();
   const [publicProfile, setPublicProfile] = useState(true);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showEditEmail, setShowEditEmail] = useState(false);
@@ -221,8 +222,19 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
           </h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             {!supported ? (
-              <div className="p-4">
-                <p className="text-xs text-stone-400">このブラウザはプッシュ通知に対応していません。</p>
+              <div className="p-4 space-y-2">
+                {isIOS && !isStandalone ? (
+                  <>
+                    <p className="text-xs font-bold text-stone-600">iOSでプッシュ通知を有効にするには</p>
+                    <ol className="text-xs text-stone-400 list-decimal list-inside space-y-1">
+                      <li>Safari の共有ボタン（□↑）をタップ</li>
+                      <li>「ホーム画面に追加」を選択</li>
+                      <li>追加したアプリを開くと通知が使えます</li>
+                    </ol>
+                  </>
+                ) : (
+                  <p className="text-xs text-stone-400">このブラウザはプッシュ通知に対応していません。</p>
+                )}
               </div>
             ) : (
               <>
@@ -293,7 +305,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 <p className="text-xs text-stone-400">ダークテーマを使用する</p>
               </div>
               <button
-                onClick={() => setDarkMode(!darkMode)}
+                onClick={toggleDarkMode}
                 className={`w-12 h-7 rounded-full transition-colors relative ${darkMode ? 'bg-green-500' : 'bg-stone-200'}`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${darkMode ? 'right-1' : 'left-1'}`} />
