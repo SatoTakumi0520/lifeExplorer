@@ -32,9 +32,18 @@ export function usePushNotification(session: Session | null) {
   const [settings, setSettings] = useState<NotificationSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(false);
   const [supported, setSupported] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    setSupported(typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window);
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || ('standalone' in navigator && (navigator as any).standalone === true);
+    setIsIOS(ios);
+    setIsStandalone(standalone);
+    // iOS Safari（PWA未インストール時）は PushManager 非対応
+    const pushSupported = typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window;
+    setSupported(pushSupported);
     if (typeof window !== 'undefined' && 'Notification' in window) {
       setPermission(Notification.permission);
     }
@@ -138,5 +147,5 @@ export function usePushNotification(session: Session | null) {
     });
   }, [supported, permission]);
 
-  return { supported, permission, settings, loading, subscribe, unsubscribe, sendTestNotification };
+  return { supported, permission, settings, loading, subscribe, unsubscribe, sendTestNotification, isIOS, isStandalone };
 }

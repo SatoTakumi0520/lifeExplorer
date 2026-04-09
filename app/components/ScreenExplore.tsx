@@ -136,7 +136,8 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
   const canLoadMore = activeCategory === 'all' && totalCurated !== null && displayLimit < totalCurated;
 
-  const canGenerate = IS_DEMO || hasApiKey;
+  // デモモードまたは本番（Edge Functionがサーバー側キーを使用）なら常に生成可能
+  const canGenerate = true;
 
   const handleGenerate = async () => {
     if (!prompt.trim() || generating) return;
