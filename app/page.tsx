@@ -23,6 +23,7 @@ import { useDarkMode } from './hooks/useDarkMode';
 import { useBorrowHistory } from './hooks/useBorrowHistory';
 import { useActivityStreak } from './hooks/useActivityStreak';
 import { usePublicRoutines } from './hooks/usePublicRoutines';
+import { useComments } from './hooks/useComments';
 import { ScreenOnboarding } from './components/ScreenOnboarding';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 
@@ -57,6 +58,7 @@ export default function App() {
   const { streak, last35Days, totalActiveDays } = useActivityStreak();
   useDarkMode(); // アプリ起動時にダークモード状態を復元
   const { publicRoutines, isPublished, publish: publishRoutine, unpublish: unpublishRoutine, toggleLike } = usePublicRoutines(session);
+  const { commentsByRoutine, loadingRoutineId: loadingComments, postingRoutineId: postingComment, fetchComments, postComment, deleteComment } = useComments(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
@@ -137,7 +139,7 @@ export default function App() {
           onSkip={() => { skipOnboarding(); go('HOME'); }}
         />
       )}
-      {currentScreen === 'EXPLORE' && (personaTemplates.length === 0 ? <ExploreSkeleton /> : <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onAddEventToRoutine={handleAddTask} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} />)}
+      {currentScreen === 'EXPLORE' && (personaTemplates.length === 0 ? <ExploreSkeleton /> : <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onAddEventToRoutine={handleAddTask} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} commentsByRoutine={commentsByRoutine} loadingComments={loadingComments} postingComment={postingComment} onFetchComments={fetchComments} onPostComment={postComment} onDeleteComment={deleteComment} currentUserId={session?.user?.id} />)}
       {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} streak={streak} last35Days={last35Days} totalActiveDays={totalActiveDays} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
