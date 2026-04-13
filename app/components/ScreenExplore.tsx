@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2 } from 'lucide-react';
 import type { PublicRoutine } from '../hooks/usePublicRoutines';
+import type { RoutineComment } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
 import { Screen, PersonaTemplate, PersonaCategory, SocialPost, RoutineTask } from '../lib/types';
@@ -42,6 +43,14 @@ type ScreenExploreProps = {
   prefecture?: string | null;
   publicRoutines?: PublicRoutine[];
   onToggleLike?: (routineId: string) => void;
+  // コメント機能
+  commentsByRoutine?: Record<string, RoutineComment[]>;
+  loadingComments?: string | null;
+  postingComment?: string | null;
+  onFetchComments?: (routineId: string) => void;
+  onPostComment?: (routineId: string, body: string) => void;
+  onDeleteComment?: (routineId: string, commentId: string) => void;
+  currentUserId?: string;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -57,7 +66,7 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture, publicRoutines = [], onToggleLike }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const { events, loading: eventsLoading } = useEvents(prefecture ?? null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
@@ -67,6 +76,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
   const [generatedPersonas, setGeneratedPersonas] = useState<PersonaTemplate[]>([]);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | number | null>(null);
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [displayLimit, setDisplayLimit] = useState(12);
 
   const { toggle: toggleFavorite, isFavorite } = useFavorites();
@@ -136,7 +146,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
   const canLoadMore = activeCategory === 'all' && totalCurated !== null && displayLimit < totalCurated;
 
-  // デモモードまたは本番（Edge Functionがサーバー側キーを使用）なら常に生成可能
+  // デモモード: モックデータ返却 / 本番: ユーザーがSettings画面で設定したAPIキーをEdge Function経由で使用
   const canGenerate = true;
 
   const handleGenerate = async () => {
@@ -233,7 +243,11 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 const expanded = expandedId === r.id;
                 return (
                   <div key={r.id} className="bg-white rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-all">
-                    <div className="p-5 cursor-pointer" onClick={() => setExpandedId(expanded ? null : r.id)}>
+                    <div className="p-5 cursor-pointer" onClick={() => {
+                      const next = expanded ? null : r.id;
+                      setExpandedId(next);
+                      if (next && onFetchComments) onFetchComments(r.id);
+                    }}>
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-100 to-emerald-50 border border-green-200 flex items-center justify-center text-sm font-bold text-green-700">
@@ -254,6 +268,10 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                             <Heart size={14} fill={r.isLikedByMe ? 'currentColor' : 'none'} />
                             <span className="text-xs font-bold">{r.likesCount}</span>
                           </button>
+                          <span className="flex items-center gap-1 text-stone-300">
+                            <MessageCircle size={14} />
+                            <span className="text-xs font-bold">{(commentsByRoutine[r.id] ?? []).length || ''}</span>
+                          </span>
                           {expanded ? <ChevronUp size={16} className="text-stone-400" /> : <ChevronDown size={16} className="text-stone-400" />}
                         </div>
                       </div>
@@ -293,6 +311,84 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                             </div>
                           ))}
                         </div>
+                        {/* ── コメントセクション ── */}
+                        <div className="mt-4 pt-4 border-t border-stone-100">
+                          <div className="flex items-center gap-1.5 mb-3">
+                            <MessageCircle size={14} className="text-stone-400" />
+                            <span className="text-xs font-bold text-stone-600">コメント</span>
+                          </div>
+
+                          {loadingComments === r.id ? (
+                            <div className="flex justify-center py-3">
+                              <Loader2 size={16} className="animate-spin text-stone-300" />
+                            </div>
+                          ) : (
+                            <>
+                              {(commentsByRoutine[r.id] ?? []).length === 0 ? (
+                                <p className="text-xs text-stone-300 mb-3">まだコメントはありません</p>
+                              ) : (
+                                <div className="space-y-2.5 mb-3 max-h-48 overflow-y-auto">
+                                  {(commentsByRoutine[r.id] ?? []).map(c => (
+                                    <div key={c.id} className="flex gap-2 group">
+                                      <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-[10px] font-bold text-stone-500 flex-shrink-0 mt-0.5">
+                                        {c.displayName.charAt(0).toUpperCase()}
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-baseline gap-1.5">
+                                          <span className="text-xs font-bold text-stone-700">{c.displayName}</span>
+                                          <span className="text-[10px] text-stone-300">
+                                            {new Date(c.createdAt).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })}
+                                          </span>
+                                          {c.userId === currentUserId && (
+                                            <button
+                                              onClick={() => onDeleteComment?.(r.id, c.id)}
+                                              className="opacity-0 group-hover:opacity-100 text-stone-300 hover:text-red-400 transition-all ml-auto"
+                                            >
+                                              <Trash2 size={11} />
+                                            </button>
+                                          )}
+                                        </div>
+                                        <p className="text-xs text-stone-600 leading-relaxed break-words">{c.body}</p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* コメント入力欄 */}
+                              <div className="flex gap-2">
+                                <input
+                                  type="text"
+                                  value={commentInputs[r.id] ?? ''}
+                                  onChange={e => setCommentInputs(prev => ({ ...prev, [r.id]: e.target.value }))}
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter' && (commentInputs[r.id] ?? '').trim()) {
+                                      onPostComment?.(r.id, commentInputs[r.id]);
+                                      setCommentInputs(prev => ({ ...prev, [r.id]: '' }));
+                                    }
+                                  }}
+                                  placeholder="コメントを入力…"
+                                  maxLength={500}
+                                  disabled={postingComment === r.id}
+                                  className="flex-1 px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 transition-colors disabled:opacity-50"
+                                />
+                                <button
+                                  onClick={() => {
+                                    if ((commentInputs[r.id] ?? '').trim()) {
+                                      onPostComment?.(r.id, commentInputs[r.id]);
+                                      setCommentInputs(prev => ({ ...prev, [r.id]: '' }));
+                                    }
+                                  }}
+                                  disabled={!(commentInputs[r.id] ?? '').trim() || postingComment === r.id}
+                                  className="p-2 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                  {postingComment === r.id ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
                         <button
                           onClick={() => {
                             setSelectedUser({ id: r.id, user: r.displayName, title: r.title, likes: r.likesCount, avatar: '', routine: r.routineTasks });

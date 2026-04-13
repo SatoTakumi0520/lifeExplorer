@@ -43,3 +43,12 @@ export type SocialPost = {
   avatar: string;
   routine: RoutineTask[];
 };
+
+export type RoutineComment = {
+  id: string;
+  routineId: string;
+  userId: string;
+  displayName: string;
+  body: string;
+  createdAt: string;
+};
