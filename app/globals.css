@@ -51,7 +51,10 @@ html.dark .bg-stone-100 {
   background-color: #44403c !important;
 }
 
-/* テキスト色 */
+/* テキスト色 — ダーク背景で十分なコントラストを確保 */
+html.dark .text-stone-900 {
+  color: #fafaf9 !important;
+}
 html.dark .text-stone-800 {
   color: #e7e5e4 !important;
 }
@@ -59,19 +62,20 @@ html.dark .text-stone-700 {
   color: #d6d3d1 !important;
 }
 html.dark .text-stone-600 {
-  color: #a8a29e !important;
+  color: #d6d3d1 !important;
 }
 html.dark .text-stone-500 {
   color: #a8a29e !important;
 }
 html.dark .text-stone-400 {
-  color: #78716c !important;
+  color: #a8a29e !important;
 }
 html.dark .text-stone-300 {
-  color: #57534e !important;
+  color: #a8a29e !important;
 }
-html.dark .text-stone-900 {
-  color: #fafaf9 !important;
+/* 白テキストはダークでそのまま維持 */
+html.dark .text-white {
+  color: #ffffff !important;
 }
 
 /* ボーダー */
@@ -105,4 +109,123 @@ html.dark .animate-pulse.bg-stone-200 {
 html.dark nav {
   background-color: #292524 !important;
   border-color: #44403c !important;
+}
+
+/* モーダル・オーバーレイ背景 */
+html.dark .bg-\[\#FDFCF8\].rounded-t-3xl,
+html.dark .bg-\[\#FDFCF8\].rounded-3xl {
+  background-color: #292524 !important;
+}
+
+/* カテゴリタブ・バッジ */
+html.dark .bg-stone-800 {
+  background-color: #57534e !important;
+}
+html.dark .border-stone-800 {
+  border-color: #57534e !important;
+}
+
+/* ヘッダー sticky 背景 */
+html.dark .backdrop-blur {
+  background-color: rgba(41, 37, 36, 0.85) !important;
+}
+
+/* テキスト装飾色: 赤系（危険な操作） */
+html.dark .text-red-600 {
+  color: #fca5a5 !important;
+}
+html.dark .text-red-400 {
+  color: #f87171 !important;
+}
+html.dark .border-red-100 {
+  border-color: #7f1d1d !important;
+}
+
+/* グリーン系ボタンはダークでもそのまま */
+html.dark .bg-green-700 {
+  background-color: #15803d !important;
+}
+
+/* ミニタイムライン背景 */
+html.dark .bg-stone-100.rounded-full {
+  background-color: #44403c !important;
+}
+
+/* shadow をダーク向けに抑制 */
+html.dark .shadow-sm,
+html.dark .shadow-md {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+
+/* ── タイムライン画面ダークモード ── */
+
+/* sticky ヘッダー背景（透過付き） */
+html.dark .bg-\[\#FDFCF8\]\/95 {
+  background-color: rgba(28, 25, 23, 0.95) !important;
+}
+
+/* 上部フェードグラデーション */
+html.dark .from-\[\#FDFCF8\] {
+  --tw-gradient-from: #1c1917 !important;
+}
+
+/* タスクカード背景 — ダーク用にシフト */
+html.dark .bg-amber-50\/60 {
+  background-color: rgba(120, 93, 42, 0.25) !important;
+}
+html.dark .bg-blue-50\/60 {
+  background-color: rgba(49, 78, 115, 0.25) !important;
+}
+html.dark .bg-violet-50\/60 {
+  background-color: rgba(88, 60, 120, 0.25) !important;
+}
+
+/* タスクカードのボーダー */
+html.dark .border-stone-100\/80 {
+  border-color: rgba(68, 64, 60, 0.8) !important;
+}
+
+/* 時間帯ゾーン背景グラデーション — 暗く */
+html.dark .from-amber-50\/30 {
+  --tw-gradient-from: rgba(120, 93, 42, 0.12) !important;
+}
+html.dark .to-amber-50\/10 {
+  --tw-gradient-to: rgba(120, 93, 42, 0.04) !important;
+}
+html.dark .from-sky-50\/20 {
+  --tw-gradient-from: rgba(49, 78, 115, 0.10) !important;
+}
+html.dark .to-sky-50\/10 {
+  --tw-gradient-to: rgba(49, 78, 115, 0.04) !important;
+}
+html.dark .from-violet-50\/20 {
+  --tw-gradient-from: rgba(88, 60, 120, 0.10) !important;
+}
+html.dark .to-violet-50\/5 {
+  --tw-gradient-to: rgba(88, 60, 120, 0.02) !important;
+}
+
+/* グリッドライン — ダーク用 */
+html.dark .bg-stone-200 {
+  background-color: #44403c !important;
+}
+
+/* 現在時刻マーカーのリング背景 */
+html.dark .ring-\[\#FDFCF8\] {
+  --tw-ring-color: #1c1917 !important;
+}
+
+/* 空の状態カード */
+html.dark .bg-white\/90 {
+  background-color: rgba(41, 37, 36, 0.9) !important;
+}
+
+/* Explore ペルソナカード */
+html.dark .bg-white.rounded-2xl {
+  background-color: #292524 !important;
+}
+
+/* Profile セクションカード */
+html.dark .bg-white.rounded-xl {
+  background-color: #292524 !important;
 }

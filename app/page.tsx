@@ -19,6 +19,7 @@ import { usePublicData } from './hooks/usePublicData';
 import { useRoutine } from './hooks/useRoutine';
 import { useSettings } from './hooks/useSettings';
 import { useOnboarding } from './hooks/useOnboarding';
+import { useDarkMode } from './hooks/useDarkMode';
 import { useBorrowHistory } from './hooks/useBorrowHistory';
 import { useActivityStreak } from './hooks/useActivityStreak';
 import { usePublicRoutines } from './hooks/usePublicRoutines';
@@ -54,21 +55,27 @@ export default function App() {
   const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, loading: onboardingLoading } = useOnboarding(session);
   const { history: borrowHistory, recordBorrow } = useBorrowHistory();
   const { streak, last35Days, totalActiveDays } = useActivityStreak();
+  useDarkMode(); // アプリ起動時にダークモード状態を復元
   const { publicRoutines, isPublished, publish: publishRoutine, unpublish: unpublishRoutine, toggleLike } = usePublicRoutines(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
 
   // ログイン済みユーザはTOP画面をスキップ
+  // セッションが存在する場合のみ自動遷移（デモモードでも session or onboarding 完了が必要）
   // オンボーディング未完了 → ONBOARDING、完了済み → HOME
-  // デモモードではTOPを表示せず直接遷移（本番ではsession必須）
+  const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
   useEffect(() => {
     if (!loading && !onboardingLoading && currentScreen === 'TOP') {
-      const isAuthenticated = session || process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-      if (isAuthenticated) {
+      if (session) {
+        // 本番: セッション有 → オンボーディング状態で分岐
         setCurrentScreen(onboardingComplete ? 'HOME' : 'ONBOARDING');
+      } else if (IS_DEMO && onboardingComplete) {
+        // デモモード: オンボーディング完了済みなら HOME へ
+        setCurrentScreen('HOME');
       }
+      // それ以外（未ログイン＆デモ未完了 or 非デモ）→ TOP に留まる
     }
-  }, [session, loading, onboardingLoading, onboardingComplete]);
+  }, [session, loading, onboardingLoading, onboardingComplete, IS_DEMO]);
 
   // セッション確認中はスプラッシュ画面を表示
   if (loading) {
