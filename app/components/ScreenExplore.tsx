@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2 } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck } from 'lucide-react';
 import type { PublicRoutine } from '../hooks/usePublicRoutines';
 import type { RoutineComment } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
@@ -51,6 +51,9 @@ type ScreenExploreProps = {
   onPostComment?: (routineId: string, body: string) => void;
   onDeleteComment?: (routineId: string, commentId: string) => void;
   currentUserId?: string;
+  // フォロー機能
+  isFollowing?: (userId: string) => boolean;
+  onToggleFollow?: (userId: string) => void;
 };
 
 // PersonaTemplate → SocialPost へ変換（既存のOTHER_HOME画面で表示するため）
@@ -66,11 +69,12 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId, isFollowing, onToggleFollow }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const { events, loading: eventsLoading } = useEvents(prefecture ?? null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
   const [addedEventIds, setAddedEventIds] = useState<Set<string>>(new Set());
+  const [communitySearch, setCommunitySearch] = useState('');
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
   const [generatedPersonas, setGeneratedPersonas] = useState<PersonaTemplate[]>([]);
@@ -187,16 +191,31 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     }
   };
 
+  const followingRoutines = useMemo(() =>
+    publicRoutines.filter(r => isFollowing?.(r.userId)),
+  [publicRoutines, isFollowing]);
+
+  const filteredCommunityRoutines = useMemo(() => {
+    if (!communitySearch.trim()) return publicRoutines;
+    const q = communitySearch.toLowerCase();
+    return publicRoutines.filter(r =>
+      r.displayName.toLowerCase().includes(q) ||
+      r.title.toLowerCase().includes(q) ||
+      (r.category && PERSONA_CATEGORY_LABELS[r.category]?.toLowerCase().includes(q))
+    );
+  }, [publicRoutines, communitySearch]);
+
   const categoriesWithFav = useMemo(() => {
     const favCount = sortedTemplates.filter((t) => isFavorite(t.id)).length + generatedPersonas.filter((t) => isFavorite(t.id)).length;
     const base = categories.filter(([key]) => key !== 'all');
     return [
       ['all', 'すべて'] as [string, string],
       ...(publicRoutines.length > 0 ? [['community', `👥 みんなの一日 (${publicRoutines.length})`] as [string, string]] : []),
+      ...(followingRoutines.length > 0 ? [['following', `🤝 フォロー中 (${followingRoutines.length})`] as [string, string]] : []),
       ...(favCount > 0 ? [['favorites', `♡ お気に入り (${favCount})`] as [string, string]] : []),
       ...base,
     ];
-  }, [categories, sortedTemplates, generatedPersonas, isFavorite, publicRoutines.length]);
+  }, [categories, sortedTemplates, generatedPersonas, isFavorite, publicRoutines.length, followingRoutines.length]);
 
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">
@@ -229,17 +248,42 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
       {/* Persona cards */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
 
-        {/* ── みんなの一日（コミュニティ）タブ ───────────────────── */}
-        {activeCategory === 'community' && (
+        {/* ── みんなの一日（コミュニティ）/ フォロー中 タブ ─────── */}
+        {(activeCategory === 'community' || activeCategory === 'following') && (
           <>
-            {publicRoutines.length === 0 ? (
+            {/* 検索バー（コミュニティタブのみ） */}
+            {activeCategory === 'community' && publicRoutines.length > 0 && (
+              <div className="relative mb-2">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" />
+                <input
+                  type="text"
+                  value={communitySearch}
+                  onChange={e => setCommunitySearch(e.target.value)}
+                  placeholder="ユーザーやルーティンを検索"
+                  className="w-full pl-9 pr-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 transition-colors"
+                />
+              </div>
+            )}
+
+            {(activeCategory === 'community' ? filteredCommunityRoutines : followingRoutines).length === 0 ? (
               <div className="text-center text-stone-300 pt-12">
                 <Users size={32} className="mx-auto mb-3 opacity-30" />
-                <p className="text-sm">まだ公開されているルーティンがありません</p>
-                <p className="text-xs mt-1">プロフィール画面から自分のルーティンを公開してみましょう</p>
+                {activeCategory === 'following' ? (
+                  <>
+                    <p className="text-sm">まだ誰もフォローしていません</p>
+                    <p className="text-xs mt-1">「みんなの一日」タブでフォローしてみましょう</p>
+                  </>
+                ) : communitySearch ? (
+                  <p className="text-sm">「{communitySearch}」に一致するルーティンがありません</p>
+                ) : (
+                  <>
+                    <p className="text-sm">まだ公開されているルーティンがありません</p>
+                    <p className="text-xs mt-1">プロフィール画面から自分のルーティンを公開してみましょう</p>
+                  </>
+                )}
               </div>
             ) : (
-              publicRoutines.map((r) => {
+              (activeCategory === 'community' ? filteredCommunityRoutines : followingRoutines).map((r) => {
                 const expanded = expandedId === r.id;
                 return (
                   <div key={r.id} className="bg-white rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-all">
@@ -253,8 +297,23 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-100 to-emerald-50 border border-green-200 flex items-center justify-center text-sm font-bold text-green-700">
                             {r.displayName.charAt(0).toUpperCase()}
                           </div>
-                          <div>
-                            <div className="text-sm font-bold text-stone-800">{r.displayName}</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-stone-800 truncate">{r.displayName}</span>
+                              {r.userId !== currentUserId && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); onToggleFollow?.(r.userId); }}
+                                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors ${
+                                    isFollowing?.(r.userId)
+                                      ? 'bg-green-50 text-green-700 border border-green-200'
+                                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                                  }`}
+                                >
+                                  {isFollowing?.(r.userId) ? <UserCheck size={10} /> : <UserPlus size={10} />}
+                                  {isFollowing?.(r.userId) ? 'フォロー中' : 'フォロー'}
+                                </button>
+                              )}
+                            </div>
                             <div className="text-xs text-stone-400">
                               {r.category ? PERSONA_CATEGORY_LABELS[r.category] ?? r.category : 'ライフスタイル'}
                             </div>
@@ -407,7 +466,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           </>
         )}
 
-        {activeCategory !== 'community' && filteredTemplates.map((template) => {
+        {activeCategory !== 'community' && activeCategory !== 'following' && filteredTemplates.map((template) => {
           const expanded = expandedId === template.id;
           const fav = isFavorite(template.id);
           return (
@@ -532,7 +591,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           );
         })}
 
-        {activeCategory !== 'community' && filteredTemplates.length === 0 && (
+        {activeCategory !== 'community' && activeCategory !== 'following' && filteredTemplates.length === 0 && (
           <div className="text-center text-stone-300 pt-12">
             <p className="text-sm">
               {activeCategory === 'favorites'
