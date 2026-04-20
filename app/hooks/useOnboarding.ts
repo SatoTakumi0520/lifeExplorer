@@ -32,9 +32,13 @@ export function useOnboarding(session: Session | null) {
       }
 
       if (!session?.user?.id) {
+        // セッション未確定時はloadingを維持しない（ただしデフォルト値のまま）
         setLoading(false);
         return;
       }
+
+      // セッション確定後にDBフェッチ開始 → loadingを再度trueにしてpage.tsxの早期遷移を防ぐ
+      setLoading(true);
 
       try {
         const { data, error } = await supabase
