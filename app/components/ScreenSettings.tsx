@@ -19,9 +19,10 @@ type ScreenSettingsProps = {
   onSaveAISettings?: (updates: Partial<UserSettings>) => void;
   onboardingPrefs?: OnboardingPreferences;
   onSaveOnboarding?: (prefs: OnboardingPreferences) => void;
+  onResetOnboarding?: () => void;
 };
 
-export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings, onboardingPrefs, onSaveOnboarding }: ScreenSettingsProps) => {
+export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings, onboardingPrefs, onSaveOnboarding, onResetOnboarding }: ScreenSettingsProps) => {
   const { supported, permission, settings: notifSettings, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, isIOS, isStandalone } = usePushNotification(session);
   const [reminderTime, setReminderTime] = useState(
     `${String(notifSettings.reminderHour).padStart(2, '0')}:${String(notifSettings.reminderMinute).padStart(2, '0')}`,
@@ -168,6 +169,18 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 ))}
               </select>
             </div>
+            {/* オンボーディングやり直し */}
+            {onResetOnboarding && (
+              <div className="pt-2 border-t border-stone-100">
+                <button
+                  onClick={onResetOnboarding}
+                  className="w-full py-2.5 px-4 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl text-xs font-bold transition-colors"
+                >
+                  初期設定をやり直す
+                </button>
+                <p className="text-[10px] text-stone-400 mt-1.5 text-center">カテゴリと生活リズムを再選択します</p>
+              </div>
+            )}
           </div>
         </div>
 

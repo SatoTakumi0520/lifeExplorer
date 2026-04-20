@@ -37,13 +37,15 @@ export function useOnboarding(session: Session | null) {
       }
 
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('user_settings')
           .select('onboarding_completed, preferred_categories, lifestyle_rhythm, prefecture')
           .eq('user_id', session.user.id)
           .single();
 
-        if (data) {
+        if (error) {
+          console.warn('[useOnboarding] Failed to load settings:', error.message);
+        } else if (data) {
           setPreferences({
             completed: data.onboarding_completed ?? false,
             selectedCategories: (data.preferred_categories ?? []) as PersonaCategory[],
@@ -51,7 +53,9 @@ export function useOnboarding(session: Session | null) {
             prefecture: data.prefecture ?? null,
           });
         }
-      } catch { /* no settings row yet */ }
+      } catch (e) {
+        console.warn('[useOnboarding] Unexpected error loading settings:', e);
+      }
 
       setLoading(false);
     };
@@ -71,7 +75,7 @@ export function useOnboarding(session: Session | null) {
 
     if (!session?.user?.id) return;
 
-    await supabase
+    const { error } = await supabase
       .from('user_settings')
       .upsert({
         user_id: session.user.id,
@@ -80,6 +84,10 @@ export function useOnboarding(session: Session | null) {
         lifestyle_rhythm: completed.lifestyleRhythm,
         prefecture: completed.prefecture,
       }, { onConflict: 'user_id' });
+
+    if (error) {
+      console.error('[useOnboarding] Failed to save preferences:', error.message);
+    }
   }, [session?.user?.id]);
 
   // Skip onboarding
@@ -94,23 +102,46 @@ export function useOnboarding(session: Session | null) {
 
     if (!session?.user?.id) return;
 
-    await supabase
+    const { error } = await supabase
       .from('user_settings')
       .upsert({
         user_id: session.user.id,
         onboarding_completed: true,
         preferred_categories: [],
         lifestyle_rhythm: null,
+        prefecture: null,
       }, { onConflict: 'user_id' });
+
+    if (error) {
+      console.error('[useOnboarding] Failed to skip onboarding:', error.message);
+    }
   }, [session?.user?.id]);
 
-  // Reset for testing
-  const resetOnboarding = useCallback(() => {
+  // Reset onboarding — allows re-doing from settings
+  const resetOnboarding = useCallback(async () => {
     setPreferences(DEFAULT_PREFERENCES);
+
     if (IS_DEMO) {
       localStorage.removeItem(STORAGE_KEY);
+      return;
     }
-  }, []);
+
+    if (!session?.user?.id) return;
+
+    const { error } = await supabase
+      .from('user_settings')
+      .upsert({
+        user_id: session.user.id,
+        onboarding_completed: false,
+        preferred_categories: [],
+        lifestyle_rhythm: null,
+        prefecture: null,
+      }, { onConflict: 'user_id' });
+
+    if (error) {
+      console.error('[useOnboarding] Failed to reset onboarding:', error.message);
+    }
+  }, [session?.user?.id]);
 
   return {
     preferences,
