@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AddTaskModal } from './components/AddTaskModal';
 import { AuthModal } from './components/AuthModal';
 import { BottomNav } from './components/BottomNav';
@@ -12,6 +12,7 @@ import { ScreenSettings } from './components/ScreenSettings';
 import { ScreenExplore } from './components/ScreenExplore';
 import { ScreenTimeline } from './components/ScreenTimeline';
 import { ScreenTop } from './components/ScreenTop';
+import { SplashScreen } from './components/SplashScreen';
 import { TimelineSkeleton, ExploreSkeleton, ProfileSkeleton } from './components/SkeletonLoaders';
 import { TaskDetailModal } from './components/TaskDetailModal';
 import { useAuth } from './hooks/useAuth';
@@ -33,6 +34,7 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [showAddTask, setShowAddTask] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   const [selectedUser, setSelectedUser] = useState<SocialPost | null>(null);
   const [selectedTask, setSelectedTask] = useState<RoutineTask | null>(null);
@@ -81,20 +83,17 @@ export default function App() {
     }
   }, [session, loading, onboardingLoading, onboardingComplete, IS_DEMO]);
 
-  // セッション確認中はスプラッシュ画面を表示
-  if (loading) {
-    return (
-      <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#FDFCF8] flex flex-col items-center justify-center shadow-2xl border-x border-stone-200">
-        <div className="flex items-center gap-2 text-stone-500 mb-4">
-          <div className="w-8 h-1 bg-stone-800" />
-          <span className="font-bold tracking-widest text-xs uppercase">Life Explorer</span>
-        </div>
-        <p className="text-4xl font-serif font-bold text-stone-900">🌱</p>
-      </div>
-    );
-  }
+  // スプラッシュ完了コールバック
+  const handleSplashFinished = useCallback(() => setShowSplash(false), []);
+
+  // Auth + Onboarding の両方が完了するまでスプラッシュを表示
+  const isAppReady = !loading && !onboardingLoading;
 
   return (
+    <>
+    {showSplash && (
+      <SplashScreen isLoading={!isAppReady} onFinished={handleSplashFinished} />
+    )}
     <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#FDFCF8] overflow-hidden relative font-sans antialiased shadow-2xl border-x border-stone-200">
       {currentScreen === 'TOP' && (
         <ScreenTop
@@ -209,5 +208,6 @@ export default function App() {
         />
       )}
     </div>
+    </>
   );
 }
