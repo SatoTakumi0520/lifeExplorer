@@ -54,7 +54,7 @@ export default function App() {
   } = useRoutine(session);
   const isOffline = useNetworkError();
   const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
-  const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, resetOnboarding, loading: onboardingLoading } = useOnboarding(session);
+  const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, resetOnboarding, loading: onboardingLoading } = useOnboarding(session, loading);
   const { history: borrowHistory, recordBorrow } = useBorrowHistory();
   const { streak, last35Days, totalActiveDays } = useActivityStreak();
   useDarkMode(); // アプリ起動時にダークモード状態を復元

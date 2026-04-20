@@ -15,12 +15,17 @@ const DEFAULT_PREFERENCES: OnboardingPreferences = {
   prefecture: null,
 };
 
-export function useOnboarding(session: Session | null) {
+export function useOnboarding(session: Session | null, authLoading: boolean = false) {
   const [preferences, setPreferences] = useState<OnboardingPreferences>(DEFAULT_PREFERENCES);
   const [loading, setLoading] = useState(true);
 
   // Load preferences
+  // authLoading が true の間は何もせず loading=true を維持する
+  // → page.tsx が「onboardingComplete=false」で早期遷移するのを完全に防止
   useEffect(() => {
+    // Auth がまだ確定していない場合はスキップ（loading=true を維持）
+    if (authLoading) return;
+
     const load = async () => {
       if (IS_DEMO) {
         try {
@@ -32,14 +37,12 @@ export function useOnboarding(session: Session | null) {
       }
 
       if (!session?.user?.id) {
-        // セッション未確定時はloadingを維持しない（ただしデフォルト値のまま）
+        // Auth 確定済みでセッションなし → 未ログイン
         setLoading(false);
         return;
       }
 
-      // セッション確定後にDBフェッチ開始 → loadingを再度trueにしてpage.tsxの早期遷移を防ぐ
-      setLoading(true);
-
+      // Auth 確定済みでセッションあり → DB から読み込み
       try {
         const { data, error } = await supabase
           .from('user_settings')
@@ -65,7 +68,7 @@ export function useOnboarding(session: Session | null) {
     };
 
     load();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, authLoading]);
 
   // Save preferences
   const savePreferences = useCallback(async (prefs: OnboardingPreferences) => {
