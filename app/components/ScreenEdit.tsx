@@ -160,7 +160,10 @@ export const ScreenEdit = ({
                     <div key={time} className="flex border-b border-stone-50">
                       <div className="flex-1 p-3 bg-orange-50/30">
                         {tplTask ? (
-                          <div className="bg-white p-3 rounded-xl border border-orange-100 shadow-sm">
+                          <div
+                            onClick={() => setSelectedTask({ ...tplTask, isOther: true })}
+                            className="bg-white p-3 rounded-xl border border-orange-100 shadow-sm cursor-pointer active:scale-[0.97] transition-transform"
+                          >
                             <div className="font-bold text-xs text-orange-600 mb-1">{tplTask.time}</div>
                             <div className="text-xs font-bold text-stone-800">{tplTask.title}</div>
                           </div>
@@ -182,7 +185,11 @@ export const ScreenEdit = ({
                       </div>
                       <div className="flex-1 p-3 bg-green-50/30">
                         {myTasks.map((task, index) => (
-                          <div key={task.id ?? index} className="bg-white p-3 rounded-xl border border-green-100 shadow-sm mb-1">
+                          <div
+                            key={task.id ?? index}
+                            onClick={() => setSelectedTask(task)}
+                            className="bg-white p-3 rounded-xl border border-green-100 shadow-sm mb-1 cursor-pointer active:scale-[0.97] transition-transform"
+                          >
                             <div className="font-bold text-xs text-green-700 mb-1">{task.time}</div>
                             <div className="text-xs font-bold text-stone-800">{task.title}</div>
                           </div>
