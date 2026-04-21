@@ -1,14 +1,26 @@
 import type { PersonaTemplate, SocialPost, RoutineTask } from './types';
 
-// ローカル開発用デモルーティン（未ログイン時に表示）
-export const MOCK_MY_ROUTINE: RoutineTask[] = [
-  { id: 'mock-1', time: '06:00', endTime: '06:30', title: 'Morning Stretch', thought: '目覚めとともに全身を伸ばす。血流を促し、一日を気持ちよくスタート。', type: 'nature' },
-  { id: 'mock-2', time: '06:30', endTime: '07:00', title: 'Meditation', thought: '静かに呼吸を整え、今日の意図を設定する。10分でも十分。', type: 'mind' },
-  { id: 'mock-3', time: '09:00', endTime: '11:00', title: 'Deep Work', thought: '通知をオフにして最も重要なプロジェクトに集中する。', type: 'work' },
-  { id: 'mock-4', time: '12:00', endTime: '12:45', title: 'Lunch Walk', thought: '外に出て歩きながら昼食。太陽を浴びて午後のエネルギーを補充。', type: 'nature' },
-  { id: 'mock-5', time: '14:00', endTime: '16:00', title: 'Meetings', thought: 'チームとのコラボレーション。アジェンダを明確にして時間内に終わらせる。', type: 'work' },
-  { id: 'mock-6', time: '19:00', endTime: '19:30', title: 'Journaling', thought: '今日の振り返りと明日のTOPタスクを1つ決める。', type: 'mind' },
+// ローカル開発用デモルーティン — 平日
+export const MOCK_MY_ROUTINE_WEEKDAY: RoutineTask[] = [
+  { id: 'mock-w1', time: '06:00', endTime: '06:30', title: 'Morning Stretch', thought: '目覚めとともに全身を伸ばす。血流を促し、一日を気持ちよくスタート。', type: 'nature' },
+  { id: 'mock-w2', time: '06:30', endTime: '07:00', title: 'Meditation', thought: '静かに呼吸を整え、今日の意図を設定する。10分でも十分。', type: 'mind' },
+  { id: 'mock-w3', time: '09:00', endTime: '11:00', title: 'Deep Work', thought: '通知をオフにして最も重要なプロジェクトに集中する。', type: 'work' },
+  { id: 'mock-w4', time: '12:00', endTime: '12:45', title: 'Lunch Walk', thought: '外に出て歩きながら昼食。太陽を浴びて午後のエネルギーを補充。', type: 'nature' },
+  { id: 'mock-w5', time: '14:00', endTime: '16:00', title: 'Meetings', thought: 'チームとのコラボレーション。アジェンダを明確にして時間内に終わらせる。', type: 'work' },
+  { id: 'mock-w6', time: '19:00', endTime: '19:30', title: 'Journaling', thought: '今日の振り返りと明日のTOPタスクを1つ決める。', type: 'mind' },
 ];
+
+// ローカル開発用デモルーティン — 休日
+export const MOCK_MY_ROUTINE_WEEKEND: RoutineTask[] = [
+  { id: 'mock-e1', time: '08:00', endTime: '08:30', title: 'ゆっくり朝食', thought: 'コーヒーを淹れて、好きなパンをゆっくり食べる。', type: 'nature' },
+  { id: 'mock-e2', time: '09:00', endTime: '10:00', title: 'Reading', thought: '積読になっていた本を読む。静かな朝は最高の読書タイム。', type: 'mind' },
+  { id: 'mock-e3', time: '10:30', endTime: '12:00', title: 'Workout', thought: 'ジムでトレーニング。平日の疲れをリフレッシュ。', type: 'nature' },
+  { id: 'mock-e4', time: '14:00', endTime: '15:30', title: 'Creative Time', thought: '趣味のプロジェクトや新しいスキルの練習。', type: 'mind' },
+  { id: 'mock-e5', time: '18:00', endTime: '19:00', title: 'Evening Walk', thought: '近所を散歩して一週間を振り返る。', type: 'nature' },
+];
+
+// 後方互換: 古いコードが参照する場合
+export const MOCK_MY_ROUTINE = MOCK_MY_ROUTINE_WEEKDAY;
 
 // ─── Persona Templates ──────────────────────────────────────────────
 

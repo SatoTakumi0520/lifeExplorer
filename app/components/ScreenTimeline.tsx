@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { BookOpen, ChevronLeft, ChevronRight, Coffee, Edit3, Sun } from 'lucide-react';
+import { BookOpen, Briefcase, ChevronLeft, Coffee, Edit3, Palmtree, Sun } from 'lucide-react';
 import { formatDate, timeToMinutes } from '../lib/utils';
-import { RoutineTask, Screen, SocialPost } from '../lib/types';
+import { RoutineTask, ScheduleType, Screen, SocialPost } from '../lib/types';
 
 /* ─── タイプ別スタイル ────────────────────────────────────────────── */
 const typeLeftBorder: Record<string, string> = {
@@ -94,9 +94,9 @@ const formatDuration = (minutes: number) => {
 /* ─── Props ──────────────────────────────────────────────────────── */
 type ScreenTimelineProps = {
   go: (screen: Screen) => void;
-  targetDate: Date;
-  shiftDate: (days: number) => void;
   myRoutine: RoutineTask[];
+  scheduleType: ScheduleType;
+  onToggleSchedule: () => void;
   isOther?: boolean;
   selectedUser?: SocialPost | null;
   setSelectedTask: (task: RoutineTask | null) => void;
@@ -107,17 +107,18 @@ type ScreenTimelineProps = {
 /* ─── Component ──────────────────────────────────────────────────── */
 export const ScreenTimeline = ({
   go,
-  targetDate,
-  shiftDate,
   myRoutine,
+  scheduleType,
+  onToggleSchedule,
   isOther = false,
   selectedUser,
   setSelectedTask,
   setBorrowingUser,
   loadingRoutine,
 }: ScreenTimelineProps) => {
-  const dayInfo  = formatDate(targetDate);
-  const isToday  = new Date().toDateString() === targetDate.toDateString();
+  const today    = new Date();
+  const dayInfo  = formatDate(today);
+  const isToday  = true;
   const routine  = isOther && selectedUser ? selectedUser.routine : myRoutine;
 
   /* 現在時刻（今日のみ1分更新） */
@@ -187,35 +188,53 @@ export const ScreenTimeline = ({
           )}
         </div>
 
-        {/* 下段：日付ナビ */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => shiftDate(-1)}
-            className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 rounded-full transition-colors"
-          >
-            <ChevronLeft size={20} className="text-stone-500" />
-          </button>
-
-          <div className="flex flex-col items-center gap-0.5">
+        {/* 下段：日付 + 平日/休日トグル */}
+        <div className="flex flex-col items-center gap-2">
+          {isOther && selectedUser ? (
             <h2 className="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">
-              {isOther && selectedUser ? (
-                <>
-                  <span className="text-xl">{selectedUser.avatar}</span>
-                  {selectedUser.user.split(' ')[0]} の一日
-                </>
-              ) : (
-                <>
-                  {dayInfo.dow}, {dayInfo.month} {dayInfo.day}
-                  {isToday && (
-                    <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-                  )}
-                </>
-              )}
+              <span className="text-xl">{selectedUser.avatar}</span>
+              {selectedUser.user.split(' ')[0]} の一日
             </h2>
-            {!isOther && (
+          ) : (
+            <>
+              {/* 日付表示 */}
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-serif font-bold text-stone-900">
+                  {dayInfo.dow}, {dayInfo.month} {dayInfo.day}
+                </h2>
+                <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+              </div>
+
+              {/* 平日/休日トグル */}
+              <div className="flex items-center bg-stone-100 rounded-full p-0.5">
+                <button
+                  onClick={() => scheduleType !== 'weekday' && onToggleSchedule()}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    scheduleType === 'weekday'
+                      ? 'bg-white text-stone-800 shadow-sm'
+                      : 'text-stone-400 hover:text-stone-600'
+                  }`}
+                >
+                  <Briefcase size={12} />
+                  平日
+                </button>
+                <button
+                  onClick={() => scheduleType !== 'weekend' && onToggleSchedule()}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    scheduleType === 'weekend'
+                      ? 'bg-white text-stone-800 shadow-sm'
+                      : 'text-stone-400 hover:text-stone-600'
+                  }`}
+                >
+                  <Palmtree size={12} />
+                  休日
+                </button>
+              </div>
+
+              {/* 統計 */}
               <div className="flex items-center gap-1.5">
                 <p className="text-xs text-stone-400">
-                  {loadingRoutine ? '同期中…' : '理想の一日'}
+                  {loadingRoutine ? '同期中…' : scheduleType === 'weekday' ? '平日のルーティン' : '休日のルーティン'}
                 </p>
                 {statsText && !loadingRoutine && (
                   <>
@@ -224,15 +243,8 @@ export const ScreenTimeline = ({
                   </>
                 )}
               </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => shiftDate(1)}
-            className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 rounded-full transition-colors"
-          >
-            <ChevronRight size={20} className="text-stone-500" />
-          </button>
+            </>
+          )}
         </div>
       </div>
 

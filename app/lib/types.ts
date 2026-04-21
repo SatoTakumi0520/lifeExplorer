@@ -15,6 +15,8 @@ export type OnboardingPreferences = {
 
 export type RoutineType = 'nature' | 'mind' | 'work';
 
+export type ScheduleType = 'weekday' | 'weekend';
+
 export type RoutineTask = {
   id?: string | number;
   time: string;

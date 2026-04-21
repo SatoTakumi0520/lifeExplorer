@@ -47,8 +47,8 @@ export default function App() {
     loadingRoutine,
     routineError,
     clearRoutineError,
-    targetDate,
-    shiftDate,
+    scheduleType,
+    toggleScheduleType,
     handleAddTask,
     handleDeleteTask,
     copyTaskFromTemplate,
@@ -104,9 +104,9 @@ export default function App() {
       {currentScreen === 'HOME' && (loadingRoutine ? <TimelineSkeleton /> : (
         <ScreenTimeline
           go={go}
-          targetDate={targetDate}
-          shiftDate={shiftDate}
           myRoutine={myRoutine}
+          scheduleType={scheduleType}
+          onToggleSchedule={toggleScheduleType}
           loadingRoutine={loadingRoutine}
           setSelectedTask={setSelectedTask}
         />
@@ -114,9 +114,9 @@ export default function App() {
       {currentScreen === 'OTHER_HOME' && (
         <ScreenTimeline
           go={go}
-          targetDate={targetDate}
-          shiftDate={shiftDate}
           myRoutine={myRoutine}
+          scheduleType={scheduleType}
+          onToggleSchedule={toggleScheduleType}
           isOther
           selectedUser={selectedUser}
           setBorrowingUser={setBorrowingUser}
