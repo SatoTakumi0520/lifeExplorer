@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ArrowRight, Plus, X } from 'lucide-react';
-import { PersonaTemplate, RoutineTask, Screen } from '../lib/types';
+import { ArrowRight, Briefcase, Palmtree, Plus, X } from 'lucide-react';
+import { PersonaTemplate, RoutineTask, ScheduleType, Screen } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { timeToMinutes } from '../lib/utils';
 
@@ -28,6 +28,9 @@ type ScreenEditProps = {
   removeCopiedTask: (task: RoutineTask) => void;
   deleteTaskFromRoutine: (id: string | number) => void;
   setShowAddTask: (show: boolean) => void;
+  scheduleType: ScheduleType;
+  onToggleSchedule: () => void;
+  setSelectedTask: (task: RoutineTask | null) => void;
 };
 
 export const ScreenEdit = ({
@@ -38,6 +41,9 @@ export const ScreenEdit = ({
   removeCopiedTask,
   deleteTaskFromRoutine,
   setShowAddTask,
+  scheduleType,
+  onToggleSchedule,
+  setSelectedTask,
 }: ScreenEditProps) => {
   const [selectedTemplate, setSelectedTemplate] = useState<PersonaTemplate | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -62,6 +68,34 @@ export const ScreenEdit = ({
         }} className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors">完了</button>
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
+        {/* 平日/休日トグル */}
+        <div className="flex items-center justify-center gap-2 py-3 bg-white border-b border-stone-100">
+          <div className="flex items-center bg-stone-100 rounded-full p-0.5">
+            <button
+              onClick={() => scheduleType !== 'weekday' && onToggleSchedule()}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                scheduleType === 'weekday'
+                  ? 'bg-white text-stone-800 shadow-sm'
+                  : 'text-stone-400 hover:text-stone-600'
+              }`}
+            >
+              <Briefcase size={12} />
+              平日
+            </button>
+            <button
+              onClick={() => scheduleType !== 'weekend' && onToggleSchedule()}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                scheduleType === 'weekend'
+                  ? 'bg-white text-stone-800 shadow-sm'
+                  : 'text-stone-400 hover:text-stone-600'
+              }`}
+            >
+              <Palmtree size={12} />
+              休日
+            </button>
+          </div>
+        </div>
+
         <div className="pt-4 bg-white border-b border-stone-50">
           <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-2 px-4">テンプレート</h3>
           {/* Category filter tabs */}
@@ -189,7 +223,10 @@ export const ScreenEdit = ({
                       </div>
                     )}
                     {/* タスクカード */}
-                    <div className={`bg-white rounded-xl border border-stone-200 border-l-[3px] shadow-sm flex items-center gap-3 px-4 py-3 ${typeLeftBorder[item.type ?? 'work'] ?? 'border-l-stone-300'}`}>
+                    <div
+                      onClick={() => setSelectedTask(item)}
+                      className={`bg-white rounded-xl border border-stone-200 border-l-[3px] shadow-sm flex items-center gap-3 px-4 py-3 cursor-pointer active:scale-[0.98] transition-transform ${typeLeftBorder[item.type ?? 'work'] ?? 'border-l-stone-300'}`}
+                    >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-baseline gap-2 mb-0.5">
                           <span className="text-xs font-mono text-stone-400">{item.time}</span>
@@ -203,7 +240,7 @@ export const ScreenEdit = ({
                         {duration && (
                           <span className="text-[10px] font-mono text-stone-300 bg-stone-50 px-1.5 py-0.5 rounded">{duration}</span>
                         )}
-                        <button onClick={() => deleteTaskFromRoutine(item.id!)} className="text-stone-300 hover:text-red-400 transition-colors">
+                        <button onClick={(e) => { e.stopPropagation(); deleteTaskFromRoutine(item.id!); }} className="text-stone-300 hover:text-red-400 transition-colors">
                           <X size={15} />
                         </button>
                       </div>

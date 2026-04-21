@@ -132,6 +132,9 @@ export default function App() {
           removeCopiedTask={removeCopiedTask}
           deleteTaskFromRoutine={handleDeleteTask}
           setShowAddTask={setShowAddTask}
+          scheduleType={scheduleType}
+          onToggleSchedule={toggleScheduleType}
+          setSelectedTask={setSelectedTask}
         />
       )}
       {currentScreen === 'ONBOARDING' && (
