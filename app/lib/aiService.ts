@@ -6,11 +6,11 @@ const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 // デモモード用: ランダムなモックペルソナを生成
 const MOCK_TASKS: Record<string, RoutineTask[]> = {
   default: [
-    { time: '06:00', endTime: '06:30', title: 'Morning Ritual', thought: 'AIが提案した朝の儀式。一日の始まりを丁寧に。', type: 'mind' },
-    { time: '07:00', endTime: '08:00', title: 'Movement', thought: '身体を動かすことで頭が冴える。種類は問わない。', type: 'nature' },
-    { time: '09:00', endTime: '12:00', title: 'Deep Focus', thought: '最も集中力が高い時間帯を最重要タスクに充てる。', type: 'work' },
-    { time: '15:00', endTime: '16:00', title: 'Creative Break', thought: '午後のスランプを創造的な活動で乗り越える。', type: 'mind' },
-    { time: '19:00', endTime: '19:30', title: 'Reflection', thought: '今日学んだことを振り返り、明日への準備をする。', type: 'mind' },
+    { time: '06:00', endTime: '06:30', title: '朝の儀式', thought: 'AIが提案した朝の儀式。一日の始まりを丁寧に。', type: 'mind' },
+    { time: '07:00', endTime: '08:00', title: '朝の運動', thought: '身体を動かすことで頭が冴える。種類は問わない。', type: 'nature' },
+    { time: '09:00', endTime: '12:00', title: '集中ワーク', thought: '最も集中力が高い時間帯を最重要タスクに充てる。', type: 'work' },
+    { time: '15:00', endTime: '16:00', title: '創造的な休憩', thought: '午後のスランプを創造的な活動で乗り越える。', type: 'mind' },
+    { time: '19:00', endTime: '19:30', title: '一日の振り返り', thought: '今日学んだことを振り返り、明日への準備をする。', type: 'mind' },
   ],
 };
 
