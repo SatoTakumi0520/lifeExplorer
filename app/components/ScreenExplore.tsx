@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck, ExternalLink, RefreshCw } from 'lucide-react';
 import type { PublicRoutine } from '../hooks/usePublicRoutines';
 import type { RoutineComment } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
@@ -10,7 +10,7 @@ import { Screen, PersonaTemplate, PersonaCategory, SocialPost, RoutineTask } fro
 import { timeToMinutes } from '../lib/utils';
 import { useFavorites } from '../hooks/useFavorites';
 import { useEvents } from '../hooks/useEvents';
-import { EVENT_CATEGORY_LABELS } from '../lib/eventService';
+import { EVENT_CATEGORY_LABELS, type EventItem } from '../lib/eventService';
 
 // ミニタイムライン: タスクを5am-10pm(1020分)の割合でカラーブロック表示
 const MINI_START = 300;  // 5:00
@@ -676,6 +676,9 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
             <div className="flex items-center gap-2 px-1">
               <CalendarDays size={14} className="text-stone-400" />
               <h3 className="text-sm font-bold text-stone-600">今週のイベント</h3>
+              {events.some((e: EventItem) => e.source === 'connpass') && (
+                <span className="text-[9px] text-blue-400 bg-blue-50 px-1.5 py-0.5 rounded-full">LIVE</span>
+              )}
               <span className="text-[10px] text-stone-300 ml-auto">
                 {prefecture ? `${prefecture}周辺 · オンライン` : '全国 · オンライン'}
               </span>
@@ -752,22 +755,38 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                               <p className="text-[11px] text-stone-400 mt-1 italic">"{event.routineSuggestion.thought}"</p>
                             )}
                           </div>
-                          <button
-                            onClick={() => {
-                              if (!isAdded && onAddEventToRoutine) {
-                                onAddEventToRoutine(event.routineSuggestion);
-                                setAddedEventIds(prev => new Set([...prev, event.id]));
-                              }
-                            }}
-                            disabled={isAdded || !onAddEventToRoutine}
-                            className={`w-full py-3 rounded-xl text-sm font-bold transition-all ${
-                              isAdded
-                                ? 'bg-green-50 text-green-600 border border-green-200 cursor-default'
-                                : 'bg-stone-900 text-white hover:bg-stone-700'
-                            }`}
-                          >
-                            {isAdded ? '✓ ルーティンに追加済み' : 'ルーティンに追加する'}
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                if (!isAdded && onAddEventToRoutine) {
+                                  onAddEventToRoutine(event.routineSuggestion);
+                                  setAddedEventIds(prev => new Set([...prev, event.id]));
+                                }
+                              }}
+                              disabled={isAdded || !onAddEventToRoutine}
+                              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                                isAdded
+                                  ? 'bg-green-50 text-green-600 border border-green-200 cursor-default'
+                                  : 'bg-stone-900 text-white hover:bg-stone-700'
+                              }`}
+                            >
+                              {isAdded ? '✓ ルーティンに追加済み' : 'ルーティンに追加する'}
+                            </button>
+                            {event.url && (
+                              <a
+                                href={event.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center px-4 py-3 rounded-xl border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink size={16} />
+                              </a>
+                            )}
+                          </div>
+                          {event.source === 'connpass' && (
+                            <p className="text-[9px] text-stone-300 text-right mt-1">powered by connpass</p>
+                          )}
                         </div>
                       )}
                     </div>
