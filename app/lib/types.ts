@@ -25,6 +25,7 @@ export type RoutineTask = {
   thought: string;
   type: RoutineType;
   isOther?: boolean;
+  url?: string;
 };
 
 export type PersonaTemplate = {

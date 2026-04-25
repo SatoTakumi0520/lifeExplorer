@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { BookOpen, Coffee, Sun, Trash2, X } from 'lucide-react';
+import { BookOpen, Coffee, ExternalLink, Sun, Trash2, X } from 'lucide-react';
 import { RoutineTask } from '../lib/types';
 
 type TaskDetailModalProps = {
@@ -63,6 +63,20 @@ export const TaskDetailModal = ({ task, onClose, onDelete }: TaskDetailModalProp
             <div className="bg-white p-4 rounded-2xl border border-stone-100 mb-6">
               <p className="text-stone-500 leading-relaxed font-serif italic">"{task.thought}"</p>
             </div>
+          )}
+
+          {/* イベントリンク */}
+          {task.url && (
+            <a
+              href={task.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-3 bg-blue-50 rounded-2xl border border-blue-100 text-blue-600 hover:bg-blue-100 transition-colors mb-4"
+            >
+              <ExternalLink size={14} />
+              <span className="text-sm font-bold">イベント詳細を見る</span>
+              <span className="text-[10px] text-blue-400 ml-auto">connpass</span>
+            </a>
           )}
 
           {/* アクション */}

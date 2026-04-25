@@ -56,6 +56,7 @@ type TransformedEvent = {
     title: string;
     thought: string;
     type: 'nature' | 'mind' | 'work';
+    url?: string;
   };
   url: string;
   source: 'connpass';
@@ -151,6 +152,7 @@ function buildRoutineSuggestion(event: {
   started_at: string;
   ended_at: string;
   category: string;
+  url?: string;
 }) {
   const start = new Date(event.started_at);
   const end = new Date(event.ended_at);
@@ -175,6 +177,7 @@ function buildRoutineSuggestion(event: {
     title,
     thought: thoughtMap[event.category] ?? 'イベントに参加して新しい体験を。',
     type: typeMap[event.category] ?? ('mind' as const),
+    url: event.url,
   };
 }
 
@@ -201,6 +204,7 @@ function transformConnpassEvent(ev: ConnpassEvent, category: string): Transforme
       started_at: ev.started_at,
       ended_at: ev.ended_at,
       category,
+      url: ev.event_url,
     }),
     url: ev.event_url,
     source: 'connpass',
