@@ -22,7 +22,7 @@ export type EventItem = {
   description: string;
   routineSuggestion: RoutineTask;
   url?: string;
-  source?: 'connpass' | 'curated';
+  source?: 'doorkeeper' | 'curated';
 };
 
 const DOW_JA = ['日', '月', '火', '水', '木', '金', '土'];
@@ -42,21 +42,16 @@ function getDateOffset(days: number): Date {
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-/* ─── Connpass検索URL生成 ──────────────────────────────────── */
+/* ─── Doorkeeper検索URL生成（キュレートイベントのフォールバック用） ── */
 
-function buildConnpassSearchUrl(keyword: string): string {
-  const now = new Date();
-  const monthLater = new Date(now);
-  monthLater.setDate(monthLater.getDate() + 30);
-  const fmt = (d: Date) =>
-    `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
-  return `https://connpass.com/search/?q=${encodeURIComponent(keyword)}&start_from=${fmt(now)}&start_to=${fmt(monthLater)}`;
+function buildDoorkeeperSearchUrl(keyword: string): string {
+  return `https://www.doorkeeper.jp/events?q=${encodeURIComponent(keyword)}&sort=published_at`;
 }
 
 /* ─── キュレート済みイベント（フォールバック用） ─────────────── */
 
 function getCuratedEvents(): EventItem[] {
-  /* カテゴリ → Connpass検索キーワード（1語で広くヒットするもの） */
+  /* カテゴリ → Doorkeeper検索キーワード */
   const searchKeyword: Record<string, string> = {
     wellness: 'ヨガ',
     outdoor: '朝活',
@@ -225,10 +220,10 @@ function getCuratedEvents(): EventItem[] {
     },
   ];
 
-  // Connpass検索URLを各イベントに付与（1語で広く検索）
+  // Doorkeeper検索URLを各イベントに付与（フォールバック用）
   return rawEvents.map(e => {
     const kw = searchKeyword[e.category] ?? '朝活';
-    const url = buildConnpassSearchUrl(kw);
+    const url = buildDoorkeeperSearchUrl(kw);
     return { ...e, url, routineSuggestion: { ...e.routineSuggestion, url } };
   });
 }

@@ -1,42 +1,36 @@
 /**
- * /api/events — Connpass APIプロキシ + キャッシュ
+ * /api/events — Doorkeeper APIプロキシ + キャッシュ
  *
  * クエリパラメータ:
  *   ?prefecture=東京都  (省略時は全国)
  *
- * Connpass v1 APIからリアルタイムイベントを取得し、
+ * Doorkeeper APIからリアルタイムイベントを取得し、
  * アプリのテーマに合ったキーワードでフィルタリングする。
- * API失敗時はキュレートデータにフォールバック。
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 
 /* ─── 型 ─────────────────────────────────────────────── */
 
-type ConnpassEvent = {
-  event_id: number;
+type DoorkeeperEvent = {
   title: string;
-  catch: string;
+  id: number;
+  starts_at: string;   // ISO 8601
+  ends_at: string;
+  venue_name: string | null;
+  address: string | null;
   description: string;
-  event_url: string;
-  started_at: string;   // ISO 8601
-  ended_at: string;
-  place: string;
-  address: string;
+  public_url: string;
+  participants: number;
+  waitlisted: number;
+  ticket_limit: number | null;
   lat: string | null;
-  lon: string | null;
-  limit: number | null;
-  accepted: number;
-  waiting: number;
-  event_type: string;
+  long: string | null;
 };
 
-type ConnpassResponse = {
-  results_returned: number;
-  results_available: number;
-  results_start: number;
-  events: ConnpassEvent[];
-};
+type DoorkeeperResponse = {
+  event: DoorkeeperEvent;
+}[];
 
 type TransformedEvent = {
   id: string;
@@ -59,7 +53,7 @@ type TransformedEvent = {
     url?: string;
   };
   url: string;
-  source: 'connpass';
+  source: 'doorkeeper';
 };
 
 /* ─── キャッシュ ──────────────────────────────────────── */
@@ -69,11 +63,15 @@ const CACHE_TTL = 60 * 60 * 1000; // 1時間
 
 /* ─── 検索キーワード ─────────────────────────────────── */
 
-const SEARCH_GROUPS: { keywords: string[]; category: string }[] = [
-  { keywords: ['ヨガ', '瞑想', 'マインドフルネス', 'ウェルネス'], category: 'wellness' },
-  { keywords: ['ランニング', 'ウォーキング', 'ハイキング', 'アウトドア'], category: 'outdoor' },
-  { keywords: ['読書会', '勉強会', 'もくもく会', 'ワークショップ'], category: 'learning' },
-  { keywords: ['朝活', 'コミュニティ', '交流会', 'ミートアップ'], category: 'social' },
+const SEARCH_KEYWORDS: { keyword: string; category: string }[] = [
+  { keyword: 'ヨガ',         category: 'wellness' },
+  { keyword: '瞑想',         category: 'wellness' },
+  { keyword: '朝活',         category: 'social' },
+  { keyword: '読書会',       category: 'learning' },
+  { keyword: '勉強会',       category: 'learning' },
+  { keyword: 'ワークショップ', category: 'learning' },
+  { keyword: 'ランニング',   category: 'outdoor' },
+  { keyword: '交流会',       category: 'social' },
 ];
 
 /* ─── ユーティリティ ──────────────────────────────────── */
@@ -95,6 +93,7 @@ function formatTime(isoString: string): string {
 function calcDuration(start: string, end: string): string {
   const ms = new Date(end).getTime() - new Date(start).getTime();
   const minutes = Math.round(ms / 60000);
+  if (minutes <= 0) return '未定';
   if (minutes < 60) return `${minutes}分`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
@@ -105,15 +104,15 @@ function padTime(h: number, m: number): string {
   return `${String(Math.max(0, Math.min(23, h))).padStart(2, '0')}:${String(Math.max(0, Math.min(59, m))).padStart(2, '0')}`;
 }
 
-function isOnlineEvent(place: string, address: string): boolean {
-  const combined = `${place} ${address}`.toLowerCase();
+function isOnlineEvent(venueName: string, address: string): boolean {
+  const combined = `${venueName} ${address}`.toLowerCase();
   return combined.includes('オンライン') || combined.includes('zoom') || combined.includes('online')
-    || combined.includes('discord') || combined.includes('youtube') || combined.includes('teams');
+    || combined.includes('discord') || combined.includes('youtube') || combined.includes('teams')
+    || (!venueName && !address); // 場所未設定はオンラインとみなす
 }
 
 function extractPrefecture(address: string): string {
-  if (!address) return '不明';
-  // 都道府県を抽出
+  if (!address) return 'オンライン';
   const match = address.match(/(北海道|東京都|大阪府|京都府|.{2,3}県)/);
   return match ? match[1] : '不明';
 }
@@ -121,10 +120,14 @@ function extractPrefecture(address: string): string {
 function matchesPrefecture(address: string, prefecture: string): boolean {
   if (!address) return false;
   if (address.includes(prefecture)) return true;
-  // 「東京」で「東京都」にマッチ
   const short = prefecture.replace(/[都府県]$/, '');
   if (short.length >= 2 && address.includes(short)) return true;
   return false;
+}
+
+/** HTMLタグを除去してプレーンテキスト化 */
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
 }
 
 /* ─── routineSuggestion 生成 ─────────────────────────── */
@@ -181,89 +184,90 @@ function buildRoutineSuggestion(event: {
   };
 }
 
-/* ─── Connpass → TransformedEvent 変換 ───────────────── */
+/* ─── Doorkeeper → TransformedEvent 変換 ────────────── */
 
-function transformConnpassEvent(ev: ConnpassEvent, category: string): TransformedEvent {
-  const online = isOnlineEvent(ev.place || '', ev.address || '');
-  const pref = online ? 'オンライン' : extractPrefecture(ev.address || '');
+function transformDoorkeeperEvent(ev: DoorkeeperEvent, category: string): TransformedEvent {
+  const venue = ev.venue_name || '';
+  const address = ev.address || '';
+  const online = isOnlineEvent(venue, address);
+  const pref = online ? 'オンライン' : extractPrefecture(address);
+
+  // descriptionからHTMLタグを除去して先頭200文字
+  const plainDesc = stripHtml(ev.description || '').slice(0, 200) || ev.title;
 
   return {
-    id: `connpass-${ev.event_id}`,
+    id: `doorkeeper-${ev.id}`,
     title: ev.title,
-    date: formatDateJa(new Date(ev.started_at)),
-    time: formatTime(ev.started_at),
-    duration: calcDuration(ev.started_at, ev.ended_at),
-    location: ev.place || ev.address || (online ? 'オンライン' : '未定'),
+    date: formatDateJa(new Date(ev.starts_at)),
+    time: formatTime(ev.starts_at),
+    duration: calcDuration(ev.starts_at, ev.ends_at),
+    location: venue || address || (online ? 'オンライン' : '未定'),
     prefecture: pref,
     isOnline: online,
     category,
     price: '詳細はリンク参照',
-    description: (ev.catch || '').slice(0, 200) || ev.title,
+    description: plainDesc,
     routineSuggestion: buildRoutineSuggestion({
       title: ev.title,
-      started_at: ev.started_at,
-      ended_at: ev.ended_at,
+      started_at: ev.starts_at,
+      ended_at: ev.ends_at,
       category,
-      url: ev.event_url,
+      url: ev.public_url,
     }),
-    url: ev.event_url,
-    source: 'connpass',
+    url: ev.public_url,
+    source: 'doorkeeper',
   };
 }
 
-/* ─── Connpass API呼び出し ───────────────────────────── */
+/* ─── Doorkeeper API呼び出し ──────────────────────────── */
 
-async function fetchConnpassEvents(prefecture: string | null): Promise<TransformedEvent[]> {
+async function fetchDoorkeeperEvents(prefecture: string | null): Promise<TransformedEvent[]> {
   const now = new Date();
-  // 今日〜7日後の日付範囲
-  const ymdList: string[] = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(now);
-    d.setDate(d.getDate() + i);
-    ymdList.push(
-      `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`
-    );
-  }
-  const ymd = ymdList.join(',');
+  const since = now.toISOString();
+  const until = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(); // 2週間先まで
 
   const allEvents: TransformedEvent[] = [];
   const seenIds = new Set<number>();
 
-  for (const group of SEARCH_GROUPS) {
+  for (const { keyword, category } of SEARCH_KEYWORDS) {
     try {
-      const keyword = group.keywords.join(',');
-      const url = `https://connpass.com/api/v1/event/?keyword_or=${encodeURIComponent(keyword)}&ymd=${ymd}&count=10&order=2`;
+      const params = new URLSearchParams({
+        q: keyword,
+        sort: 'starts_at',
+        since,
+        until,
+      });
+      // 都道府県フィルタ: Doorkeeper APIは場所でのフィルタ非対応のため、取得後にフィルタ
+      const url = `https://api.doorkeeper.jp/events?${params.toString()}`;
 
       const res = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; LifeExplorer/1.0; +https://life-explorer.vercel.app)',
-          'Accept': 'application/json',
-        },
+        headers: { 'Accept': 'application/json' },
         signal: AbortSignal.timeout(8000),
       });
 
       if (!res.ok) continue;
 
-      const data: ConnpassResponse = await res.json();
+      const data: DoorkeeperResponse = await res.json();
 
-      for (const ev of data.events) {
-        if (seenIds.has(ev.event_id)) continue;
-        seenIds.add(ev.event_id);
+      for (const item of data) {
+        const ev = item.event;
+        if (seenIds.has(ev.id)) continue;
+        seenIds.add(ev.id);
 
-        const online = isOnlineEvent(ev.place || '', ev.address || '');
+        const online = isOnlineEvent(ev.venue_name || '', ev.address || '');
 
         // 都道府県フィルタ: オンラインか、指定都道府県に一致するもの
         if (prefecture && !online && !matchesPrefecture(ev.address || '', prefecture)) {
           continue;
         }
 
-        allEvents.push(transformConnpassEvent(ev, group.category));
+        allEvents.push(transformDoorkeeperEvent(ev, category));
       }
 
-      // レートリミット対策: リクエスト間に200ms待つ
-      await new Promise(r => setTimeout(r, 200));
+      // レートリミット対策: 300req/5min → リクエスト間に100ms待つ
+      await new Promise(r => setTimeout(r, 100));
     } catch {
-      // 個別のグループが失敗しても続行
+      // 個別のキーワードが失敗しても続行
       continue;
     }
   }
@@ -291,14 +295,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const events = await fetchConnpassEvents(prefecture);
+    const events = await fetchDoorkeeperEvents(prefecture);
 
     // キャッシュ保存
     cache.set(cacheKey, { events, fetchedAt: Date.now() });
 
     return NextResponse.json({
       events,
-      source: 'connpass',
+      source: 'doorkeeper',
       count: events.length,
     });
   } catch {

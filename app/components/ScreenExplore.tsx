@@ -676,8 +676,8 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
             <div className="flex items-center gap-2 px-1">
               <CalendarDays size={14} className="text-stone-400" />
               <h3 className="text-sm font-bold text-stone-600">今週のイベント</h3>
-              {events.some((e: EventItem) => e.source === 'connpass') && (
-                <span className="text-[9px] text-blue-400 bg-blue-50 px-1.5 py-0.5 rounded-full">LIVE</span>
+              {events.some((e: EventItem) => e.source === 'doorkeeper') && (
+                <span className="text-[9px] text-green-500 bg-green-50 px-1.5 py-0.5 rounded-full">LIVE</span>
               )}
               <span className="text-[10px] text-stone-300 ml-auto">
                 {prefecture ? `${prefecture}周辺 · オンライン` : '全国 · オンライン'}
@@ -781,12 +781,12 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <ExternalLink size={14} />
-                                <span>connpassで探す</span>
+                                <span>詳細を見る</span>
                               </a>
                             )}
                           </div>
-                          {event.source === 'connpass' && (
-                            <p className="text-[9px] text-stone-300 text-right mt-1">powered by connpass</p>
+                          {event.source === 'doorkeeper' && (
+                            <p className="text-[9px] text-stone-300 text-right mt-1">powered by Doorkeeper</p>
                           )}
                         </div>
                       )}
