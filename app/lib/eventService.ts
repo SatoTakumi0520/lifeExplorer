@@ -42,10 +42,31 @@ function getDateOffset(days: number): Date {
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
+/* ─── Connpass検索URL生成 ──────────────────────────────────── */
+
+function buildConnpassSearchUrl(keywords: string[]): string {
+  const now = new Date();
+  const weekLater = new Date(now);
+  weekLater.setDate(weekLater.getDate() + 7);
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+  const q = keywords.join(' ');
+  return `https://connpass.com/search/?q=${encodeURIComponent(q)}&start_from=${fmt(now)}&start_to=${fmt(weekLater)}`;
+}
+
 /* ─── キュレート済みイベント（フォールバック用） ─────────────── */
 
 function getCuratedEvents(): EventItem[] {
-  return [
+  /* カテゴリ → Connpass検索キーワード */
+  const searchKeywords: Record<string, string[]> = {
+    wellness: ['ヨガ', 'マインドフルネス', 'ウェルネス'],
+    outdoor: ['ランニング', 'ウォーキング', 'アウトドア'],
+    learning: ['読書会', '勉強会', 'もくもく会'],
+    spiritual: ['瞑想', '禅', 'マインドフルネス'],
+    social: ['朝活', '交流会', 'コミュニティ'],
+  };
+
+  const rawEvents: EventItem[] = [
     // ── オンライン（全国共通）
     {
       id: 'curated-online-1',
@@ -204,6 +225,14 @@ function getCuratedEvents(): EventItem[] {
       source: 'curated',
     },
   ];
+
+  // Connpass検索URLを各イベントに付与
+  return rawEvents.map(e => {
+    const kw = searchKeywords[e.category] ?? [e.title.slice(0, 10)];
+    const loc = e.isOnline ? 'オンライン' : e.prefecture.replace(/[都道府県]$/, '');
+    const url = buildConnpassSearchUrl([...kw.slice(0, 2), loc]);
+    return { ...e, url, routineSuggestion: { ...e.routineSuggestion, url } };
+  });
 }
 
 /* ─── フィルタリングロジック ─────────────────────────────────── */
