@@ -44,26 +44,25 @@ const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
 /* ─── Connpass検索URL生成 ──────────────────────────────────── */
 
-function buildConnpassSearchUrl(keywords: string[]): string {
+function buildConnpassSearchUrl(keyword: string): string {
   const now = new Date();
-  const weekLater = new Date(now);
-  weekLater.setDate(weekLater.getDate() + 7);
+  const monthLater = new Date(now);
+  monthLater.setDate(monthLater.getDate() + 30);
   const fmt = (d: Date) =>
     `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
-  const q = keywords.join(' ');
-  return `https://connpass.com/search/?q=${encodeURIComponent(q)}&start_from=${fmt(now)}&start_to=${fmt(weekLater)}`;
+  return `https://connpass.com/search/?q=${encodeURIComponent(keyword)}&start_from=${fmt(now)}&start_to=${fmt(monthLater)}`;
 }
 
 /* ─── キュレート済みイベント（フォールバック用） ─────────────── */
 
 function getCuratedEvents(): EventItem[] {
-  /* カテゴリ → Connpass検索キーワード */
-  const searchKeywords: Record<string, string[]> = {
-    wellness: ['ヨガ', 'マインドフルネス', 'ウェルネス'],
-    outdoor: ['ランニング', 'ウォーキング', 'アウトドア'],
-    learning: ['読書会', '勉強会', 'もくもく会'],
-    spiritual: ['瞑想', '禅', 'マインドフルネス'],
-    social: ['朝活', '交流会', 'コミュニティ'],
+  /* カテゴリ → Connpass検索キーワード（1語で広くヒットするもの） */
+  const searchKeyword: Record<string, string> = {
+    wellness: 'ヨガ',
+    outdoor: '朝活',
+    learning: '読書会',
+    spiritual: '瞑想',
+    social: '朝活',
   };
 
   const rawEvents: EventItem[] = [
@@ -226,11 +225,10 @@ function getCuratedEvents(): EventItem[] {
     },
   ];
 
-  // Connpass検索URLを各イベントに付与
+  // Connpass検索URLを各イベントに付与（1語で広く検索）
   return rawEvents.map(e => {
-    const kw = searchKeywords[e.category] ?? [e.title.slice(0, 10)];
-    const loc = e.isOnline ? 'オンライン' : e.prefecture.replace(/[都道府県]$/, '');
-    const url = buildConnpassSearchUrl([...kw.slice(0, 2), loc]);
+    const kw = searchKeyword[e.category] ?? '朝活';
+    const url = buildConnpassSearchUrl(kw);
     return { ...e, url, routineSuggestion: { ...e.routineSuggestion, url } };
   });
 }

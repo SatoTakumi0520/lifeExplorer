@@ -777,10 +777,11 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                 href={event.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center px-4 py-3 rounded-xl border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors"
+                                className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors text-sm font-bold whitespace-nowrap"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <ExternalLink size={16} />
+                                <ExternalLink size={14} />
+                                <span>connpassで探す</span>
                               </a>
                             )}
                           </div>

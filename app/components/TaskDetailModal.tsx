@@ -74,8 +74,8 @@ export const TaskDetailModal = ({ task, onClose, onDelete }: TaskDetailModalProp
               className="flex items-center gap-2 px-4 py-3 bg-blue-50 rounded-2xl border border-blue-100 text-blue-600 hover:bg-blue-100 transition-colors mb-4"
             >
               <ExternalLink size={14} />
-              <span className="text-sm font-bold">イベント詳細を見る</span>
-              <span className="text-[10px] text-blue-400 ml-auto">connpass</span>
+              <span className="text-sm font-bold">connpassで類似イベントを探す</span>
+              <span className="text-[10px] text-blue-400 ml-auto">→</span>
             </a>
           )}
 
