@@ -22,6 +22,8 @@ export type EventItem = {
   description: string;
   routineSuggestion: RoutineTask;
   url?: string;
+  startsAt?: string;    // ISO 8601（Googleカレンダー連携用）
+  endsAt?: string;      // ISO 8601
   source?: 'doorkeeper' | 'curated';
 };
 
@@ -38,6 +40,14 @@ function getDateOffset(days: number): Date {
   const d = new Date();
   d.setDate(d.getDate() + days);
   return d;
+}
+
+/** キュレートイベント用: dayOffset + 時刻文字列 → ISO 8601 */
+function buildISO(dayOffset: number, timeStr: string): string {
+  const d = getDateOffset(dayOffset);
+  const [h, m] = timeStr.split(':').map(Number);
+  d.setHours(h, m, 0, 0);
+  return d.toISOString();
 }
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
@@ -75,6 +85,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '全国から参加できる朝活コミュニティ。自分のモーニングルーティンをシェアし、仲間と一緒に朝をスタート。',
       routineSuggestion: { time: '06:45', endTime: '08:00', title: 'オンライン朝活参加', thought: '全国の仲間と朝をスタートする。', type: 'mind' },
+      startsAt: buildISO(0, '07:00'), endsAt: buildISO(0, '07:45'),
       source: 'curated',
     },
     {
@@ -90,6 +101,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '夜の就寝前に心を落ち着かせる瞑想セッション。インストラクターが誘導するガイド瞑想。',
       routineSuggestion: { time: '21:45', endTime: '22:30', title: 'オンライン瞑想セッション', thought: '一日の終わりに心を静める。', type: 'mind' },
+      startsAt: buildISO(1, '22:00'), endsAt: buildISO(1, '22:30'),
       source: 'curated',
     },
     {
@@ -105,6 +117,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '今月の課題本について語り合うオンライン読書会。事前に課題本を読んでいなくても参加OK。',
       routineSuggestion: { time: '19:30', endTime: '22:00', title: 'オンライン読書会', thought: '本を通じて全国の仲間と繋がる夜。', type: 'mind' },
+      startsAt: buildISO(3, '20:00'), endsAt: buildISO(3, '21:30'),
       source: 'curated',
     },
     // ── 東京都
@@ -121,6 +134,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '早朝の公園をゆっくり歩きながら自然と向き合う時間。初心者歓迎。',
       routineSuggestion: { time: '06:30', endTime: '08:30', title: '森林浴ウォーキング（代々木公園）', thought: '自然の中を歩いて心をリセットする朝。', type: 'nature' },
+      startsAt: buildISO(0, '07:00'), endsAt: buildISO(0, '08:30'),
       source: 'curated',
     },
     {
@@ -136,6 +150,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '皇居1周（約5km）をペースグループ別に走るクラブ。初心者から上級者まで対応。',
       routineSuggestion: { time: '05:45', endTime: '07:30', title: '皇居ランニング', thought: '朝の空気の中を走って一日をスタートする。', type: 'nature' },
+      startsAt: buildISO(4, '06:00'), endsAt: buildISO(4, '07:00'),
       source: 'curated',
     },
     // ── 大阪府
@@ -152,6 +167,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '大阪城を望みながら行う屋外ヨガクラス。初心者歓迎。',
       routineSuggestion: { time: '06:30', endTime: '08:30', title: '大阪城公園ヨガ', thought: '城を見ながら心と体を整える朝。', type: 'nature' },
+      startsAt: buildISO(0, '07:00'), endsAt: buildISO(0, '08:00'),
       source: 'curated',
     },
     // ── 愛知県
@@ -168,6 +184,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '名古屋市内の緑あふれる公園でのランニングクラブ。初参加歓迎。',
       routineSuggestion: { time: '06:00', endTime: '08:00', title: '名城公園ランニング', thought: '緑の中を走って名古屋の朝を楽しむ。', type: 'nature' },
+      startsAt: buildISO(1, '06:30'), endsAt: buildISO(1, '07:30'),
       source: 'curated',
     },
     // ── 福岡県
@@ -184,6 +201,7 @@ function getCuratedEvents(): EventItem[] {
       price: '無料',
       description: '大濠公園の池を眺めながら走る早朝ランニングクラブ。',
       routineSuggestion: { time: '05:45', endTime: '07:30', title: '大濠公園ラン', thought: '池の朝靄の中を走る爽快な朝。', type: 'nature' },
+      startsAt: buildISO(0, '06:00'), endsAt: buildISO(0, '07:00'),
       source: 'curated',
     },
     // ── 京都府
@@ -200,6 +218,7 @@ function getCuratedEvents(): EventItem[] {
       price: '¥1,000',
       description: '観光客がいない早朝の嵐山を禅の視点で歩くツアー。',
       routineSuggestion: { time: '06:00', endTime: '09:00', title: '嵐山 禅ウォーキング', thought: '観光客のいない京都で内面と向き合う朝。', type: 'mind' },
+      startsAt: buildISO(2, '06:30'), endsAt: buildISO(2, '08:30'),
       source: 'curated',
     },
     // ── 神奈川県
@@ -216,6 +235,7 @@ function getCuratedEvents(): EventItem[] {
       price: '¥500',
       description: '鎌倉の古刹で行われる坐禅体験。',
       routineSuggestion: { time: '05:30', endTime: '07:30', title: '円覚寺 坐禅体験', thought: '鎌倉の古刹で無心になる早朝。', type: 'mind' },
+      startsAt: buildISO(5, '06:00'), endsAt: buildISO(5, '06:45'),
       source: 'curated',
     },
   ];

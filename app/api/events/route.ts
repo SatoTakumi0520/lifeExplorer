@@ -53,6 +53,8 @@ type TransformedEvent = {
     url?: string;
   };
   url: string;
+  startsAt: string;
+  endsAt: string;
   source: 'doorkeeper';
 };
 
@@ -215,6 +217,8 @@ function transformDoorkeeperEvent(ev: DoorkeeperEvent, category: string): Transf
       url: ev.public_url,
     }),
     url: ev.public_url,
+    startsAt: ev.starts_at,
+    endsAt: ev.ends_at,
     source: 'doorkeeper',
   };
 }

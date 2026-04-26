@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck, ExternalLink, RefreshCw } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck, ExternalLink, CalendarPlus } from 'lucide-react';
 import type { PublicRoutine } from '../hooks/usePublicRoutines';
 import type { RoutineComment } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { generatePersona } from '../lib/aiService';
-import { Screen, PersonaTemplate, PersonaCategory, SocialPost, RoutineTask } from '../lib/types';
+import { Screen, PersonaTemplate, PersonaCategory, SocialPost } from '../lib/types';
 import { timeToMinutes } from '../lib/utils';
 import { useFavorites } from '../hooks/useFavorites';
 import { useEvents } from '../hooks/useEvents';
@@ -39,7 +39,6 @@ type ScreenExploreProps = {
   preferredCategories?: PersonaCategory[];
   lifestyleRhythm?: 'morning' | 'night' | 'balanced' | null;
   recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
-  onAddEventToRoutine?: (task: RoutineTask) => void;
   prefecture?: string | null;
   publicRoutines?: PublicRoutine[];
   onToggleLike?: (routineId: string) => void;
@@ -69,11 +68,10 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onAddEventToRoutine, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId, isFollowing, onToggleFollow }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId, isFollowing, onToggleFollow }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const { events, loading: eventsLoading } = useEvents(prefecture ?? null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
-  const [addedEventIds, setAddedEventIds] = useState<Set<string>>(new Set());
   const [communitySearch, setCommunitySearch] = useState('');
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
@@ -693,7 +691,6 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 {events.map((event) => {
                   const catInfo = EVENT_CATEGORY_LABELS[event.category] ?? EVENT_CATEGORY_LABELS['culture'];
                   const isExpanded = expandedEventId === event.id;
-                  const isAdded = addedEventIds.has(event.id);
                   return (
                     <div key={event.id} className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
                       {/* ヘッダー（タップで展開） */}
@@ -742,36 +739,26 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                           {event.description && (
                             <p className="text-xs text-stone-500 leading-relaxed">{event.description}</p>
                           )}
-                          {/* ルーティン提案 */}
-                          <div className="bg-stone-50 rounded-xl p-3">
-                            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wide mb-1.5">ルーティン提案</p>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-mono font-bold text-stone-600">
-                                {event.routineSuggestion.time}{event.routineSuggestion.endTime ? ` — ${event.routineSuggestion.endTime}` : ''}
-                              </span>
-                              <span className="text-xs text-stone-700 font-bold">{event.routineSuggestion.title}</span>
-                            </div>
-                            {event.routineSuggestion.thought && (
-                              <p className="text-[11px] text-stone-400 mt-1 italic">"{event.routineSuggestion.thought}"</p>
-                            )}
-                          </div>
                           <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                if (!isAdded && onAddEventToRoutine) {
-                                  onAddEventToRoutine(event.routineSuggestion);
-                                  setAddedEventIds(prev => new Set([...prev, event.id]));
-                                }
-                              }}
-                              disabled={isAdded || !onAddEventToRoutine}
-                              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                                isAdded
-                                  ? 'bg-green-50 text-green-600 border border-green-200 cursor-default'
-                                  : 'bg-stone-900 text-white hover:bg-stone-700'
-                              }`}
-                            >
-                              {isAdded ? '✓ ルーティンに追加済み' : 'ルーティンに追加する'}
-                            </button>
+                            {event.startsAt && (
+                              <a
+                                href={(() => {
+                                  const fmtGCal = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+                                  const start = fmtGCal(event.startsAt!);
+                                  const end = event.endsAt ? fmtGCal(event.endsAt) : fmtGCal(new Date(new Date(event.startsAt!).getTime() + 3600000).toISOString());
+                                  const details = event.url ? `${event.description || ''}\n\n詳細: ${event.url}` : (event.description || '');
+                                  const params = new URLSearchParams({ action: 'TEMPLATE', text: event.title, dates: `${start}/${end}`, details, location: event.location || '' });
+                                  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+                                })()}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-stone-900 text-white rounded-xl text-sm font-bold hover:bg-stone-700 transition-colors"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <CalendarPlus size={16} />
+                                カレンダーに追加
+                              </a>
+                            )}
                             {event.url && (
                               <a
                                 href={event.url}
@@ -781,7 +768,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <ExternalLink size={14} />
-                                <span>詳細を見る</span>
+                                詳細を見る
                               </a>
                             )}
                           </div>
