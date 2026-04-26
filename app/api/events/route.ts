@@ -235,8 +235,11 @@ async function fetchConnpassEvents(prefecture: string | null): Promise<Transform
       const url = `https://connpass.com/api/v1/event/?keyword_or=${encodeURIComponent(keyword)}&ymd=${ymd}&count=10&order=2`;
 
       const res = await fetch(url, {
-        headers: { 'User-Agent': 'LifeExplorer/1.0' },
-        signal: AbortSignal.timeout(5000),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; LifeExplorer/1.0; +https://life-explorer.vercel.app)',
+          'Accept': 'application/json',
+        },
+        signal: AbortSignal.timeout(8000),
       });
 
       if (!res.ok) continue;
