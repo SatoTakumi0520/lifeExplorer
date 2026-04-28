@@ -11,6 +11,7 @@ type ScreenBorrowProps = {
   myRoutine: RoutineTask[];
   copyTaskFromTemplate: (task: RoutineTask) => void;
   removeCopiedTask: (task: RoutineTask) => void;
+  recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
 };
 
 export const ScreenBorrow = ({
@@ -20,6 +21,7 @@ export const ScreenBorrow = ({
   myRoutine,
   copyTaskFromTemplate,
   removeCopiedTask,
+  recordBorrow,
 }: ScreenBorrowProps) => {
   if (!borrowingUser) return null;
   const allTimes = [...new Set([...borrowingUser.routine.map((routine) => routine.time), ...myRoutine.map((routine) => routine.time)])].sort();
@@ -72,7 +74,7 @@ export const ScreenBorrow = ({
               </div>
               <div className="w-10 flex items-center justify-center bg-stone-50/50">
                 {userTask && !added && (
-                  <button onClick={() => copyTaskFromTemplate(userTask)} className="p-1.5 rounded-full bg-white border">
+                  <button onClick={() => { copyTaskFromTemplate(userTask); recordBorrow?.({ id: borrowingUser.id, name: borrowingUser.user, title: borrowingUser.title }); }} className="p-1.5 rounded-full bg-white border">
                     <ArrowRight size={12} />
                   </button>
                 )}

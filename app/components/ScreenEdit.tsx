@@ -31,6 +31,7 @@ type ScreenEditProps = {
   scheduleType: ScheduleType;
   onToggleSchedule: () => void;
   setSelectedTask: (task: RoutineTask | null) => void;
+  recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
 };
 
 export const ScreenEdit = ({
@@ -44,6 +45,7 @@ export const ScreenEdit = ({
   scheduleType,
   onToggleSchedule,
   setSelectedTask,
+  recordBorrow,
 }: ScreenEditProps) => {
   const [selectedTemplate, setSelectedTemplate] = useState<PersonaTemplate | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -173,7 +175,7 @@ export const ScreenEdit = ({
                       </div>
                       <div className="w-10 flex items-center justify-center bg-stone-50/50">
                         {tplTask && !added && (
-                          <button onClick={() => copyTaskFromTemplate(tplTask)} className="p-1.5 rounded-full bg-white border border-stone-200 text-stone-400 hover:text-green-600">
+                          <button onClick={() => { copyTaskFromTemplate(tplTask); if (selectedTemplate) recordBorrow?.({ id: selectedTemplate.id, name: selectedTemplate.name, title: selectedTemplate.title, category: selectedTemplate.category }); }} className="p-1.5 rounded-full bg-white border border-stone-200 text-stone-400 hover:text-green-600">
                             <ArrowRight size={12} />
                           </button>
                         )}

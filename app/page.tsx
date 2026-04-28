@@ -163,6 +163,7 @@ export default function App() {
           scheduleType={scheduleType}
           onToggleSchedule={toggleScheduleType}
           setSelectedTask={setSelectedTask}
+          recordBorrow={recordBorrow}
         />
       )}
       {currentScreen === 'ONBOARDING' && (
@@ -181,6 +182,7 @@ export default function App() {
           myRoutine={myRoutine}
           copyTaskFromTemplate={copyTaskFromTemplate}
           removeCopiedTask={removeCopiedTask}
+          recordBorrow={recordBorrow}
         />
       )}
       {currentScreen === 'SETTINGS' && (
