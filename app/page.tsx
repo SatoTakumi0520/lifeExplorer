@@ -22,7 +22,7 @@ import { useSettings } from './hooks/useSettings';
 import { useOnboarding } from './hooks/useOnboarding';
 import { useDarkMode } from './hooks/useDarkMode';
 import { useBorrowHistory } from './hooks/useBorrowHistory';
-import { useActivityStreak } from './hooks/useActivityStreak';
+// useActivityStreak は Phase 2（タスク完了機能）実装後に復活予定
 import { usePublicRoutines } from './hooks/usePublicRoutines';
 import { useComments } from './hooks/useComments';
 import { useFollows } from './hooks/useFollows';
@@ -63,7 +63,7 @@ export default function App() {
   const { settings: aiSettings, saving: aiSaving, saveSettings: saveAISettings, hasApiKey } = useSettings(session);
   const { preferences: onboardingPrefs, isComplete: onboardingComplete, savePreferences: saveOnboarding, skipOnboarding, resetOnboarding, loading: onboardingLoading } = useOnboarding(session, loading);
   const { history: borrowHistory, recordBorrow } = useBorrowHistory();
-  const { streak, last35Days, totalActiveDays } = useActivityStreak();
+  // useActivityStreak は Phase 2 で復活予定
   useDarkMode(); // アプリ起動時にダークモード状態を復元
   const { publicRoutines, isPublished, publish: publishRoutine, unpublish: unpublishRoutine, toggleLike } = usePublicRoutines(session);
   const { commentsByRoutine, loadingRoutineId: loadingComments, postingRoutineId: postingComment, fetchComments, postComment, deleteComment } = useComments(session);
@@ -172,7 +172,7 @@ export default function App() {
         />
       )}
       {currentScreen === 'EXPLORE' && (personaTemplates.length === 0 ? <ExploreSkeleton /> : <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onScheduleEvent={handleScheduleEvent} isEventScheduled={isEventScheduled} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} commentsByRoutine={commentsByRoutine} loadingComments={loadingComments} postingComment={postingComment} onFetchComments={fetchComments} onPostComment={postComment} onDeleteComment={deleteComment} currentUserId={session?.user?.id} isFollowing={isFollowing} onToggleFollow={toggleFollow} />)}
-      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} streak={streak} last35Days={last35Days} totalActiveDays={totalActiveDays} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
+      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} upcomingEvents={upcomingEvents} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
           go={go}
