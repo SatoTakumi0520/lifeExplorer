@@ -26,8 +26,11 @@ import { useActivityStreak } from './hooks/useActivityStreak';
 import { usePublicRoutines } from './hooks/usePublicRoutines';
 import { useComments } from './hooks/useComments';
 import { useFollows } from './hooks/useFollows';
+import { useScheduledEvents } from './hooks/useScheduledEvents';
 import { ScreenOnboarding } from './components/ScreenOnboarding';
+import { ScreenCalendar } from './components/ScreenCalendar';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
+import type { EventItem } from './lib/eventService';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('TOP');
@@ -44,6 +47,8 @@ export default function App() {
   const { personaTemplates, socialFeed } = usePublicData();
   const {
     myRoutine,
+    routineWeekday,
+    routineWeekend,
     loadingRoutine,
     routineError,
     clearRoutineError,
@@ -63,8 +68,31 @@ export default function App() {
   const { publicRoutines, isPublished, publish: publishRoutine, unpublish: unpublishRoutine, toggleLike } = usePublicRoutines(session);
   const { commentsByRoutine, loadingRoutineId: loadingComments, postingRoutineId: postingComment, fetchComments, postComment, deleteComment } = useComments(session);
   const { isFollowing, toggleFollow } = useFollows(session);
+  const { events: scheduledEvents, upcomingEvents, addEvent: addScheduledEvent, removeEvent: removeScheduledEvent, getTasksForDate, isScheduled: isEventScheduled, getEventDatesForMonth } = useScheduledEvents(session);
 
   const go = (screen: Screen) => setCurrentScreen(screen);
+
+  // EventItem → ScheduledEvent 変換して予定に追加
+  const handleScheduleEvent = useCallback((event: EventItem) => {
+    const dateKey = event.startsAt ? event.startsAt.slice(0, 10) : '';
+    if (!dateKey) return;
+    addScheduledEvent({
+      title: event.title,
+      date: dateKey,
+      time: event.time || '00:00',
+      endTime: event.routineSuggestion?.endTime,
+      location: event.location,
+      url: event.url,
+      category: event.category,
+      source: event.source,
+      thought: event.routineSuggestion?.thought || '',
+      type: event.routineSuggestion?.type || 'mind',
+    });
+  }, [addScheduledEvent]);
+
+  // 今日のイベントをルーティンに統合
+  const todayEventTasks = getTasksForDate(new Date());
+  const mergedRoutine = [...myRoutine, ...todayEventTasks].sort((a, b) => a.time.localeCompare(b.time));
 
   // ログイン済みユーザはTOP画面をスキップ
   // セッションが存在する場合のみ自動遷移（デモモードでも session or onboarding 完了が必要）
@@ -104,7 +132,7 @@ export default function App() {
       {currentScreen === 'HOME' && (loadingRoutine ? <TimelineSkeleton /> : (
         <ScreenTimeline
           go={go}
-          myRoutine={myRoutine}
+          myRoutine={mergedRoutine}
           scheduleType={scheduleType}
           onToggleSchedule={toggleScheduleType}
           loadingRoutine={loadingRoutine}
@@ -143,7 +171,7 @@ export default function App() {
           onSkip={() => { skipOnboarding(); go('HOME'); }}
         />
       )}
-      {currentScreen === 'EXPLORE' && (personaTemplates.length === 0 ? <ExploreSkeleton /> : <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} commentsByRoutine={commentsByRoutine} loadingComments={loadingComments} postingComment={postingComment} onFetchComments={fetchComments} onPostComment={postComment} onDeleteComment={deleteComment} currentUserId={session?.user?.id} isFollowing={isFollowing} onToggleFollow={toggleFollow} />)}
+      {currentScreen === 'EXPLORE' && (personaTemplates.length === 0 ? <ExploreSkeleton /> : <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onScheduleEvent={handleScheduleEvent} isEventScheduled={isEventScheduled} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} commentsByRoutine={commentsByRoutine} loadingComments={loadingComments} postingComment={postingComment} onFetchComments={fetchComments} onPostComment={postComment} onDeleteComment={deleteComment} currentUserId={session?.user?.id} isFollowing={isFollowing} onToggleFollow={toggleFollow} />)}
       {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} streak={streak} last35Days={last35Days} totalActiveDays={totalActiveDays} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
@@ -166,6 +194,17 @@ export default function App() {
           onboardingPrefs={onboardingPrefs}
           onSaveOnboarding={saveOnboarding}
           onResetOnboarding={async () => { await resetOnboarding(); go('ONBOARDING'); }}
+        />
+      )}
+      {currentScreen === 'CALENDAR' && (
+        <ScreenCalendar
+          go={go}
+          myRoutineWeekday={routineWeekday}
+          myRoutineWeekend={routineWeekend}
+          scheduledEvents={scheduledEvents}
+          getTasksForDate={getTasksForDate}
+          getEventDatesForMonth={getEventDatesForMonth}
+          onRemoveEvent={removeScheduledEvent}
         />
       )}
 

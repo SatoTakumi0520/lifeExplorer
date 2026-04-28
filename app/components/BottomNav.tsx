@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Calendar, Sparkles, User } from 'lucide-react';
+import { CalendarDays, Home, Sparkles, User } from 'lucide-react';
 import { Screen } from '../lib/types';
 
 type BottomNavProps = {
@@ -10,8 +10,9 @@ type BottomNavProps = {
 };
 
 const tabs = [
-  { screen: 'HOME' as Screen, icon: Calendar, activeScreens: ['HOME', 'OTHER_HOME'], activeClass: 'bg-green-50 text-green-700' },
+  { screen: 'HOME' as Screen, icon: Home, activeScreens: ['HOME', 'OTHER_HOME'], activeClass: 'bg-green-50 text-green-700' },
   { screen: 'EXPLORE' as Screen, icon: Sparkles, activeScreens: ['EXPLORE'], activeClass: 'bg-orange-50 text-orange-600' },
+  { screen: 'CALENDAR' as Screen, icon: CalendarDays, activeScreens: ['CALENDAR'], activeClass: 'bg-blue-50 text-blue-600' },
   { screen: 'PROFILE' as Screen, icon: User, activeScreens: ['PROFILE', 'SETTINGS'], activeClass: 'bg-stone-100 text-stone-800' },
 ];
 

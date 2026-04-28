@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck, ExternalLink, CalendarPlus } from 'lucide-react';
+import { Sparkles, Search, Loader2, Heart, ChevronDown, ChevronUp, CalendarDays, MapPin, Users, MessageCircle, Send, Trash2, UserPlus, UserCheck, ExternalLink, CalendarPlus, Check } from 'lucide-react';
 import type { PublicRoutine } from '../hooks/usePublicRoutines';
 import type { RoutineComment } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
@@ -39,6 +39,8 @@ type ScreenExploreProps = {
   preferredCategories?: PersonaCategory[];
   lifestyleRhythm?: 'morning' | 'night' | 'balanced' | null;
   recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
+  onScheduleEvent?: (event: import('../lib/eventService').EventItem) => void;
+  isEventScheduled?: (title: string, date: string) => boolean;
   prefecture?: string | null;
   publicRoutines?: PublicRoutine[];
   onToggleLike?: (routineId: string) => void;
@@ -68,7 +70,7 @@ const templateToSocialPost = (t: PersonaTemplate): SocialPost => ({
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
-export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId, isFollowing, onToggleFollow }: ScreenExploreProps) => {
+export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey, preferredCategories = [], lifestyleRhythm, recordBorrow, onScheduleEvent, isEventScheduled, prefecture, publicRoutines = [], onToggleLike, commentsByRoutine = {}, loadingComments, postingComment, onFetchComments, onPostComment, onDeleteComment, currentUserId, isFollowing, onToggleFollow }: ScreenExploreProps) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const { events, loading: eventsLoading } = useEvents(prefecture ?? null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
@@ -740,25 +742,26 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                             <p className="text-xs text-stone-500 leading-relaxed">{event.description}</p>
                           )}
                           <div className="flex gap-2">
-                            {event.startsAt && (
-                              <a
-                                href={(() => {
-                                  const fmtGCal = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-                                  const start = fmtGCal(event.startsAt!);
-                                  const end = event.endsAt ? fmtGCal(event.endsAt) : fmtGCal(new Date(new Date(event.startsAt!).getTime() + 3600000).toISOString());
-                                  const details = event.url ? `${event.description || ''}\n\n詳細: ${event.url}` : (event.description || '');
-                                  const params = new URLSearchParams({ action: 'TEMPLATE', text: event.title, dates: `${start}/${end}`, details, location: event.location || '' });
-                                  return `https://calendar.google.com/calendar/render?${params.toString()}`;
-                                })()}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-stone-900 text-white rounded-xl text-sm font-bold hover:bg-stone-700 transition-colors"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <CalendarPlus size={16} />
-                                カレンダーに追加
-                              </a>
-                            )}
+                            {(() => {
+                              const dateKey = event.startsAt ? event.startsAt.slice(0, 10) : '';
+                              const alreadyScheduled = dateKey && isEventScheduled?.(event.title, dateKey);
+                              return (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!alreadyScheduled && onScheduleEvent) onScheduleEvent(event);
+                                  }}
+                                  disabled={!!alreadyScheduled}
+                                  className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
+                                    alreadyScheduled
+                                      ? 'bg-green-50 text-green-600 border border-green-200'
+                                      : 'bg-stone-900 text-white hover:bg-stone-700'
+                                  }`}
+                                >
+                                  {alreadyScheduled ? <><Check size={16} />予定に追加済み</> : <><CalendarPlus size={16} />予定に追加</>}
+                                </button>
+                              );
+                            })()}
                             {event.url && (
                               <a
                                 href={event.url}

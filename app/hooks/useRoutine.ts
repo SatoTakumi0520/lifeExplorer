@@ -204,6 +204,8 @@ export const useRoutine = (session: Session | null) => {
 
   return {
     myRoutine,
+    routineWeekday: routines.weekday,
+    routineWeekend: routines.weekend,
     loadingRoutine,
     routineError,
     clearRoutineError: () => setRoutineError(null),

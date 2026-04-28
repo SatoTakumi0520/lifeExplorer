@@ -1,4 +1,4 @@
-export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'EXPLORE' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS' | 'ONBOARDING';
+export type Screen = 'TOP' | 'HOME' | 'EDIT' | 'EXPLORE' | 'OTHER_HOME' | 'PROFILE' | 'BORROW' | 'SETTINGS' | 'ONBOARDING' | 'CALENDAR';
 
 export type PersonaCategory =
   | 'morning' | 'wellness' | 'business' | 'creative' | 'minimalist' | 'student'
@@ -45,6 +45,20 @@ export type SocialPost = {
   likes: number;
   avatar: string;
   routine: RoutineTask[];
+};
+
+export type ScheduledEvent = {
+  id: string;
+  title: string;
+  date: string;          // 'YYYY-MM-DD'
+  time: string;          // 'HH:mm'
+  endTime?: string;
+  location?: string;
+  url?: string;
+  category?: string;
+  source?: string;       // 'doorkeeper' | 'curated'
+  thought?: string;
+  type: RoutineType;     // タイムライン表示用の色分け
 };
 
 export type RoutineComment = {
