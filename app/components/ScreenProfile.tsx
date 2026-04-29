@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useMemo, useState } from 'react';
-import { Settings, ArrowRight, Users, Globe, Lock, Edit2, CalendarDays, MapPin, ExternalLink, Sparkles, RefreshCw } from 'lucide-react';
+import { Settings, ArrowRight, Users, Globe, Lock, Edit2, CalendarDays, MapPin, ExternalLink, Sparkles, RefreshCw, ChevronDown, ChevronUp, Eye } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
-import { Screen, RoutineTask, ScheduledEvent } from '../lib/types';
+import { Screen, RoutineTask, ScheduledEvent, PersonaTemplate, SocialPost } from '../lib/types';
+import { timeToMinutes } from '../lib/utils';
 import { BorrowRecord } from '../hooks/useBorrowHistory';
 
 type ScreenProfileProps = {
@@ -12,6 +13,8 @@ type ScreenProfileProps = {
   session: Session | null;
   borrowHistory: BorrowRecord[];
   upcomingEvents: ScheduledEvent[];
+  personaTemplates: PersonaTemplate[];
+  onViewRoutine: (user: SocialPost) => void;
   isPublished: boolean;
   onPublish: (title: string) => void;
   onUnpublish: () => void;
@@ -20,10 +23,19 @@ type ScreenProfileProps = {
 /* ─── Static constants ─────────────────────────────────────────────── */
 
 const typeConfig = {
-  nature: { label: '自然', color: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50' },
-  mind:   { label: '思考', color: 'bg-blue-400',  text: 'text-blue-600',  bg: 'bg-blue-50'  },
-  work:   { label: '仕事', color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50' },
+  nature: { label: '自然', color: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50', dot: 'bg-amber-400' },
+  mind:   { label: '思考', color: 'bg-blue-400',  text: 'text-blue-600',  bg: 'bg-blue-50',  dot: 'bg-blue-400'  },
+  work:   { label: '仕事', color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50', dot: 'bg-violet-400' },
 } as const;
+
+// ミニタイムラインバー用
+const MINI_START = 300;  // 5:00
+const MINI_RANGE = 1020; // 17h
+const typeBarColor: Record<string, string> = {
+  nature: 'bg-amber-400',
+  mind:   'bg-blue-400',
+  work:   'bg-violet-400',
+};
 
 function relativeTime(isoStr: string): string {
   const diff = Date.now() - new Date(isoStr).getTime();
@@ -44,9 +56,10 @@ function formatEventDate(dateStr: string): string {
 
 /* ─── Component ────────────────────────────────────────────────────── */
 
-export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingEvents, isPublished, onPublish, onUnpublish }: ScreenProfileProps) => {
+export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingEvents, personaTemplates, onViewRoutine, isPublished, onPublish, onUnpublish }: ScreenProfileProps) => {
   const displayName = session?.user?.email?.split('@')[0] ?? 'Explorer';
   const [publishTitle, setPublishTitle] = useState('');
+  const [expandedBorrowId, setExpandedBorrowId] = useState<string | number | null>(null);
 
   const typeBalance = useMemo(() => {
     const total = myRoutine.length;
@@ -59,6 +72,13 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
       work:   Math.round((counts.work   / total) * 100),
     };
   }, [myRoutine]);
+
+  // personaTemplates を id → template のマップに変換
+  const templateMap = useMemo(() => {
+    const map = new Map<string | number, PersonaTemplate>();
+    personaTemplates.forEach(t => map.set(t.id, t));
+    return map;
+  }, [personaTemplates]);
 
   const hasRoutine = myRoutine.length > 0;
 
@@ -234,26 +254,110 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
           </div>
           {borrowHistory.length > 0 ? (
             <div className="space-y-2">
-              {borrowHistory.slice(0, 5).map(item => (
-                <div key={item.personaId} className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-stone-100 flex items-center justify-center text-base font-bold text-stone-400 flex-shrink-0">
-                    {String(item.personaName).charAt(0).toUpperCase()}
+              {borrowHistory.map(item => {
+                const isExpanded = expandedBorrowId === item.personaId;
+                const template = templateMap.get(item.personaId);
+                const routine = template?.routine ?? [];
+
+                return (
+                  <div key={item.personaId} className={`rounded-xl border transition-all ${isExpanded ? 'border-orange-200 bg-orange-50/30' : 'border-transparent bg-stone-50'}`}>
+                    {/* カードヘッダー（タップで展開） */}
+                    <div
+                      className="flex items-center gap-3 p-3 cursor-pointer"
+                      onClick={() => setExpandedBorrowId(isExpanded ? null : item.personaId)}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-white border border-stone-100 flex items-center justify-center text-base font-bold text-stone-400 flex-shrink-0">
+                        {String(item.personaName).charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-bold text-stone-700 truncate">{item.title}</div>
+                        <div className="text-[10px] text-stone-400 mt-0.5">{item.personaName} · {routine.length} タスク</div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex flex-col items-end">
+                          <span className="text-[10px] font-bold text-orange-500">{item.triedCount}回</span>
+                          <span className="text-[10px] text-stone-300">{relativeTime(item.lastBorrowedAt)}</span>
+                        </div>
+                        {isExpanded
+                          ? <ChevronUp size={14} className="text-stone-300" />
+                          : <ChevronDown size={14} className="text-stone-300" />
+                        }
+                      </div>
+                    </div>
+
+                    {/* 展開コンテンツ */}
+                    {isExpanded && (
+                      <div className="px-3 pb-3">
+                        {routine.length > 0 ? (
+                          <>
+                            {/* ミニタイムラインバー */}
+                            <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
+                              {routine.map((task, i) => {
+                                const start = timeToMinutes(task.time);
+                                const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
+                                const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
+                                const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
+                                    style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }}
+                                  />
+                                );
+                              })}
+                            </div>
+
+                            {/* タスク一覧 */}
+                            <div className="space-y-1.5 mb-3">
+                              {routine.map((task, i) => {
+                                const cfg = typeConfig[task.type] ?? typeConfig.work;
+                                return (
+                                  <div key={i} className="flex gap-2.5 items-start">
+                                    <div className="flex flex-col items-center flex-shrink-0 pt-1">
+                                      <div className={`w-2 h-2 rounded-full ${cfg.dot}`} />
+                                      {i < routine.length - 1 && <div className="w-px flex-1 bg-stone-100 mt-0.5" />}
+                                    </div>
+                                    <div className="flex-1 min-w-0 pb-1.5">
+                                      <div className="flex items-baseline gap-2">
+                                        <span className="text-[10px] font-mono text-stone-400">{task.time}</span>
+                                        {task.endTime && <span className="text-[9px] text-stone-300">— {task.endTime}</span>}
+                                      </div>
+                                      <p className="text-xs font-bold text-stone-700 leading-snug">{task.title}</p>
+                                      {task.thought && <p className="text-[10px] text-stone-400 mt-0.5 leading-relaxed">{task.thought}</p>}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            {/* アクションボタン */}
+                            <button
+                              onClick={() => {
+                                if (template) {
+                                  onViewRoutine({
+                                    id: template.id,
+                                    user: template.name,
+                                    title: template.title,
+                                    likes: 0,
+                                    avatar: '',
+                                    routine: template.routine,
+                                  });
+                                }
+                              }}
+                              className="w-full py-2.5 bg-green-700 text-white rounded-xl text-xs font-bold hover:bg-green-800 transition-colors flex items-center justify-center gap-1.5"
+                            >
+                              <Eye size={14} />
+                              このルーティンを見る →
+                            </button>
+                          </>
+                        ) : (
+                          <p className="text-[10px] text-stone-300 text-center py-3">ルーティンデータが見つかりません</p>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-stone-700 truncate">{item.title}</div>
-                    <div className="text-[10px] text-stone-400 mt-0.5">{item.personaName}</div>
-                  </div>
-                  <div className="flex flex-col items-end flex-shrink-0">
-                    <span className="text-[10px] font-bold text-orange-500">{item.triedCount}回</span>
-                    <span className="text-[10px] text-stone-300">{relativeTime(item.lastBorrowedAt)}</span>
-                  </div>
-                </div>
-              ))}
-              {borrowHistory.length > 5 && (
-                <p className="text-[10px] text-stone-300 text-center pt-1">
-                  他 {borrowHistory.length - 5} 件
-                </p>
-              )}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-5">

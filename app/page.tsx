@@ -173,7 +173,7 @@ export default function App() {
         />
       )}
       {currentScreen === 'EXPLORE' && (personaTemplates.length === 0 ? <ExploreSkeleton /> : <ScreenExplore go={go} setSelectedUser={setSelectedUser} personaTemplates={personaTemplates} hasApiKey={hasApiKey} preferredCategories={onboardingPrefs.selectedCategories} lifestyleRhythm={onboardingPrefs.lifestyleRhythm} recordBorrow={recordBorrow} onScheduleEvent={handleScheduleEvent} isEventScheduled={isEventScheduled} prefecture={onboardingPrefs.prefecture} publicRoutines={publicRoutines} onToggleLike={toggleLike} commentsByRoutine={commentsByRoutine} loadingComments={loadingComments} postingComment={postingComment} onFetchComments={fetchComments} onPostComment={postComment} onDeleteComment={deleteComment} currentUserId={session?.user?.id} isFollowing={isFollowing} onToggleFollow={toggleFollow} />)}
-      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} upcomingEvents={upcomingEvents} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
+      {currentScreen === 'PROFILE' && <ScreenProfile go={go} myRoutine={myRoutine} session={session} borrowHistory={borrowHistory} upcomingEvents={upcomingEvents} personaTemplates={personaTemplates} onViewRoutine={(user) => { setSelectedUser(user); go('OTHER_HOME'); }} isPublished={isPublished} onPublish={(title) => publishRoutine(myRoutine, session?.user?.email?.split('@')[0] ?? 'Explorer', title)} onUnpublish={unpublishRoutine} />}
       {currentScreen === 'BORROW' && (
         <ScreenBorrow
           go={go}
