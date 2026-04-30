@@ -33,10 +33,10 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
     color: 'bg-stone-800 text-white',
     category: 'business',
     routine: [
-      { time: '05:00', title: '鏡への問い', thought: '「もし今日が人生最後の日だとしたら、今日やろうとしていることをやりたいか？」と鏡の前で自問する。', type: 'mind' },
-      { time: '06:00', title: '禅の瞑想', thought: '禅の瞑想で心を空にする。複雑さを削ぎ落とし、本質だけを残す練習。', type: 'mind' },
-      { time: '07:00', title: '散歩と思索', thought: '裸足で庭を歩きながら、今日最も重要な一つの決断について考える。', type: 'nature' },
-      { time: '09:00', title: 'デザインレビュー', thought: '製品の細部を徹底的にレビュー。「これは本当に必要か？」を繰り返し問う。', type: 'work' },
+      { time: '05:00', endTime: '05:30', title: '鏡への問い', thought: '「もし今日が人生最後の日だとしたら、今日やろうとしていることをやりたいか？」と鏡の前で自問する。', type: 'mind' },
+      { time: '06:00', endTime: '06:45', title: '禅の瞑想', thought: '禅の瞑想で心を空にする。複雑さを削ぎ落とし、本質だけを残す練習。', type: 'mind' },
+      { time: '07:00', endTime: '07:45', title: '散歩と思索', thought: '裸足で庭を歩きながら、今日最も重要な一つの決断について考える。', type: 'nature' },
+      { time: '09:00', endTime: '12:00', title: 'プロダクトレビュー', thought: '製品の細部を徹底的にレビュー。「これは本当に必要か？」を繰り返し問う。', type: 'work' },
     ],
   },
   {
@@ -46,10 +46,10 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
     color: 'bg-blue-100 text-blue-800',
     category: 'business',
     routine: [
-      { time: '06:00', title: '朝食スキップ', thought: '朝食は取らない。時間の節約と集中力の維持のため。コーヒーだけで十分。', type: 'work' },
-      { time: '07:00', title: 'メール一括処理', thought: '30分でメールを処理。重要度で瞬時に判断し、返信は簡潔に。', type: 'work' },
-      { time: '08:00', title: '技術的深掘り', thought: '最も困難な技術的課題に取り組む。5分単位でスケジュールを区切り、集中を維持。', type: 'work' },
-      { time: '22:00', title: '就寝前の読書', thought: '就寝前の読書。SF小説や物理学の本から未来のアイデアを得る。', type: 'mind' },
+      { time: '06:00', endTime: '06:15', title: '朝食スキップ', thought: '朝食は取らない。時間の節約と集中力の維持のため。コーヒーだけで十分。', type: 'work' },
+      { time: '07:00', endTime: '07:30', title: 'メール一括処理', thought: '30分でメールを処理。重要度で瞬時に判断し、返信は簡潔に。', type: 'work' },
+      { time: '08:00', endTime: '12:00', title: '技術的深掘り', thought: '最も困難な技術的課題に取り組む。5分単位でスケジュールを区切り、集中を維持。', type: 'work' },
+      { time: '22:00', endTime: '22:30', title: '就寝前の読書', thought: '就寝前の読書。SF小説や物理学の本から未来のアイデアを得る。', type: 'mind' },
     ],
   },
   {
@@ -59,7 +59,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
     color: 'bg-slate-100 text-slate-800',
     category: 'business',
     routine: [
-      { time: '04:45', endTime: '05:15', title: 'ユーザーメール確認', thought: '世界中のAppleユーザーからのメールを読む。現場の声が最高の羅針盤。', type: 'mind' },
+      { time: '04:45', endTime: '05:15', title: 'ユーザーメール確認', thought: '世界中のユーザーからのメールを読む。現場の声が最高の羅針盤。', type: 'mind' },
       { time: '05:15', endTime: '06:00', title: 'ジムトレーニング', thought: 'ジムで体を鍛える。規律ある身体が規律ある思考を生む。', type: 'nature' },
       { time: '08:00', endTime: '12:00', title: '連続ミーティング', thought: '各チームとの連続ミーティング。明確な意思決定を積み重ねる。', type: 'work' },
       { time: '21:00', endTime: '21:30', title: '就寝準備', thought: '翌日の優先事項を確認し、静かに一日を締めくくる。', type: 'mind' },
@@ -100,10 +100,10 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
     color: 'bg-orange-100 text-orange-800',
     category: 'creative',
     routine: [
-      { time: '04:00', title: '早朝の執筆', thought: '朝4時に起きて、まだ世界が静かなうちに原稿に向かう。5〜6時間、ただ書く。', type: 'work' },
-      { time: '10:00', title: 'ランニング', thought: '10kmのランニング。走っている間は何も考えない。身体が勝手に走る状態を目指す。', type: 'nature' },
-      { time: '12:00', title: '音楽を聴く時間', thought: 'レコードを聴きながら昼食。音楽は言葉を超えた物語を教えてくれる。', type: 'mind' },
-      { time: '21:00', title: '早めの就寝', thought: '夜9時には就寝。規則正しい生活こそが長編小説を書き続ける秘訣。', type: 'mind' },
+      { time: '04:00', endTime: '10:00', title: '早朝の執筆', thought: '朝4時に起きて、まだ世界が静かなうちに原稿に向かう。5〜6時間、ただ書く。', type: 'work' },
+      { time: '10:00', endTime: '11:00', title: 'ランニング', thought: '10kmのランニング。走っている間は何も考えない。身体が勝手に走る状態を目指す。', type: 'nature' },
+      { time: '12:00', endTime: '13:00', title: '音楽を聴く時間', thought: 'レコードを聴きながら昼食。音楽は言葉を超えた物語を教えてくれる。', type: 'mind' },
+      { time: '21:00', endTime: '21:30', title: '早めの就寝', thought: '夜9時には就寝。規則正しい生活こそが長編小説を書き続ける秘訣。', type: 'mind' },
     ],
   },
   {
@@ -452,10 +452,10 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
     color: 'bg-yellow-100 text-yellow-700',
     category: 'cooking',
     routine: [
-      { time: '08:00', endTime: '08:30', title: '献立作成', thought: '��週の献立を考える。栄養バランスと食材のロスを最小化。', type: 'work' },
+      { time: '08:00', endTime: '08:30', title: '献立作成', thought: '一週間の献立を考える。栄養バランスと食材のロスを最小化。', type: 'work' },
       { time: '09:00', endTime: '11:00', title: 'まとめて調理', thought: '5日分の主菜と副菜を一気に調理。効率と味の両立が腕の見せどころ。', type: 'work' },
-      { time: '11:00', endTime: '11:30', title: '小分け作業', thought: '容器に詰め分ける。平日の自分への贈��物。', type: 'work' },
-      { time: '19:00', endTime: '19:30', title: '試食と調整', thought: '今日の分を食べて味を確認。次回��改善点をメモ。', type: 'mind' },
+      { time: '11:00', endTime: '11:30', title: '小分け作業', thought: '容器に詰め分ける。平日の自分への贈り物。', type: 'work' },
+      { time: '19:00', endTime: '19:30', title: '試食と調整', thought: '今日の分を食べて味を確認。次回の改善点をメモ。', type: 'mind' },
     ],
   },
   {
@@ -468,7 +468,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
       { time: '06:30', endTime: '07:00', title: '発酵食品の観察', thought: '味噌、ぬか漬け、コンブチャの様子を見る。微生物との対話。', type: 'nature' },
       { time: '07:00', endTime: '07:30', title: '発酵食の朝食', thought: '自家製ヨーグルトと漬物の朝食。腸から健康を作る。', type: 'nature' },
       { time: '12:00', endTime: '12:30', title: '季節の仕込み', thought: '旬の食材で新しい発酵食品を仕込む。季節を味わう暮らし。', type: 'work' },
-      { time: '20:00', endTime: '20:30', title: '発酵記録', thought: '温��、日数、味の変化を記録。発酵は科学でもあり芸術でもある。', type: 'mind' },
+      { time: '20:00', endTime: '20:30', title: '発酵記録', thought: '温度、日数、味の変化を記録。発酵は科学でもあり芸術でもある。', type: 'mind' },
     ],
   },
   {
@@ -478,10 +478,10 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
     color: 'bg-orange-100 text-orange-800',
     category: 'cooking',
     routine: [
-      { time: '07:00', endTime: '07:30', title: 'チャイを淹れる', thought: 'カ���ダモン、シナモン、ジン���ャー。毎朝のチャイが一日を温める。', type: 'nature' },
-      { time: '11:00', endTime: '12:00', title: 'スパイス料理', thought: '今日はモロッコ風タジ���。スパイスの組み合わ���で異国の風を感じる���', type: 'work' },
-      { time: '15:00', endTime: '15:30', title: 'スパイス店巡��', thought: 'スパイス専門店を巡る。知らない香りとの出会いが新しい料理を生む。', type: 'nature' },
-      { time: '21:00', endTime: '21:30', title: 'レシピ記録', thought: '今日の配合を記録。同じ料理は二度と作れない。それが手��理の魅力。', type: 'mind' },
+      { time: '07:00', endTime: '07:30', title: 'チャイを淹れる', thought: 'カルダモン、シナモン、ジンジャー。毎朝のチャイが一日を温める。', type: 'nature' },
+      { time: '11:00', endTime: '12:00', title: 'スパイス料理', thought: '今日はモロッコ風タジン。スパイスの組み合わせで異国の風を感じる。', type: 'work' },
+      { time: '15:00', endTime: '15:30', title: 'スパイス店巡り', thought: 'スパイス専門店を巡る。知らない香りとの出会いが新しい料理を生む。', type: 'nature' },
+      { time: '21:00', endTime: '21:30', title: 'レシピ記録', thought: '今日の配合を記録。同じ料理は二度と作れない。それが手料理の魅力。', type: 'mind' },
     ],
   },
   {
