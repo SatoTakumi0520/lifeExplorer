@@ -210,7 +210,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     const base = categories.filter(([key]) => key !== 'all');
     return [
       ['all', 'すべて'] as [string, string],
-      ...(publicRoutines.length > 0 ? [['community', `👥 みんなの一日 (${publicRoutines.length})`] as [string, string]] : []),
+      ['community', publicRoutines.length > 0 ? `👥 みんなの一日 (${publicRoutines.length})` : '👥 みんなの一日'] as [string, string],
       ...(followingRoutines.length > 0 ? [['following', `🤝 フォロー中 (${followingRoutines.length})`] as [string, string]] : []),
       ...(favCount > 0 ? [['favorites', `♡ お気に入り (${favCount})`] as [string, string]] : []),
       ...base,
@@ -277,8 +277,16 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                   <p className="text-sm">「{communitySearch}」に一致するルーティンがありません</p>
                 ) : (
                   <>
-                    <p className="text-sm">まだ公開されているルーティンがありません</p>
-                    <p className="text-xs mt-1">プロフィール画面から自分のルーティンを公開してみましょう</p>
+                    <p className="text-sm font-bold text-stone-500">まだ公開されているルーティンがありません</p>
+                    <p className="text-xs mt-1 text-stone-400 leading-relaxed">
+                      あなたのルーティンを公開して、<br />最初の投稿者になりませんか？
+                    </p>
+                    <button
+                      onClick={() => go('PROFILE')}
+                      className="mt-4 px-6 py-2.5 bg-stone-800 text-white rounded-xl text-xs font-bold hover:bg-stone-700 transition-colors"
+                    >
+                      プロフィールで公開する →
+                    </button>
                   </>
                 )}
               </div>
