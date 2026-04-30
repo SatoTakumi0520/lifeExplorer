@@ -62,7 +62,7 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
     setError('');
     setLoading(true);
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/`,
+      redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     });
     setLoading(false);
     if (resetError) {

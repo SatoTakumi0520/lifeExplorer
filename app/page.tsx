@@ -29,6 +29,7 @@ import { useFollows } from './hooks/useFollows';
 import { useScheduledEvents } from './hooks/useScheduledEvents';
 import { ScreenOnboarding } from './components/ScreenOnboarding';
 import { ScreenCalendar } from './components/ScreenCalendar';
+import { UpdatePasswordModal } from './components/UpdatePasswordModal';
 import { Screen, SocialPost, RoutineTask } from './lib/types';
 import type { EventItem } from './lib/eventService';
 
@@ -43,7 +44,7 @@ export default function App() {
   const [selectedTask, setSelectedTask] = useState<RoutineTask | null>(null);
   const [borrowingUser, setBorrowingUser] = useState<SocialPost | null>(null);
 
-  const { session, loading, signOut } = useAuth();
+  const { session, loading, signOut, isRecovery, updatePassword, clearRecovery } = useAuth();
   const { personaTemplates, socialFeed } = usePublicData();
   const {
     myRoutine,
@@ -249,6 +250,12 @@ export default function App() {
             if (selectedTask.id !== undefined) handleDeleteTask(selectedTask.id);
             setSelectedTask(null);
           }}
+        />
+      )}
+      {isRecovery && (
+        <UpdatePasswordModal
+          onUpdate={updatePassword}
+          onClose={clearRecovery}
         />
       )}
     </div>
