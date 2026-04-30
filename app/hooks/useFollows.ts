@@ -22,10 +22,16 @@ export function useFollows(session: Session | null) {
     }
     if (!session?.user?.id) { setLoading(false); return; }
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_follows')
       .select('following_id')
       .eq('follower_id', session.user.id);
+
+    if (error) {
+      console.error('Failed to load follows:', error);
+      setLoading(false);
+      return;
+    }
 
     setFollowingIds(new Set((data ?? []).map((r: any) => r.following_id)));
     setLoading(false);

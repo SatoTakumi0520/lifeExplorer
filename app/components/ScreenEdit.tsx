@@ -217,7 +217,7 @@ export const ScreenEdit = ({
                 const duration = fmtDur(durationMin);
 
                 return (
-                  <React.Fragment key={item.id ?? idx}>
+                  <React.Fragment key={item.id ?? `${item.time}-${item.title}`}>
                     {/* 空き時間コネクタ */}
                     {gapMin !== null && (
                       <div className="flex items-stretch gap-0 ml-4 my-0.5">

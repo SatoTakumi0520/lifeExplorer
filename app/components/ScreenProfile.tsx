@@ -292,14 +292,14 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
                           <>
                             {/* ミニタイムラインバー */}
                             <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
-                              {routine.map((task, i) => {
+                              {routine.map((task) => {
                                 const start = timeToMinutes(task.time);
                                 const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
                                 const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
                                 const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
                                 return (
                                   <div
-                                    key={i}
+                                    key={`${task.time}-${task.title}`}
                                     className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
                                     style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }}
                                   />
@@ -312,7 +312,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
                               {routine.map((task, i) => {
                                 const cfg = typeConfig[task.type] ?? typeConfig.work;
                                 return (
-                                  <div key={i} className="flex gap-2.5 items-start">
+                                  <div key={`${task.time}-${task.title}`} className="flex gap-2.5 items-start">
                                     <div className="flex flex-col items-center flex-shrink-0 pt-1">
                                       <div className={`w-2 h-2 rounded-full ${cfg.dot}`} />
                                       {i < routine.length - 1 && <div className="w-px flex-1 bg-stone-100 mt-0.5" />}

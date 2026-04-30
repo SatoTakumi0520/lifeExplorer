@@ -345,13 +345,13 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                       <h3 className="font-bold text-base text-stone-800 mb-3 leading-snug">{r.title}</h3>
                       {r.routineTasks.length > 0 && (
                         <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
-                          {r.routineTasks.map((task, i) => {
+                          {r.routineTasks.map((task) => {
                             const start = timeToMinutes(task.time);
                             const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
                             const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
                             const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
                             return (
-                              <div key={i} className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
+                              <div key={`${task.time}-${task.title}`} className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
                                 style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }} />
                             );
                           })}
@@ -363,7 +363,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                       <div className="border-t border-stone-100 px-5 pb-5">
                         <div className="pt-4 space-y-3">
                           {r.routineTasks.map((task, i) => (
-                            <div key={i} className="flex gap-3">
+                            <div key={`${task.time}-${task.title}`} className="flex gap-3">
                               <div className="flex flex-col items-center flex-shrink-0">
                                 <div className={`w-2 h-2 rounded-full mt-1 ${typeDotColor[task.type ?? 'work'] ?? 'bg-stone-300'}`} />
                                 {i < r.routineTasks.length - 1 && <div className="w-px flex-1 bg-stone-100 mt-1" />}
@@ -524,14 +524,14 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 {/* Mini timeline */}
                 {template.routine && template.routine.length > 0 && (
                   <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
-                    {template.routine.map((task, i) => {
+                    {template.routine.map((task) => {
                       const start = timeToMinutes(task.time);
                       const end = task.endTime ? timeToMinutes(task.endTime) : start + 60;
                       const left = Math.max(0, (start - MINI_START) / MINI_RANGE) * 100;
                       const width = Math.min(100 - left, (end - start) / MINI_RANGE * 100);
                       return (
                         <div
-                          key={i}
+                          key={`${task.time}-${task.title}`}
                           className={`absolute top-0 h-full rounded-sm ${typeBarColor[task.type ?? 'work'] ?? 'bg-stone-300'}`}
                           style={{ left: `${left}%`, width: `${Math.max(width, 1)}%` }}
                         />
@@ -555,7 +555,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 <div className="border-t border-stone-100 px-5 pb-5">
                   <div className="pt-4 space-y-3">
                     {template.routine.map((task, i) => (
-                      <div key={i} className="flex gap-3">
+                      <div key={`${task.time}-${task.title}`} className="flex gap-3">
                         <div className="flex flex-col items-center flex-shrink-0">
                           <div className={`w-2 h-2 rounded-full mt-1 ${typeDotColor[task.type ?? 'work'] ?? 'bg-stone-300'}`} />
                           {i < template.routine.length - 1 && (

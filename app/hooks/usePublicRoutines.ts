@@ -94,17 +94,26 @@ export function usePublicRoutines(session: Session | null) {
       return;
     }
 
-    const { data: rows } = await supabase
+    const { data: rows, error: rowsError } = await supabase
       .from('public_routines')
       .select('*')
       .order('likes_count', { ascending: false });
 
+    if (rowsError) {
+      console.error('Failed to load public routines:', rowsError);
+      setLoading(false);
+      return;
+    }
+
     let myLikedIds = new Set<string>();
     if (session?.user?.id) {
-      const { data: likes } = await supabase
+      const { data: likes, error: likesError } = await supabase
         .from('routine_likes')
         .select('routine_id')
         .eq('user_id', session.user.id);
+      if (likesError) {
+        console.error('Failed to load likes:', likesError);
+      }
       myLikedIds = new Set((likes ?? []).map((l: any) => l.routine_id));
     }
 

@@ -245,7 +245,7 @@ export const ScreenCalendar = ({
                     : null;
 
                   return (
-                    <div key={`${task.id ?? i}`} className={`flex gap-3 p-3 rounded-xl border ${isEvent ? 'border-orange-200 bg-orange-50/50' : `${colors.border} ${colors.bg}`}`}>
+                    <div key={task.id ?? `${task.time}-${task.title}`} className={`flex gap-3 p-3 rounded-xl border ${isEvent ? 'border-orange-200 bg-orange-50/50' : `${colors.border} ${colors.bg}`}`}>
                       <div className="flex flex-col items-center flex-shrink-0 pt-0.5">
                         <div className={`w-2.5 h-2.5 rounded-full ${isEvent ? 'bg-orange-400' : colors.dot}`} />
                         {i < selectedDayData.allTasks.length - 1 && (

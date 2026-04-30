@@ -318,7 +318,7 @@ export const ScreenTimeline = ({
                 : null;
 
               return (
-                <React.Fragment key={item.id ?? idx}>
+                <React.Fragment key={item.id ?? `${item.time}-${item.title}`}>
                   {taskLabel && (
                     <div
                       className="absolute w-10 text-right pointer-events-none"

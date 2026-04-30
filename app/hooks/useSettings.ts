@@ -37,11 +37,16 @@ export const useSettings = (session: Session | null) => {
     }
 
     const fetchSettings = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('user_settings')
         .select('ai_provider, ai_api_key_encrypted, ai_model, display_name, timezone')
         .eq('user_id', session.user.id)
         .single();
+
+      if (error && error.code !== 'PGRST116') {
+        // PGRST116 = row not found（新規ユーザー）— それ以外はエラー
+        console.error('Failed to load settings:', error);
+      }
 
       if (data) {
         setSettings({

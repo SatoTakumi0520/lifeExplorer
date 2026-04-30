@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import type { RoutineComment } from '../lib/types';
@@ -24,10 +24,11 @@ export function useComments(session: Session | null) {
   const [commentsByRoutine, setCommentsByRoutine] = useState<Record<string, RoutineComment[]>>({});
   const [loadingRoutineId, setLoadingRoutineId] = useState<string | null>(null);
   const [postingRoutineId, setPostingRoutineId] = useState<string | null>(null);
+  const loadedIdsRef = useRef<Set<string>>(new Set());
 
   const fetchComments = useCallback(async (routineId: string) => {
-    // Already loaded
-    if (commentsByRoutine[routineId]) return;
+    // Already loaded — ref で判定（stale closure 回避）
+    if (loadedIdsRef.current.has(routineId)) return;
 
     setLoadingRoutineId(routineId);
 
@@ -37,18 +38,25 @@ export function useComments(session: Session | null) {
       return;
     }
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('routine_comments')
       .select('*')
       .eq('routine_id', routineId)
       .order('created_at', { ascending: true });
 
+    if (error) {
+      console.error('Failed to load comments:', error);
+      setLoadingRoutineId(null);
+      return;
+    }
+
+    loadedIdsRef.current.add(routineId);
     setCommentsByRoutine(prev => ({
       ...prev,
       [routineId]: (data ?? []).map(mapRow),
     }));
     setLoadingRoutineId(null);
-  }, [commentsByRoutine]);
+  }, []);
 
   const postComment = useCallback(async (routineId: string, body: string) => {
     if (!body.trim()) return;
