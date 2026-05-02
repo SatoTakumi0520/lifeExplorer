@@ -235,7 +235,7 @@ export const ScreenCalendar = ({
             <div className="space-y-1.5">
               <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wide">Timeline</p>
               {selectedDayData.allTasks.length === 0 ? (
-                <p className="text-xs text-stone-300 py-4 text-center">No routine for this day yet</p>
+                <p className="text-xs text-stone-300 py-4 text-center">この日のルーティンはまだありません</p>
               ) : (
                 selectedDayData.allTasks.map((task, i) => {
                   const colors = typeColor[task.type] ?? typeColor.work;

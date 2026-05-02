@@ -162,7 +162,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
               <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
                 <Sparkles size={20} className="text-green-400" />
               </div>
-              <p className="text-xs text-stone-400 mb-3">Design your ideal day with a routine</p>
+              <p className="text-xs text-stone-400 mb-3">ルーティンで理想の1日をデザインしよう</p>
               <button
                 onClick={() => go('EDIT')}
                 className="px-4 py-2 text-xs font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 transition-colors"
@@ -233,8 +233,8 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
               <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
                 <CalendarDays size={20} className="text-blue-300" />
               </div>
-              <p className="text-xs text-stone-400 mb-2">No upcoming events</p>
-              <p className="text-[10px] text-stone-300">Add events from Explore</p>
+              <p className="text-xs text-stone-400 mb-2">予定されたイベントはありません</p>
+              <p className="text-[10px] text-stone-300">Explore からイベントを追加</p>
             </div>
           )}
         </div>
@@ -347,11 +347,11 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
                               className="w-full py-2.5 bg-green-700 text-white rounded-xl text-xs font-bold hover:bg-green-800 transition-colors flex items-center justify-center gap-1.5"
                             >
                               <Eye size={14} />
-                              View this routine →
+                              このルーティンを見る →
                             </button>
                           </>
                         ) : (
-                          <p className="text-[10px] text-stone-300 text-center py-3">Routine data not found</p>
+                          <p className="text-[10px] text-stone-300 text-center py-3">ルーティンデータが見つかりません</p>
                         )}
                       </div>
                     )}
@@ -364,12 +364,12 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
               <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mx-auto mb-3">
                 <Sparkles size={20} className="text-orange-300" />
               </div>
-              <p className="text-xs text-stone-400 mb-2">No routines tried yet</p>
+              <p className="text-xs text-stone-400 mb-2">まだルーティンを試していません</p>
               <button
                 onClick={() => go('EXPLORE')}
                 className="text-[10px] font-bold text-orange-500 hover:text-orange-600 transition-colors"
               >
-                Find on Explore →
+                Explore で探す →
               </button>
             </div>
           )}
@@ -390,7 +390,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
 
             {isPublished ? (
               <div className="space-y-2">
-                <p className="text-xs text-stone-500">Your routine is listed on Explore.</p>
+                <p className="text-xs text-stone-500">あなたのルーティンがExploreに公開されています。</p>
                 <button
                   onClick={onUnpublish}
                   className="w-full py-2 text-xs font-bold text-stone-500 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
@@ -401,7 +401,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
             ) : (
               <div className="space-y-2">
                 <p className="text-xs text-stone-400">
-                  {hasRoutine ? 'Share your routine with the community.' : 'Add tasks before publishing.'}
+                  {hasRoutine ? 'ルーティンをコミュニティに共有しましょう。' : '公開するにはまずタスクを追加してください。'}
                 </p>
                 {hasRoutine && (
                   <>
@@ -411,7 +411,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
                         type="text"
                         value={publishTitle}
                         onChange={e => setPublishTitle(e.target.value)}
-                        placeholder="Title (e.g. Early Bird Engineer)"
+                        placeholder="タイトル（例：早起きエンジニア）"
                         className="flex-1 text-xs text-stone-700 bg-transparent outline-none placeholder:text-stone-300"
                         maxLength={30}
                       />

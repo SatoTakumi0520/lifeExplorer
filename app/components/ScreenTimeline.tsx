@@ -367,8 +367,8 @@ export const ScreenTimeline = ({
                     <Edit3 size={12} className="text-stone-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-stone-500">No tasks yet</p>
-                    <p className="text-[10px] text-stone-300">Tap ✎ to design your day</p>
+                    <p className="text-xs font-bold text-stone-500">タスクがまだありません</p>
+                    <p className="text-[10px] text-stone-300">✎ をタップして1日をデザインしよう</p>
                   </div>
                 </div>
               </div>

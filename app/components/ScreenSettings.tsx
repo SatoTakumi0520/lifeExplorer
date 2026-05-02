@@ -71,7 +71,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             <div className="p-4 flex items-center justify-between border-b border-stone-50">
               <div>
                 <h4 className="font-bold text-sm text-stone-800">Public Profile</h4>
-                <p className="text-xs text-stone-400">Share your routine with others</p>
+                <p className="text-xs text-stone-400">ルーティンを他のユーザーと共有</p>
               </div>
               <button
                 onClick={() => setPublicProfile(!publicProfile)}
@@ -154,7 +154,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             {/* 都道府県 */}
             <div>
               <h4 className="font-bold text-sm text-stone-800 mb-1">Region</h4>
-              <p className="text-[11px] text-stone-400 mb-2">Events near your area will be prioritized</p>
+              <p className="text-[11px] text-stone-400 mb-2">お住まいの地域のイベントが優先表示されます</p>
               <select
                 value={onboardingPrefs?.prefecture ?? ''}
                 onChange={(e) => {
@@ -163,7 +163,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 }}
                 className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 focus:outline-none focus:border-stone-400 transition-colors"
               >
-                <option value="">Not set (show all events)</option>
+                <option value="">未設定（すべてのイベントを表示）</option>
                 {JAPAN_PREFECTURES.map((pref) => (
                   <option key={pref} value={pref}>{pref}</option>
                 ))}
@@ -178,7 +178,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 >
                   Redo Onboarding
                 </button>
-                <p className="text-[10px] text-stone-400 mt-1.5 text-center">Re-select categories and lifestyle rhythm</p>
+                <p className="text-[10px] text-stone-400 mt-1.5 text-center">カテゴリと生活リズムを再選択</p>
               </div>
             )}
           </div>
@@ -218,14 +218,14 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               <div className="text-left">
                 <h4 className="font-bold text-sm text-stone-800">API Key</h4>
                 <p className="text-xs text-stone-400">
-                  {aiSettings?.ai_api_key_encrypted ? '✓ Configured' : 'Not set — Tap to configure'}
+                  {aiSettings?.ai_api_key_encrypted ? '✓ 設定済み' : '未設定 — タップして設定'}
                 </p>
               </div>
               <ChevronRight size={18} className="text-stone-300" />
             </button>
           </div>
           <p className="text-[10px] text-stone-300 mt-2 px-1">
-            An API key is required for AI persona generation. Keys are securely managed server-side.
+            AIペルソナ生成にはAPIキーが必要です。キーはサーバー側で安全に管理されます。
           </p>
         </div>
 
@@ -238,15 +238,15 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               <div className="p-4 space-y-2">
                 {isIOS && !isStandalone ? (
                   <>
-                    <p className="text-xs font-bold text-stone-600">To enable push notifications on iOS</p>
+                    <p className="text-xs font-bold text-stone-600">iOSでプッシュ通知を有効にするには</p>
                     <ol className="text-xs text-stone-400 list-decimal list-inside space-y-1">
-                      <li>Tap the Share button (□↑) in Safari</li>
-                      <li>Select &ldquo;Add to Home Screen&rdquo;</li>
-                      <li>Open the app from your Home Screen</li>
+                      <li>Safariで共有ボタン（□↑）をタップ</li>
+                      <li>「ホーム画面に追加」を選択</li>
+                      <li>ホーム画面からアプリを開く</li>
                     </ol>
                   </>
                 ) : (
-                  <p className="text-xs text-stone-400">This browser does not support push notifications.</p>
+                  <p className="text-xs text-stone-400">このブラウザはプッシュ通知に対応していません。</p>
                 )}
               </div>
             ) : (
@@ -257,7 +257,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                     <div>
                       <h4 className="font-bold text-sm text-stone-800">Morning Reminder</h4>
                       <p className="text-xs text-stone-400">
-                        {permission === 'denied' ? '⚠️ Notifications are blocked' : 'Get notified when your routine starts'}
+                        {permission === 'denied' ? '⚠️ 通知がブロックされています' : 'ルーティン開始時に通知を受け取る'}
                       </p>
                     </div>
                   </div>
@@ -279,7 +279,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 <div className="p-4 flex items-center justify-between border-b border-stone-50">
                   <div>
                     <h4 className="font-bold text-sm text-stone-800">Reminder Time</h4>
-                    <p className="text-xs text-stone-400">Send a reminder at this time every morning</p>
+                    <p className="text-xs text-stone-400">毎朝この時刻にリマインダーを送信</p>
                   </div>
                   <input
                     type="time"
@@ -300,7 +300,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                   >
                     <Send size={15} className="text-stone-400" />
                     <span className="text-sm font-bold text-stone-600">
-                      {testSent ? '✓ Test notification sent' : 'Send test notification'}
+                      {testSent ? '✓ テスト通知を送信しました' : 'テスト通知を送信'}
                     </span>
                   </button>
                 )}
@@ -315,7 +315,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             <div className="p-4 flex items-center justify-between">
               <div>
                 <h4 className="font-bold text-sm text-stone-800">Dark Mode</h4>
-                <p className="text-xs text-stone-400">Use dark theme</p>
+                <p className="text-xs text-stone-400">ダークテーマを使用</p>
               </div>
               <button
                 onClick={toggleDarkMode}
@@ -347,7 +347,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             <button className="w-full p-4 flex items-center justify-between hover:bg-red-50 transition-colors">
               <div>
                 <h4 className="font-bold text-sm text-red-600">Delete Account</h4>
-                <p className="text-xs text-red-400">Permanently delete your account and all data</p>
+                <p className="text-xs text-red-400">アカウントとすべてのデータを完全に削除</p>
               </div>
               <ChevronRight size={18} className="text-red-300" />
             </button>
@@ -380,7 +380,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
 
         <div className="p-4 text-center">
           <p className="text-xs text-stone-300">Life Explorer v1.0.0</p>
-          <p className="text-xs text-stone-300 mt-1">Crafted with care</p>
+          <p className="text-xs text-stone-300 mt-1">丁寧に作りました</p>
         </div>
       </div>
 
@@ -415,7 +415,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 <textarea
                   value={profileBio}
                   onChange={(e) => setProfileBio(e.target.value)}
-                  placeholder="Tell us about yourself..."
+                  placeholder="自己紹介を書いてください..."
                   className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm h-24 resize-none focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
@@ -474,7 +474,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               </div>
 
               <div className="bg-amber-50 border border-amber-100 rounded-xl p-3">
-                <p className="text-xs text-amber-700 font-bold mb-1">How to get an API key</p>
+                <p className="text-xs text-amber-700 font-bold mb-1">APIキーの取得方法</p>
                 <p className="text-xs text-amber-600">
                   {aiSettings?.ai_provider === 'openai'
                     ? 'platform.openai.com → API Keys → Create new secret key'
@@ -484,7 +484,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
 
               {aiSettings?.ai_api_key_encrypted && (
                 <div className="bg-green-50 border border-green-100 rounded-xl p-3">
-                  <p className="text-xs text-green-700">✓ An API key is currently set. Enter a new key to overwrite.</p>
+                  <p className="text-xs text-green-700">✓ APIキーは設定済みです。新しいキーを入力すると上書きされます。</p>
                 </div>
               )}
             </div>
@@ -526,7 +526,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">New Email</label>
                 <input
                   type="email"
-                  placeholder="Enter new email address"
+                  placeholder="新しいメールアドレスを入力"
                   className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
@@ -535,13 +535,13 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">Confirm Password</label>
                 <input
                   type="password"
-                  placeholder="Enter your password to confirm"
+                  placeholder="確認のためパスワードを入力"
                   className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
 
               <div className="bg-orange-50 border border-orange-100 rounded-xl p-3">
-                <p className="text-xs text-orange-700">A confirmation email will be sent to the new address. Check your inbox to complete the change.</p>
+                <p className="text-xs text-orange-700">新しいアドレスに確認メールが送信されます。受信トレイを確認して変更を完了してください。</p>
               </div>
             </div>
 

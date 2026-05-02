@@ -73,7 +73,7 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
               <h2 className="text-xl font-serif font-bold">Choose your interests</h2>
             </div>
             <p className="text-sm text-stone-400">
-              Routines from selected categories will be prioritized
+              選んだカテゴリのルーティンが優先表示されます
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
               onClick={onSkip}
               className="w-full py-2 text-stone-400 text-xs hover:text-stone-500 transition-colors"
             >
-              Skip and explore freely
+              スキップして自由に探す
             </button>
           </div>
         </div>
@@ -122,15 +122,15 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
               <h2 className="text-xl font-serif font-bold">What&apos;s your lifestyle rhythm?</h2>
             </div>
             <p className="text-sm text-stone-400">
-              We&apos;ll recommend routines that match your style
+              あなたのスタイルに合うルーティンをおすすめします
             </p>
           </div>
 
           <div className="space-y-4 flex-1">
             {([
-              { value: 'morning' as const, icon: Sun, label: 'Morning', desc: 'Active and productive in the morning' },
-              { value: 'night' as const, icon: Moon, label: 'Night Owl', desc: 'Most focused at night' },
-              { value: 'balanced' as const, icon: Scale, label: 'Balanced', desc: 'No strong preference' },
+              { value: 'morning' as const, icon: Sun, label: 'Morning', desc: '朝に活動的で生産的なタイプ' },
+              { value: 'night' as const, icon: Moon, label: 'Night Owl', desc: '夜に最も集中できるタイプ' },
+              { value: 'balanced' as const, icon: Scale, label: 'Balanced', desc: '特にこだわりはない' },
             ]).map(({ value, icon: Icon, label, desc }) => {
               const isSelected = lifestyleRhythm === value;
               return (
@@ -171,7 +171,7 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
                 onClick={onSkip}
                 className="py-2 text-stone-400 text-xs hover:text-stone-500 transition-colors"
               >
-                Skip and explore freely
+                スキップして自由に探す
               </button>
             </div>
           </div>
