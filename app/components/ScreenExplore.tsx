@@ -21,9 +21,9 @@ const typeBarColor: Record<string, string> = {
   work:   'bg-violet-400',
 };
 const typeLabel: Record<string, string> = {
-  nature: '自然',
-  mind:   '思考',
-  work:   '仕事',
+  nature: 'Nature',
+  mind:   'Mind',
+  work:   'Work',
 };
 const typeDotColor: Record<string, string> = {
   nature: 'bg-amber-400',
@@ -162,7 +162,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
       setGeneratedPersonas((prev) => [result.persona!, ...prev]);
       setPrompt('');
     } else {
-      setGenerateError(result.error || '生成に失敗しました');
+      setGenerateError(result.error || 'Generation failed');
     }
     setGenerating(false);
   };
@@ -209,10 +209,10 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
     const favCount = sortedTemplates.filter((t) => isFavorite(t.id)).length + generatedPersonas.filter((t) => isFavorite(t.id)).length;
     const base = categories.filter(([key]) => key !== 'all');
     return [
-      ['all', 'すべて'] as [string, string],
-      ['community', publicRoutines.length > 0 ? `👥 みんなの一日 (${publicRoutines.length})` : '👥 みんなの一日'] as [string, string],
-      ...(followingRoutines.length > 0 ? [['following', `🤝 フォロー中 (${followingRoutines.length})`] as [string, string]] : []),
-      ...(favCount > 0 ? [['favorites', `♡ お気に入り (${favCount})`] as [string, string]] : []),
+      ['all', 'All'] as [string, string],
+      ['community', publicRoutines.length > 0 ? `👥 Community (${publicRoutines.length})` : '👥 Community'] as [string, string],
+      ...(followingRoutines.length > 0 ? [['following', `🤝 Following (${followingRoutines.length})`] as [string, string]] : []),
+      ...(favCount > 0 ? [['favorites', `♡ Favorites (${favCount})`] as [string, string]] : []),
       ...base,
     ];
   }, [categories, sortedTemplates, generatedPersonas, isFavorite, publicRoutines.length, followingRoutines.length]);
@@ -225,7 +225,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           <Sparkles size={18} className="text-orange-500" />
           <h2 className="text-2xl font-serif font-bold">Explore</h2>
         </div>
-        <p className="text-xs text-stone-400">さまざまなライフスタイルを試してみよう</p>
+        <p className="text-xs text-stone-400">Discover and try different lifestyles</p>
 
         {/* Category tabs */}
         <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
@@ -259,7 +259,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                   type="text"
                   value={communitySearch}
                   onChange={e => setCommunitySearch(e.target.value)}
-                  placeholder="ユーザーやルーティンを検索"
+                  placeholder="Search users or routines"
                   className="w-full pl-9 pr-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 transition-colors"
                 />
               </div>
@@ -270,22 +270,22 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                 <Users size={32} className="mx-auto mb-3 opacity-30" />
                 {activeCategory === 'following' ? (
                   <>
-                    <p className="text-sm">まだ誰もフォローしていません</p>
-                    <p className="text-xs mt-1">「みんなの一日」タブでフォローしてみましょう</p>
+                    <p className="text-sm">You&apos;re not following anyone yet</p>
+                    <p className="text-xs mt-1">Follow people from the Community tab</p>
                   </>
                 ) : communitySearch ? (
-                  <p className="text-sm">「{communitySearch}」に一致するルーティンがありません</p>
+                  <p className="text-sm">No routines matching &ldquo;{communitySearch}&rdquo;</p>
                 ) : (
                   <>
-                    <p className="text-sm font-bold text-stone-500">まだ公開されているルーティンがありません</p>
+                    <p className="text-sm font-bold text-stone-500">No published routines yet</p>
                     <p className="text-xs mt-1 text-stone-400 leading-relaxed">
-                      あなたのルーティンを公開して、<br />最初の投稿者になりませんか？
+                      Share your routine and<br />be the first to publish!
                     </p>
                     <button
                       onClick={() => go('PROFILE')}
                       className="mt-4 px-6 py-2.5 bg-stone-800 text-white rounded-xl text-xs font-bold hover:bg-stone-700 transition-colors"
                     >
-                      プロフィールで公開する →
+                      Publish from Profile →
                     </button>
                   </>
                 )}
@@ -318,12 +318,12 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                   }`}
                                 >
                                   {isFollowing?.(r.userId) ? <UserCheck size={10} /> : <UserPlus size={10} />}
-                                  {isFollowing?.(r.userId) ? 'フォロー中' : 'フォロー'}
+                                  {isFollowing?.(r.userId) ? 'Following' : 'Follow'}
                                 </button>
                               )}
                             </div>
                             <div className="text-xs text-stone-400">
-                              {r.category ? PERSONA_CATEGORY_LABELS[r.category] ?? r.category : 'ライフスタイル'}
+                              {r.category ? PERSONA_CATEGORY_LABELS[r.category] ?? r.category : 'Lifestyle'}
                             </div>
                           </div>
                         </div>
@@ -357,7 +357,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                           })}
                         </div>
                       )}
-                      <div className="text-xs text-stone-400">{r.routineTasks.length} タスク</div>
+                      <div className="text-xs text-stone-400">{r.routineTasks.length} tasks</div>
                     </div>
                     {expanded && (
                       <div className="border-t border-stone-100 px-5 pb-5">
@@ -382,7 +382,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                         <div className="mt-4 pt-4 border-t border-stone-100">
                           <div className="flex items-center gap-1.5 mb-3">
                             <MessageCircle size={14} className="text-stone-400" />
-                            <span className="text-xs font-bold text-stone-600">コメント</span>
+                            <span className="text-xs font-bold text-stone-600">Comments</span>
                           </div>
 
                           {loadingComments === r.id ? (
@@ -392,7 +392,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                           ) : (
                             <>
                               {(commentsByRoutine[r.id] ?? []).length === 0 ? (
-                                <p className="text-xs text-stone-300 mb-3">まだコメントはありません</p>
+                                <p className="text-xs text-stone-300 mb-3">No comments yet</p>
                               ) : (
                                 <div className="space-y-2.5 mb-3 max-h-48 overflow-y-auto">
                                   {(commentsByRoutine[r.id] ?? []).map(c => (
@@ -404,7 +404,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                         <div className="flex items-baseline gap-1.5">
                                           <span className="text-xs font-bold text-stone-700">{c.displayName}</span>
                                           <span className="text-[10px] text-stone-300">
-                                            {new Date(c.createdAt).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })}
+                                            {new Date(c.createdAt).toLocaleDateString('en', { month: 'short', day: 'numeric' })}
                                           </span>
                                           {c.userId === currentUserId && (
                                             <button
@@ -434,7 +434,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                       setCommentInputs(prev => ({ ...prev, [r.id]: '' }));
                                     }
                                   }}
-                                  placeholder="コメントを入力…"
+                                  placeholder="Write a comment..."
                                   maxLength={500}
                                   disabled={postingComment === r.id}
                                   className="flex-1 px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 transition-colors disabled:opacity-50"
@@ -463,7 +463,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                           }}
                           className="w-full mt-4 py-3 bg-green-700 text-white rounded-xl text-sm font-bold hover:bg-green-800 transition-colors"
                         >
-                          このルーティンを試す →
+                          Try this routine →
                         </button>
                       </div>
                     )}
@@ -542,7 +542,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
 
                 {/* Task count */}
                 <div className="flex items-center gap-3 text-xs text-stone-400">
-                  <span>{template.routine.length} タスク</span>
+                  <span>{template.routine.length} tasks</span>
                   <span className="text-stone-200">·</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${template.color}`}>
                     {template.category ? PERSONA_CATEGORY_LABELS[template.category] : 'Persona'}
@@ -591,7 +591,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                     }}
                     className="w-full mt-4 py-3 bg-green-700 text-white rounded-xl text-sm font-bold hover:bg-green-800 transition-colors"
                   >
-                    このルーティンを試す →
+                    Try this routine →
                   </button>
                 </div>
               )}
@@ -603,8 +603,8 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           <div className="text-center text-stone-300 pt-12">
             <p className="text-sm">
               {activeCategory === 'favorites'
-                ? 'まだお気に入りがありません。ハートをタップして追加しましょう。'
-                : 'このカテゴリにはまだペルソナがありません'}
+                ? 'No favorites yet. Tap the heart to add some.'
+                : 'No personas in this category yet'}
             </p>
           </div>
         )}
@@ -615,11 +615,11 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
             onClick={() => setDisplayLimit((prev) => prev + 12)}
             className="w-full py-3.5 border border-stone-200 rounded-2xl text-sm font-bold text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-all"
           >
-            もっと見る ({totalCurated! - displayLimit} 件)
+            Show more ({totalCurated! - displayLimit})
           </button>
         )}
         {activeCategory === 'all' && totalCurated !== null && displayLimit >= totalCurated && filteredTemplates.length > 0 && (
-          <p className="text-center text-xs text-stone-300 py-2">すべて表示しました</p>
+          <p className="text-center text-xs text-stone-300 py-2">All personas shown</p>
         )}
 
         {/* 日常を見つけるカード */}
@@ -627,18 +627,18 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           <div className="bg-white p-5 rounded-2xl border border-dashed border-stone-200 space-y-3">
             <div className="flex items-center gap-2">
               <Search size={14} className="text-stone-400" />
-              <h3 className="text-sm font-bold text-stone-600">まだ出会っていない日常を見つける</h3>
+              <h3 className="text-sm font-bold text-stone-600">Discover a new lifestyle</h3>
             </div>
             {canGenerate ? (
               <>
-                <p className="text-xs text-stone-400">どんな一日を過ごしてみたいですか？</p>
+                <p className="text-xs text-stone-400">What kind of day would you like to try?</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
-                    placeholder="例: 早起きして創作に集中する一日"
+                    placeholder="e.g. A day focused on early morning creativity"
                     disabled={generating}
                     className="flex-1 px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 transition-colors disabled:opacity-50"
                   />
@@ -650,15 +650,15 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                     {generating ? (
                       <>
                         <Loader2 size={14} className="animate-spin" />
-                        <span>探索中</span>
+                        <span>Searching</span>
                       </>
                     ) : (
-                      '見つける'
+                      'Discover'
                     )}
                   </button>
                 </div>
                 {generating && (
-                  <p className="text-xs text-stone-400 animate-pulse">あなたに合った日常を探しています…</p>
+                  <p className="text-xs text-stone-400 animate-pulse">Finding a lifestyle that fits you…</p>
                 )}
                 {generateError && (
                   <p className="text-xs text-red-500">{generateError}</p>
@@ -666,12 +666,12 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
               </>
             ) : (
               <div>
-                <p className="text-xs text-stone-400 mb-2">この機能を使うにはAPIキーの設定が必要です</p>
+                <p className="text-xs text-stone-400 mb-2">An API key is required to use this feature</p>
                 <button
                   onClick={() => go('SETTINGS')}
                   className="text-xs text-green-700 font-bold hover:underline"
                 >
-                  設定画面で設定する →
+                  Configure in Settings →
                 </button>
               </div>
             )}
@@ -683,18 +683,18 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
           <div className="space-y-3">
             <div className="flex items-center gap-2 px-1">
               <CalendarDays size={14} className="text-stone-400" />
-              <h3 className="text-sm font-bold text-stone-600">今週のイベント</h3>
+              <h3 className="text-sm font-bold text-stone-600">This Week&apos;s Events</h3>
               {events.some((e: EventItem) => e.source === 'doorkeeper') && (
                 <span className="text-[9px] text-green-500 bg-green-50 px-1.5 py-0.5 rounded-full">LIVE</span>
               )}
               <span className="text-[10px] text-stone-300 ml-auto">
-                {prefecture ? `${prefecture}周辺 · オンライン` : '全国 · オンライン'}
+                {prefecture ? `Near ${prefecture} · Online` : 'All regions · Online'}
               </span>
             </div>
             {eventsLoading ? (
               <div className="flex items-center justify-center py-8 gap-2 text-stone-300">
                 <Loader2 size={16} className="animate-spin" />
-                <span className="text-xs">イベントを取得中...</span>
+                <span className="text-xs">Loading events...</span>
               </div>
             ) : (
               <div className="space-y-2">
@@ -714,9 +714,9 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                               {catInfo.label}
                             </div>
                             {event.isOnline ? (
-                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600">オンライン</div>
+                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600">Online</div>
                             ) : prefecture && event.prefecture === prefecture ? (
-                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700">近くで開催</div>
+                              <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700">Nearby</div>
                             ) : (
                               <div className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-50 text-stone-400">{event.prefecture}</div>
                             )}
@@ -731,7 +731,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                 {event.location}
                               </span>
                               {event.price && (
-                                <span className={`text-[11px] font-bold ${event.price === '無料' ? 'text-green-600' : 'text-stone-500'}`}>
+                                <span className={`text-[11px] font-bold ${event.price === '無料' || event.price === 'Free' ? 'text-green-600' : 'text-stone-500'}`}>
                                   {event.price}
                                 </span>
                               )}
@@ -766,7 +766,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                       : 'bg-stone-900 text-white hover:bg-stone-700'
                                   }`}
                                 >
-                                  {alreadyScheduled ? <><Check size={16} />予定に追加済み</> : <><CalendarPlus size={16} />予定に追加</>}
+                                  {alreadyScheduled ? <><Check size={16} />Scheduled</> : <><CalendarPlus size={16} />Add to Schedule</>}
                                 </button>
                               );
                             })()}
@@ -779,7 +779,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <ExternalLink size={14} />
-                                詳細を見る
+                                Details
                               </a>
                             )}
                           </div>

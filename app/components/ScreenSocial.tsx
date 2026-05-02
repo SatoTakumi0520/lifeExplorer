@@ -40,7 +40,7 @@ export const ScreenSocial = ({ go, setSelectedUser, socialFeed }: ScreenSocialPr
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">
       <div className="p-6 pb-4 bg-white/80 backdrop-blur sticky top-0 z-10 border-b border-stone-100">
         <h2 className="text-2xl font-serif font-bold mb-1">Catalog</h2>
-        <p className="text-xs text-stone-400">みんなの過ごし方を見てみよう</p>
+        <p className="text-xs text-stone-400">Discover how others spend their day</p>
         <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
           {['Recommended', 'Business', 'Creative', 'Wellness'].map((tag) => (
             <span

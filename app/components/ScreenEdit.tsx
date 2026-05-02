@@ -62,12 +62,12 @@ export const ScreenEdit = ({
         <button onClick={() => {
           setSelectedTemplate(null);
           go('HOME');
-        }} className="text-stone-400 hover:text-stone-800 text-sm font-bold">キャンセル</button>
-        <h2 className="font-bold text-stone-800">ルーティン編集</h2>
+        }} className="text-stone-400 hover:text-stone-800 text-sm font-bold">Cancel</button>
+        <h2 className="font-bold text-stone-800">Edit Routine</h2>
         <button onClick={() => {
           setSelectedTemplate(null);
           go('HOME');
-        }} className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors">完了</button>
+        }} className="text-white bg-green-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors">Done</button>
       </div>
       <div className="flex-1 overflow-y-auto pb-24">
         {/* 平日/休日トグル */}
@@ -82,7 +82,7 @@ export const ScreenEdit = ({
               }`}
             >
               <Briefcase size={12} />
-              平日
+              Weekday
             </button>
             <button
               onClick={() => scheduleType !== 'weekend' && onToggleSchedule()}
@@ -93,13 +93,13 @@ export const ScreenEdit = ({
               }`}
             >
               <Palmtree size={12} />
-              休日
+              Weekend
             </button>
           </div>
         </div>
 
         <div className="pt-4 bg-white border-b border-stone-50">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-2 px-4">テンプレート</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-2 px-4">Templates</h3>
           {/* Category filter tabs */}
           <div className="flex gap-2 overflow-x-auto pb-2 px-4 no-scrollbar">
             {availableCategories.map(cat => (
@@ -142,14 +142,14 @@ export const ScreenEdit = ({
             <div className="p-4 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold ${selectedTemplate.color}`}>{selectedTemplate.title.charAt(0)}</div>
-                <h3 className="text-sm font-bold text-stone-700">「{selectedTemplate.title}」と比較中</h3>
+                <h3 className="text-sm font-bold text-stone-700">Comparing with &ldquo;{selectedTemplate.title}&rdquo;</h3>
               </div>
-              <button onClick={() => setSelectedTemplate(null)} className="text-xs text-stone-400 hover:text-stone-600 px-3 py-1 bg-white rounded-full border border-stone-200">閉じる</button>
+              <button onClick={() => setSelectedTemplate(null)} className="text-xs text-stone-400 hover:text-stone-600 px-3 py-1 bg-white rounded-full border border-stone-200">Close</button>
             </div>
             <div className="flex border-b border-stone-100">
               <div className="flex-1 px-4 py-2 bg-orange-50/50"><span className="text-xs font-bold text-orange-600 tracking-wider">{selectedTemplate.title}</span></div>
               <div className="w-10" />
-              <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-xs font-bold text-green-600 tracking-wider">マイルーティン</span></div>
+              <div className="flex-1 px-4 py-2 bg-green-50/50"><span className="text-xs font-bold text-green-600 tracking-wider">My Routine</span></div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {[...new Set([...selectedTemplate.routine.map((routine) => routine.time), ...myRoutine.map((routine) => routine.time)])]
@@ -204,7 +204,7 @@ export const ScreenEdit = ({
           </div>
         ) : (
           <div className="p-4">
-            <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">マイルーティン</h3>
+            <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">My Routine</h3>
             <div className="space-y-0">
               {myRoutine.map((item, idx) => {
                 const prevItem = myRoutine[idx - 1];
@@ -226,7 +226,7 @@ export const ScreenEdit = ({
                         </div>
                         {gapMin > 0 && (
                           <span className="text-[10px] text-stone-300 font-mono self-center pl-2 py-1">
-                            {fmtDur(gapMin)} 空き
+                            {fmtDur(gapMin)} free
                           </span>
                         )}
                       </div>
@@ -262,7 +262,7 @@ export const ScreenEdit = ({
               onClick={() => setShowAddTask(true)}
               className="w-full mt-3 py-4 border-2 border-dashed border-stone-200 rounded-xl text-stone-400 hover:border-green-300 hover:text-green-600 transition-all flex items-center justify-center gap-2 font-bold text-sm"
             >
-              <Plus size={16} /> タスクを追加
+              <Plus size={16} /> Add Task
             </button>
           </div>
         )}

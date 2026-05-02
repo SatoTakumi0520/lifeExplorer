@@ -70,10 +70,10 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles size={20} className="text-orange-500" />
-              <h2 className="text-xl font-serif font-bold">興味のあるカテゴリを選んでください</h2>
+              <h2 className="text-xl font-serif font-bold">Choose your interests</h2>
             </div>
             <p className="text-sm text-stone-400">
-              選んだカテゴリのルーティンが優先的に表示されます（複数選択可）
+              Routines from selected categories will be prioritized
             </p>
           </div>
 
@@ -103,13 +103,13 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
               disabled={selectedCategories.length === 0}
               className="w-full py-3.5 bg-stone-800 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-stone-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              次へ <ChevronRight size={16} />
+              Next <ChevronRight size={16} />
             </button>
             <button
               onClick={onSkip}
               className="w-full py-2 text-stone-400 text-xs hover:text-stone-500 transition-colors"
             >
-              スキップして自由に探す
+              Skip and explore freely
             </button>
           </div>
         </div>
@@ -119,18 +119,18 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles size={20} className="text-orange-500" />
-              <h2 className="text-xl font-serif font-bold">あなたの生活リズムは？</h2>
+              <h2 className="text-xl font-serif font-bold">What&apos;s your lifestyle rhythm?</h2>
             </div>
             <p className="text-sm text-stone-400">
-              あなたに合ったルーティンをおすすめします
+              We&apos;ll recommend routines that match your style
             </p>
           </div>
 
           <div className="space-y-4 flex-1">
             {([
-              { value: 'morning' as const, icon: Sun, label: '朝型', desc: '早起きして午前中に活動する' },
-              { value: 'night' as const, icon: Moon, label: '夜型', desc: '夜に集中力が高まる' },
-              { value: 'balanced' as const, icon: Scale, label: 'バランス型', desc: '特にこだわりはない' },
+              { value: 'morning' as const, icon: Sun, label: 'Morning', desc: 'Active and productive in the morning' },
+              { value: 'night' as const, icon: Moon, label: 'Night Owl', desc: 'Most focused at night' },
+              { value: 'balanced' as const, icon: Scale, label: 'Balanced', desc: 'No strong preference' },
             ]).map(({ value, icon: Icon, label, desc }) => {
               const isSelected = lifestyleRhythm === value;
               return (
@@ -158,20 +158,20 @@ export const ScreenOnboarding = ({ onComplete, onSkip }: Props) => {
               onClick={handleComplete}
               className="w-full py-3.5 bg-stone-800 text-white rounded-xl font-bold text-sm hover:bg-stone-700 transition-colors"
             >
-              始める
+              Get Started
             </button>
             <div className="flex justify-between">
               <button
                 onClick={() => setStep(1)}
                 className="py-2 text-stone-400 text-xs hover:text-stone-500 transition-colors"
               >
-                ← 戻る
+                ← Back
               </button>
               <button
                 onClick={onSkip}
                 className="py-2 text-stone-400 text-xs hover:text-stone-500 transition-colors"
               >
-                スキップして自由に探す
+                Skip and explore freely
               </button>
             </div>
           </div>

@@ -162,22 +162,22 @@ const features = [
   {
     icon: <RoutineIcon />,
     label: '01',
-    title: 'マイルーティン',
-    desc: '理想の一日をデザインする',
+    title: 'My Routine',
+    desc: 'Design your ideal day',
     iconBg: 'bg-green-100 text-green-700',
   },
   {
     icon: <BorrowIcon />,
     label: '02',
-    title: '一日を借りる',
-    desc: '誰かの一日を借りて、新しい自分を試す',
+    title: 'Borrow a Day',
+    desc: 'Try someone else\'s routine, discover a new you',
     iconBg: 'bg-amber-100 text-amber-700',
   },
   {
     icon: <CatalogIcon />,
     label: '03',
-    title: '探索する',
-    desc: '75+のライフスタイルから自分に合うものを発見',
+    title: 'Explore',
+    desc: 'Discover from 75+ lifestyles that fit you',
     iconBg: 'bg-violet-100 text-violet-700',
   },
 ];
@@ -215,7 +215,7 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
 
     {/* フィーチャーリスト */}
     <div className="px-8 pt-9 z-10 relative">
-      <p className="text-[10px] font-bold text-stone-300 uppercase tracking-[0.18em] mb-4">特徴</p>
+      <p className="text-[10px] font-bold text-stone-300 uppercase tracking-[0.18em] mb-4">Features</p>
       <div className="space-y-0">
         {features.map(({ icon, label, title, desc, iconBg }) => (
           <div key={title} className="flex items-center gap-4 py-3.5 border-b border-stone-100/80 last:border-0">
@@ -241,14 +241,14 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
         onClick={onSignUp}
         className="w-full py-[17px] bg-stone-900 text-white rounded-2xl font-bold text-base tracking-wide hover:bg-stone-700 active:scale-[0.98] transition-all"
       >
-        はじめる
+        Get Started
       </button>
       <button
         onClick={onSignIn}
         className="w-full py-3 text-stone-400 text-sm font-medium hover:text-stone-700 transition-colors"
       >
-        すでにアカウントをお持ちの方は{' '}
-        <span className="text-stone-800 font-bold underline underline-offset-2">ログイン</span>
+        Already have an account?{' '}
+        <span className="text-stone-800 font-bold underline underline-offset-2">Sign In</span>
       </button>
     </div>
   </div>
