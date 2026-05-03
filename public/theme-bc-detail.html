@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Life Explorer – Midnight vs Botanical 詳細比較</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Inter:wght@300;400;500;600;700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    font-family: 'Inter', -apple-system, sans-serif;
+    padding: 32px 16px 64px;
+    min-height: 100vh;
+  }
+  .page-title { color: white; text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .page-subtitle { color: #999; text-align: center; font-size: 12px; margin-bottom: 36px; }
+
+  .theme-section {
+    max-width: 1700px;
+    margin: 0 auto 56px;
+  }
+  .theme-section h2 {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 4px;
+    padding-left: 12px;
+    border-left: 4px solid #C9A961;
+  }
+  .theme-section.bot h2 { border-left-color: #7C9474; }
+  .theme-section .lead {
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 20px;
+    padding-left: 16px;
+  }
+
+  .row {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    justify-content: flex-start;
+  }
+
+  .screen-wrap { flex-shrink: 0; }
+  .screen-label {
+    color: #ddd;
+    font-size: 11px;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .phone {
+    width: 280px;
+    height: 600px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 14px 42px rgba(0,0,0,0.4);
+    position: relative;
+  }
+
+  /* ========================================
+     MIDNIGHT
+     ======================================== */
+  .midnight {
+    background: #0E1320;
+    color: #E8E6E0;
+    font-family: 'Inter', sans-serif;
+  }
+  .midnight .header {
+    padding: 14px 18px 11px;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.3);
+    background-image: radial-gradient(ellipse at top, rgba(155, 138, 196, 0.12) 0%, transparent 60%);
+  }
+  .midnight .h-back { font-size: 11px; color: #8B8B95; margin-bottom: 4px; }
+  .midnight .h-title-sm { font-size: 10px; letter-spacing: 0.3em; color: #C9A961; font-weight: 500; }
+  .midnight .h-title { font-size: 16px; color: #F4F2EA; margin-top: 2px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; }
+  .midnight .h-date { font-size: 13px; color: #E8E6E0; margin-top: 4px; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+  .midnight .toggle {
+    margin: 12px 18px 0;
+    display: flex;
+    background: #161B2D;
+    border-radius: 9999px;
+    padding: 3px;
+    border: 1px solid rgba(201, 169, 97, 0.2);
+  }
+  .midnight .toggle-btn {
+    flex: 1; padding: 5px 10px; border-radius: 9999px;
+    font-size: 10px; text-align: center; color: #8B8B95;
+    letter-spacing: 0.05em;
+  }
+  .midnight .toggle-btn.active {
+    background: linear-gradient(135deg, #C9A961, #B89048);
+    color: #0E1320; font-weight: 600;
+  }
+  .midnight .timeline { padding: 14px 18px; }
+  .midnight .task-card {
+    background: #161B2D;
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+  .midnight .task-time {
+    font-size: 10px; color: #C9A961;
+    margin-bottom: 4px; font-family: ui-monospace, monospace;
+    letter-spacing: 0.1em;
+  }
+  .midnight .task-title { font-size: 13px; font-weight: 500; color: #F4F2EA; }
+  .midnight .task-desc { font-size: 11px; color: #8B8B95; margin-top: 3px; line-height: 1.5; }
+  .midnight .nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #08090C;
+    border-top: 1px solid rgba(201, 169, 97, 0.2);
+    padding: 8px 0;
+    display: flex; justify-content: space-around;
+  }
+  .midnight .nav-item {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 14px; color: #6B6B75;
+  }
+  .midnight .nav-item.active {
+    background: rgba(201, 169, 97, 0.15); color: #C9A961;
+  }
+
+  /* Midnight – Settings */
+  .midnight .section-label {
+    font-size: 9px; letter-spacing: 0.3em;
+    color: #C9A961; padding: 14px 18px 6px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  .midnight .setting-row {
+    background: #161B2D;
+    border: 1px solid rgba(201, 169, 97, 0.12);
+    margin: 0 18px 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .midnight .setting-row .label { font-size: 12px; color: #F4F2EA; }
+  .midnight .setting-row .sub { font-size: 10px; color: #8B8B95; margin-top: 2px; }
+  .midnight .setting-row .arrow { color: #C9A961; font-size: 14px; }
+  .midnight .toggle-switch {
+    width: 36px; height: 20px;
+    background: linear-gradient(135deg, #C9A961, #B89048);
+    border-radius: 10px; position: relative;
+  }
+  .midnight .toggle-switch::after {
+    content: ''; position: absolute; right: 2px; top: 2px;
+    width: 16px; height: 16px;
+    background: #0E1320;
+    border-radius: 50%;
+  }
+
+  /* Midnight – Explore */
+  .midnight .explore-grid { padding: 12px 18px; }
+  .midnight .explore-card {
+    background: linear-gradient(135deg, #161B2D, #1A1F33);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .midnight .explore-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.2) 0%, transparent 70%);
+  }
+  .midnight .ec-emoji { font-size: 22px; margin-bottom: 6px; }
+  .midnight .ec-title { font-size: 13px; font-weight: 600; color: #F4F2EA; margin-bottom: 3px; }
+  .midnight .ec-desc { font-size: 10px; color: #8B8B95; line-height: 1.5; margin-bottom: 6px; }
+  .midnight .ec-meta { font-size: 10px; color: #C9A961; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+  /* Midnight – Profile */
+  .midnight .profile-hero {
+    padding: 22px 18px 18px;
+    background-image: radial-gradient(ellipse at center, rgba(155, 138, 196, 0.15) 0%, transparent 70%);
+    text-align: center;
+  }
+  .midnight .avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C9A961, #9B8AC4);
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    border: 2px solid rgba(201, 169, 97, 0.3);
+  }
+  .midnight .pname {
+    font-size: 18px; color: #F4F2EA;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+  }
+  .midnight .pemail { font-size: 11px; color: #8B8B95; margin-top: 4px; }
+  .midnight .stats {
+    display: flex; justify-content: space-around;
+    padding: 14px 18px;
+    border-top: 1px solid rgba(201, 169, 97, 0.15);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+    margin: 0 18px;
+  }
+  .midnight .stat-num { font-size: 20px; color: #C9A961; font-family: 'Cormorant Garamond', serif; }
+  .midnight .stat-label { font-size: 9px; color: #8B8B95; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; text-align: center; }
+
+  /* Midnight – Detail */
+  .midnight .detail-card {
+    background: #161B2D;
+    border: 1px solid rgba(201, 169, 97, 0.2);
+    border-radius: 14px;
+    margin: 18px;
+    padding: 18px;
+  }
+  .midnight .detail-time {
+    font-size: 12px;
+    color: #C9A961;
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .midnight .detail-title {
+    font-size: 18px;
+    color: #F4F2EA;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  .midnight .detail-divider {
+    height: 1px;
+    background: rgba(201, 169, 97, 0.3);
+    margin: 12px 0;
+  }
+  .midnight .detail-label {
+    font-size: 9px;
+    color: #C9A961;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .midnight .detail-text {
+    font-size: 12px;
+    color: #E8E6E0;
+    line-height: 1.7;
+  }
+  .midnight .tag {
+    display: inline-block;
+    background: rgba(155, 138, 196, 0.15);
+    color: #9B8AC4;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 10px;
+    margin-right: 4px;
+  }
+
+  /* ========================================
+     BOTANICAL
+     ======================================== */
+  .botanical {
+    background: #E8EDE3;
+    color: #2D3E2A;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  .botanical .header {
+    padding: 14px 18px 11px;
+    border-bottom: 1px solid rgba(63, 94, 58, 0.15);
+  }
+  .botanical .h-back { font-size: 11px; color: #5A6E55; margin-bottom: 4px; }
+  .botanical .h-title-sm { font-size: 10px; letter-spacing: 0.25em; color: #3F5E3A; font-weight: 600; }
+  .botanical .h-title { font-size: 18px; color: #2D3E2A; margin-top: 2px; font-family: 'Caveat', cursive; font-weight: 700; }
+  .botanical .h-date { font-size: 18px; color: #2D3E2A; margin-top: 2px; font-family: 'Caveat', cursive; font-weight: 600; }
+
+  .botanical .toggle {
+    margin: 10px 18px 0;
+    display: flex;
+    background: #D8E0D2;
+    border-radius: 9999px;
+    padding: 3px;
+  }
+  .botanical .toggle-btn {
+    flex: 1; padding: 5px 10px; border-radius: 9999px;
+    font-size: 11px; text-align: center; color: #5A6E55;
+  }
+  .botanical .toggle-btn.active {
+    background: #F8F5EE; color: #3F5E3A; font-weight: 600;
+    box-shadow: 0 1px 2px rgba(63, 94, 58, 0.1);
+  }
+  .botanical .timeline { padding: 14px 18px; }
+  .botanical .task-card {
+    background: #F8F5EE;
+    border-radius: 18px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid #7C9474;
+  }
+  .botanical .task-card.terracotta { border-left-color: #C97B4F; }
+  .botanical .task-card.forest { border-left-color: #3F5E3A; }
+  .botanical .task-time {
+    font-size: 12px; color: #5A6E55;
+    margin-bottom: 3px; font-family: 'Caveat', cursive;
+    font-weight: 600;
+  }
+  .botanical .task-title { font-size: 13px; font-weight: 600; color: #2D3E2A; }
+  .botanical .task-desc { font-size: 11px; color: #5A6E55; margin-top: 3px; line-height: 1.5; }
+  .botanical .nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #F8F5EE;
+    border-top: 1px solid rgba(63, 94, 58, 0.15);
+    padding: 8px 0;
+    display: flex; justify-content: space-around;
+  }
+  .botanical .nav-item {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-size: 14px; color: #5A6E55;
+  }
+  .botanical .nav-item.active {
+    background: #DCE5D4; color: #3F5E3A;
+  }
+
+  /* Botanical – Settings */
+  .botanical .section-label {
+    font-size: 10px; letter-spacing: 0.2em;
+    color: #3F5E3A; padding: 14px 18px 6px;
+    text-transform: uppercase; font-weight: 700;
+  }
+  .botanical .setting-row {
+    background: #F8F5EE;
+    margin: 0 18px 8px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .botanical .setting-row .label { font-size: 12px; color: #2D3E2A; font-weight: 500; }
+  .botanical .setting-row .sub { font-size: 10px; color: #5A6E55; margin-top: 2px; }
+  .botanical .setting-row .arrow { color: #7C9474; font-size: 14px; }
+  .botanical .toggle-switch {
+    width: 36px; height: 20px;
+    background: #7C9474;
+    border-radius: 10px; position: relative;
+  }
+  .botanical .toggle-switch::after {
+    content: ''; position: absolute; right: 2px; top: 2px;
+    width: 16px; height: 16px;
+    background: #F8F5EE;
+    border-radius: 50%;
+  }
+
+  /* Botanical – Explore */
+  .botanical .explore-grid { padding: 12px 18px; }
+  .botanical .explore-card {
+    background: #F8F5EE;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(63, 94, 58, 0.1);
+    position: relative;
+  }
+  .botanical .explore-card.terra-accent { border-left: 4px solid #C97B4F; }
+  .botanical .explore-card.forest-accent { border-left: 4px solid #3F5E3A; }
+  .botanical .explore-card.sage-accent { border-left: 4px solid #7C9474; }
+  .botanical .ec-emoji { font-size: 22px; margin-bottom: 6px; }
+  .botanical .ec-title { font-size: 13px; font-weight: 700; color: #2D3E2A; margin-bottom: 3px; }
+  .botanical .ec-desc { font-size: 10px; color: #5A6E55; line-height: 1.5; margin-bottom: 6px; }
+  .botanical .ec-meta { font-size: 12px; color: #3F5E3A; font-family: 'Caveat', cursive; font-weight: 600; }
+
+  /* Botanical – Profile */
+  .botanical .profile-hero {
+    padding: 22px 18px 18px;
+    text-align: center;
+  }
+  .botanical .avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7C9474, #C97B4F);
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    border: 3px solid #F8F5EE;
+  }
+  .botanical .pname {
+    font-size: 22px; color: #2D3E2A;
+    font-family: 'Caveat', cursive; font-weight: 700;
+  }
+  .botanical .pemail { font-size: 11px; color: #5A6E55; margin-top: 4px; }
+  .botanical .stats {
+    display: flex; justify-content: space-around;
+    padding: 14px 18px;
+    background: #F8F5EE;
+    border-radius: 18px;
+    margin: 12px 18px;
+  }
+  .botanical .stat-num { font-size: 22px; color: #3F5E3A; font-family: 'Caveat', cursive; font-weight: 700; }
+  .botanical .stat-label { font-size: 9px; color: #5A6E55; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; text-align: center; }
+
+  /* Botanical – Detail */
+  .botanical .detail-card {
+    background: #F8F5EE;
+    border-radius: 18px;
+    margin: 18px;
+    padding: 18px;
+    border-left: 4px solid #C97B4F;
+  }
+  .botanical .detail-time {
+    font-size: 18px;
+    color: #5A6E55;
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .botanical .detail-title {
+    font-size: 17px;
+    color: #2D3E2A;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .botanical .detail-divider {
+    height: 1px;
+    background: rgba(63, 94, 58, 0.15);
+    margin: 12px 0;
+  }
+  .botanical .detail-label {
+    font-size: 10px;
+    color: #3F5E3A;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .botanical .detail-text {
+    font-size: 12px;
+    color: #2D3E2A;
+    line-height: 1.7;
+  }
+  .botanical .tag {
+    display: inline-block;
+    background: #DCE5D4;
+    color: #3F5E3A;
+    padding: 3px 9px;
+    border-radius: 8px;
+    font-size: 10px;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Midnight × Botanical — 詳細サンプル</h1>
+<p class="page-subtitle">候補 B（深夜エディトリアル）と候補 C（植物・スローライフ）の各画面サンプル</p>
+
+<!-- ============== MIDNIGHT ============== -->
+<section class="theme-section">
+  <h2>候補 B — Midnight</h2>
+  <p class="lead">深夜のエディトリアル ・ ネイビー × ゴールド × 藤色</p>
+  <div class="row">
+
+    <!-- Home -->
+    <div class="screen-wrap">
+      <div class="screen-label">Home / Timeline</div>
+      <div class="phone midnight">
+        <div class="header">
+          <div class="h-title-sm">LIFE EXPLORER</div>
+          <div class="h-date">Sun, May 3</div>
+        </div>
+        <div class="toggle">
+          <div class="toggle-btn">WEEKDAY</div>
+          <div class="toggle-btn active">WEEKEND</div>
+        </div>
+        <div class="timeline">
+          <div class="task-card">
+            <div class="task-time">07:00</div>
+            <div class="task-title">ゆっくり朝食</div>
+            <div class="task-desc">時間をかけて朝食を楽しむ</div>
+          </div>
+          <div class="task-card">
+            <div class="task-time">09:00</div>
+            <div class="task-title">読書タイム</div>
+            <div class="task-desc">静かな朝に最高の読書タイム</div>
+          </div>
+          <div class="task-card">
+            <div class="task-time">15:00</div>
+            <div class="task-title">トレーニング</div>
+            <div class="task-desc">ジムで疲れをリフレッシュ</div>
+          </div>
+          <div class="task-card">
+            <div class="task-time">21:00</div>
+            <div class="task-title">瞑想</div>
+            <div class="task-desc">10分間の静寂で1日を締める</div>
+          </div>
+        </div>
+        <div class="nav">
+          <div class="nav-item active">🏠</div>
+          <div class="nav-item">🔍</div>
+          <div class="nav-item">📅</div>
+          <div class="nav-item">👤</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="screen-wrap">
+      <div class="screen-label">Task Detail</div>
+      <div class="phone midnight">
+        <div class="header">
+          <div class="h-back">← Back</div>
+          <div class="h-title">Task Detail</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-time">09:00 — 10:30</div>
+          <div class="detail-title">朝の読書タイム</div>
+          <div>
+            <span class="tag">Mind</span>
+            <span class="tag">Morning</span>
+          </div>
+          <div class="detail-divider"></div>
+          <div class="detail-label">Description</div>
+          <div class="detail-text">静かな朝、コーヒーを淹れて窓辺で読書。一日のはじまりに思考を整える時間。</div>
+          <div class="detail-divider"></div>
+          <div class="detail-label">Borrowed From</div>
+          <div class="detail-text" style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: #C9A961;">@editor_takashi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explore -->
+    <div class="screen-wrap">
+      <div class="screen-label">Explore</div>
+      <div class="phone midnight">
+        <div class="header">
+          <div class="h-title-sm">EXPLORE</div>
+          <div class="h-title">Discover Routines</div>
+        </div>
+        <div class="explore-grid">
+          <div class="explore-card">
+            <div class="ec-emoji">📚</div>
+            <div class="ec-title">編集者の朝</div>
+            <div class="ec-desc">本に囲まれた静かな時間。読書と思索を中心に1日を組み立てる。</div>
+            <div class="ec-meta">— 5 routines</div>
+          </div>
+          <div class="explore-card">
+            <div class="ec-emoji">🎨</div>
+            <div class="ec-title">クリエイターの夜</div>
+            <div class="ec-desc">夜更けの集中タイム。アイデアが降りてくる神秘的な時間帯。</div>
+            <div class="ec-meta">— 8 routines</div>
+          </div>
+          <div class="explore-card">
+            <div class="ec-emoji">🌙</div>
+            <div class="ec-title">夜型ミニマリスト</div>
+            <div class="ec-desc">質を大切にする夜の儀式。少ないものに深く向き合う。</div>
+            <div class="ec-meta">— 3 routines</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="screen-wrap">
+      <div class="screen-label">Settings</div>
+      <div class="phone midnight">
+        <div class="header">
+          <div class="h-back">← Back</div>
+          <div class="h-title">Settings</div>
+        </div>
+        <div class="section-label">Account</div>
+        <div class="setting-row">
+          <div>
+            <div class="label">My Garden</div>
+            <div class="sub">Edit Profile</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">Public Profile</div>
+            <div class="sub">ルーティン公開設定</div>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+        <div class="section-label">Appearance</div>
+        <div class="setting-row">
+          <div>
+            <div class="label">Theme: Midnight</div>
+            <div class="sub">深夜のエディトリアル</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">Notifications</div>
+            <div class="sub">朝のリマインダー</div>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div class="screen-wrap">
+      <div class="screen-label">Profile</div>
+      <div class="phone midnight">
+        <div class="profile-hero">
+          <div class="avatar">🌙</div>
+          <div class="pname">Takumi</div>
+          <div class="pemail">@takumi · 編集者の朝を実践中</div>
+        </div>
+        <div class="stats">
+          <div>
+            <div class="stat-num">12</div>
+            <div class="stat-label">Routines</div>
+          </div>
+          <div>
+            <div class="stat-num">47</div>
+            <div class="stat-label">Days</div>
+          </div>
+          <div>
+            <div class="stat-num">8</div>
+            <div class="stat-label">Borrowed</div>
+          </div>
+        </div>
+        <div class="section-label">Recent Activity</div>
+        <div class="setting-row">
+          <div>
+            <div class="label">朝の読書タイム</div>
+            <div class="sub">Borrowed from @editor_takashi</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">夜のヨガ</div>
+            <div class="sub">Borrowed from @yoga_aki</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== BOTANICAL ============== -->
+<section class="theme-section bot">
+  <h2>候補 C — Botanical</h2>
+  <p class="lead">植物 ・ スローライフ ・ セージグリーン × テラコッタ × フォレスト</p>
+  <div class="row">
+
+    <!-- Home -->
+    <div class="screen-wrap">
+      <div class="screen-label">Home / Timeline</div>
+      <div class="phone botanical">
+        <div class="header">
+          <div class="h-title-sm">LIFE EXPLORER</div>
+          <div class="h-date">Sun, May 3</div>
+        </div>
+        <div class="toggle">
+          <div class="toggle-btn">Weekday</div>
+          <div class="toggle-btn active">Weekend</div>
+        </div>
+        <div class="timeline">
+          <div class="task-card terracotta">
+            <div class="task-time">7:00 am</div>
+            <div class="task-title">ゆっくり朝食</div>
+            <div class="task-desc">時間をかけて朝食を楽しむ</div>
+          </div>
+          <div class="task-card">
+            <div class="task-time">9:00 am</div>
+            <div class="task-title">読書タイム</div>
+            <div class="task-desc">静かな朝に最高の読書タイム</div>
+          </div>
+          <div class="task-card forest">
+            <div class="task-time">3:00 pm</div>
+            <div class="task-title">トレーニング</div>
+            <div class="task-desc">ジムで疲れをリフレッシュ</div>
+          </div>
+          <div class="task-card">
+            <div class="task-time">9:00 pm</div>
+            <div class="task-title">ハーブティー</div>
+            <div class="task-desc">カモミールで穏やかな夜を</div>
+          </div>
+        </div>
+        <div class="nav">
+          <div class="nav-item active">🏠</div>
+          <div class="nav-item">🔍</div>
+          <div class="nav-item">📅</div>
+          <div class="nav-item">👤</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="screen-wrap">
+      <div class="screen-label">Task Detail</div>
+      <div class="phone botanical">
+        <div class="header">
+          <div class="h-back">← Back</div>
+          <div class="h-title">Task Detail</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-time">7:00 am — 8:30 am</div>
+          <div class="detail-title">ゆっくり朝食</div>
+          <div>
+            <span class="tag">Body</span>
+            <span class="tag">Morning</span>
+          </div>
+          <div class="detail-divider"></div>
+          <div class="detail-label">Description</div>
+          <div class="detail-text">休日の朝、お気に入りのカフェオレと焼きたてのパン。ベランダで植物を眺めながら。</div>
+          <div class="detail-divider"></div>
+          <div class="detail-label">Borrowed From</div>
+          <div class="detail-text" style="font-family: 'Caveat', cursive; font-weight: 700; color: #3F5E3A; font-size: 16px;">@cafe_lover_mia</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explore -->
+    <div class="screen-wrap">
+      <div class="screen-label">Explore</div>
+      <div class="phone botanical">
+        <div class="header">
+          <div class="h-title-sm">EXPLORE</div>
+          <div class="h-title">Discover Routines</div>
+        </div>
+        <div class="explore-grid">
+          <div class="explore-card terra-accent">
+            <div class="ec-emoji">🌿</div>
+            <div class="ec-title">スローライフ</div>
+            <div class="ec-desc">早起きしてベランダの植物に水やり。朝日と一緒にゆっくり始める。</div>
+            <div class="ec-meta">— 6 routines</div>
+          </div>
+          <div class="explore-card forest-accent">
+            <div class="ec-emoji">🧘</div>
+            <div class="ec-title">ヨガと瞑想</div>
+            <div class="ec-desc">体と心を整える朝の習慣。深い呼吸とともに1日を始める。</div>
+            <div class="ec-meta">— 4 routines</div>
+          </div>
+          <div class="explore-card sage-accent">
+            <div class="ec-emoji">☕</div>
+            <div class="ec-title">カフェ巡り</div>
+            <div class="ec-desc">町の小さなカフェで日記を書く。心地よい音とコーヒーの香り。</div>
+            <div class="ec-meta">— 7 routines</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="screen-wrap">
+      <div class="screen-label">Settings</div>
+      <div class="phone botanical">
+        <div class="header">
+          <div class="h-back">← Back</div>
+          <div class="h-title">Settings</div>
+        </div>
+        <div class="section-label">Account</div>
+        <div class="setting-row">
+          <div>
+            <div class="label">My Garden</div>
+            <div class="sub">Edit Profile</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">Public Profile</div>
+            <div class="sub">ルーティン公開設定</div>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+        <div class="section-label">Appearance</div>
+        <div class="setting-row">
+          <div>
+            <div class="label">Theme: Botanical</div>
+            <div class="sub">セージグリーンの優しさ</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">Notifications</div>
+            <div class="sub">朝のリマインダー</div>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div class="screen-wrap">
+      <div class="screen-label">Profile</div>
+      <div class="phone botanical">
+        <div class="profile-hero">
+          <div class="avatar">🌱</div>
+          <div class="pname">Takumi</div>
+          <div class="pemail">@takumi · スローライフを育てる</div>
+        </div>
+        <div class="stats">
+          <div>
+            <div class="stat-num">12</div>
+            <div class="stat-label">Routines</div>
+          </div>
+          <div>
+            <div class="stat-num">47</div>
+            <div class="stat-label">Days</div>
+          </div>
+          <div>
+            <div class="stat-num">8</div>
+            <div class="stat-label">Borrowed</div>
+          </div>
+        </div>
+        <div class="section-label">Recent Activity</div>
+        <div class="setting-row">
+          <div>
+            <div class="label">朝のヨガ</div>
+            <div class="sub">Borrowed from @yoga_mia</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">ハーブティータイム</div>
+            <div class="sub">Borrowed from @tea_garden</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div style="max-width:1000px; margin:32px auto 0; color:#bbb; font-size:12px; line-height:1.7; padding:20px; background:#0E1320; border-radius:12px; border: 1px solid rgba(201, 169, 97, 0.2);">
+  <h3 style="color:#C9A961; margin-bottom:10px; font-size:14px; letter-spacing: 0.15em;">MIDNIGHT — Design Language</h3>
+  <ul style="list-style: none; padding-left: 0;">
+    <li>• 背景: <code style="color:#9B8AC4;">#0E1320</code> + 上部に藤色のグラデーション ／ ナビゲーション: <code style="color:#9B8AC4;">#08090C</code>（さらに深い）</li>
+    <li>• 文字: 本文 <code style="color:#9B8AC4;">#E8E6E0</code> ／ 見出し italic Cormorant ／ 時刻はゴールド <code style="color:#C9A961;">#C9A961</code></li>
+    <li>• カード: <code style="color:#9B8AC4;">#161B2D</code> + 細いゴールドの罫 ／ プロフィールはゴールド+藤色のグラデーションアバター</li>
+    <li>• タグ: 藤色 <code style="color:#9B8AC4;">#9B8AC4</code> の透過 ／ 詳細画面の見出しに 0.25em のtracking</li>
+  </ul>
+</div>
+
+<div style="max-width:1000px; margin:20px auto 0; color:#444; font-size:12px; line-height:1.7; padding:20px; background:#F8F5EE; border-radius:12px; border: 1px solid rgba(63, 94, 58, 0.15);">
+  <h3 style="color:#3F5E3A; margin-bottom:10px; font-size:14px; letter-spacing: 0.1em;">BOTANICAL — Design Language</h3>
+  <ul style="list-style: none; padding-left: 0;">
+    <li>• 背景: <code style="color:#C97B4F;">#E8EDE3</code>（セージ） ／ カード: <code style="color:#C97B4F;">#F8F5EE</code>（クリーム）／ 左に色付きボーダー（茎の比喩）</li>
+    <li>• 文字: 本文 <code style="color:#C97B4F;">#2D3E2A</code> ／ 時刻は手書き風 Caveat ／ 名前・見出しにも Caveat を使用</li>
+    <li>• アクセント: テラコッタ <code style="color:#C97B4F;">#C97B4F</code>（朝食・暖かさ）／ フォレスト <code style="color:#3F5E3A;">#3F5E3A</code>（運動・植物）／ セージ <code style="color:#7C9474;">#7C9474</code>（中性）</li>
+    <li>• 角丸は 18-20px と大きめ ／ プロフィールのアバターは緑+テラコッタのグラデーション</li>
+  </ul>
+</div>
+
+</body>
+</html>
