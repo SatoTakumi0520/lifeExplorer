@@ -229,3 +229,302 @@ html.dark .bg-white.rounded-2xl {
 html.dark .bg-white.rounded-xl {
   background-color: #292524 !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Vogue テーマ — Vogue Minimal
+   白ベース × シャープグレー × ローズアクセント × セリフ見出し
+   ══════════════════════════════════════════════════════════════════ */
+
+html.theme-vogue {
+  --background: #ffffff;
+  --foreground: #111111;
+}
+
+html.theme-vogue body {
+  background: #ffffff;
+  color: #111111;
+}
+
+/* ── ベース背景: クリーム → ピュアホワイト ── */
+html.theme-vogue .bg-\[\#FDFCF8\] {
+  background-color: #ffffff !important;
+}
+html.theme-vogue .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+html.theme-vogue .bg-stone-50 {
+  background-color: #FAFAFA !important;
+}
+html.theme-vogue .bg-stone-100 {
+  background-color: #F5F5F5 !important;
+}
+html.theme-vogue .bg-stone-200 {
+  background-color: #EEEEEE !important;
+}
+
+/* ── テキスト: シャープなグレースケール ── */
+html.theme-vogue .text-stone-900 {
+  color: #111111 !important;
+}
+html.theme-vogue .text-stone-800 {
+  color: #111111 !important;
+}
+html.theme-vogue .text-stone-700 {
+  color: #333333 !important;
+}
+html.theme-vogue .text-stone-600 {
+  color: #555555 !important;
+}
+html.theme-vogue .text-stone-500 {
+  color: #999999 !important;
+}
+html.theme-vogue .text-stone-400 {
+  color: #AAAAAA !important;
+}
+html.theme-vogue .text-stone-300 {
+  color: #CCCCCC !important;
+}
+html.theme-vogue .text-stone-200 {
+  color: #DDDDDD !important;
+}
+
+/* ── ボーダー: クリーンでシャープ ── */
+html.theme-vogue .border-stone-100 {
+  border-color: #F0F0F0 !important;
+}
+html.theme-vogue .border-stone-200 {
+  border-color: #E8E8E8 !important;
+}
+html.theme-vogue .border-stone-50 {
+  border-color: #F5F5F5 !important;
+}
+
+/* ── グリーン → ローズアクセント変換 ── */
+html.theme-vogue .text-green-600 {
+  color: #B8877A !important;
+}
+html.theme-vogue .text-green-700 {
+  color: #B8877A !important;
+}
+html.theme-vogue .bg-green-700 {
+  background-color: #111111 !important;
+}
+html.theme-vogue .bg-green-500 {
+  background-color: #B8877A !important;
+}
+html.theme-vogue .bg-green-50 {
+  background-color: #FBF6F4 !important;
+}
+html.theme-vogue .bg-green-100 {
+  background-color: #F5EBE8 !important;
+}
+html.theme-vogue .shadow-green-200 {
+  --tw-shadow-color: transparent !important;
+}
+
+/* ── 選択状態ボタン ── */
+html.theme-vogue .bg-stone-800 {
+  background-color: #111111 !important;
+}
+html.theme-vogue .border-stone-800 {
+  border-color: #111111 !important;
+}
+
+/* ── シャドウ: ミニマル ── */
+html.theme-vogue .shadow-sm,
+html.theme-vogue .shadow-md,
+html.theme-vogue .shadow-lg {
+  box-shadow: none !important;
+}
+html.theme-vogue .shadow-2xl {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ── セリフフォント（見出し・タイトル） ── */
+html.theme-vogue .font-serif {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif !important;
+  font-weight: 300 !important;
+  letter-spacing: -0.03em !important;
+}
+html.theme-vogue h2 {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif !important;
+  font-weight: 300 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ── セクションラベル: ワイドトラッキング ── */
+html.theme-vogue .tracking-wider {
+  letter-spacing: 0.25em !important;
+}
+
+/* ── 入力フォーム ── */
+html.theme-vogue input,
+html.theme-vogue textarea,
+html.theme-vogue select {
+  border-color: #E8E8E8 !important;
+}
+
+/* ── ナビゲーション ── */
+html.theme-vogue nav {
+  background-color: #ffffff !important;
+  border-color: #F0F0F0 !important;
+}
+
+/* ── ヘッダー背景（透過付き） ── */
+html.theme-vogue .backdrop-blur,
+html.theme-vogue .backdrop-blur-sm {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* ── スケルトンローダー ── */
+html.theme-vogue .animate-pulse.bg-stone-200 {
+  background-color: #F0F0F0 !important;
+}
+
+/* ── タスクカード背景: よりニュートラル ── */
+html.theme-vogue .bg-amber-50\/60 {
+  background-color: rgba(212, 184, 150, 0.08) !important;
+}
+html.theme-vogue .bg-blue-50\/60 {
+  background-color: rgba(160, 180, 200, 0.08) !important;
+}
+html.theme-vogue .bg-violet-50\/60 {
+  background-color: rgba(184, 160, 200, 0.08) !important;
+}
+
+/* タスクカードのボーダー */
+html.theme-vogue .border-stone-100\/80 {
+  border-color: rgba(240, 240, 240, 0.9) !important;
+}
+
+/* ── タイプ別ドットカラー: ミュート ── */
+html.theme-vogue .bg-amber-400 {
+  background-color: #D4B896 !important;
+}
+html.theme-vogue .bg-blue-400 {
+  background-color: #A0B4C8 !important;
+}
+html.theme-vogue .bg-violet-400 {
+  background-color: #B8A0C8 !important;
+}
+
+/* タイプ別テキスト */
+html.theme-vogue .text-amber-700 {
+  color: #C4A265 !important;
+}
+html.theme-vogue .text-blue-700 {
+  color: #7B95B0 !important;
+}
+html.theme-vogue .text-violet-700 {
+  color: #9A7AB8 !important;
+}
+
+/* タイプ別背景 */
+html.theme-vogue .bg-amber-50 {
+  background-color: #FAF7F0 !important;
+}
+html.theme-vogue .bg-blue-50 {
+  background-color: #F0F4F8 !important;
+}
+html.theme-vogue .bg-violet-50 {
+  background-color: #F5F0F8 !important;
+}
+
+/* タイプ別ボーダー */
+html.theme-vogue .border-amber-200 {
+  border-color: #E8DCC8 !important;
+}
+html.theme-vogue .border-blue-200 {
+  border-color: #C8D4E0 !important;
+}
+html.theme-vogue .border-violet-200 {
+  border-color: #D8C8E0 !important;
+}
+
+/* ── モーダル背景 ── */
+html.theme-vogue .bg-\[\#FDFCF8\].rounded-t-3xl,
+html.theme-vogue .bg-\[\#FDFCF8\].rounded-3xl {
+  background-color: #ffffff !important;
+}
+
+/* ── Sticky ヘッダー ── */
+html.theme-vogue .bg-\[\#FDFCF8\]\/95 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+/* ── グラデーション ── */
+html.theme-vogue .from-\[\#FDFCF8\] {
+  --tw-gradient-from: #ffffff !important;
+}
+
+/* タイムラインゾーングラデーション */
+html.theme-vogue .from-amber-50\/30 {
+  --tw-gradient-from: rgba(212, 184, 150, 0.06) !important;
+}
+html.theme-vogue .to-amber-50\/10 {
+  --tw-gradient-to: rgba(212, 184, 150, 0.02) !important;
+}
+html.theme-vogue .from-sky-50\/20 {
+  --tw-gradient-from: rgba(160, 180, 200, 0.05) !important;
+}
+html.theme-vogue .to-sky-50\/10 {
+  --tw-gradient-to: rgba(160, 180, 200, 0.02) !important;
+}
+html.theme-vogue .from-violet-50\/20 {
+  --tw-gradient-from: rgba(184, 160, 200, 0.05) !important;
+}
+html.theme-vogue .to-violet-50\/5 {
+  --tw-gradient-to: rgba(184, 160, 200, 0.01) !important;
+}
+
+/* ── 現在時刻マーカー ── */
+html.theme-vogue .ring-\[\#FDFCF8\] {
+  --tw-ring-color: #ffffff !important;
+}
+
+/* ── 空の状態カード ── */
+html.theme-vogue .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+/* ── Explore ペルソナカード ── */
+html.theme-vogue .bg-white.rounded-2xl {
+  background-color: #ffffff !important;
+}
+
+/* ── Profile セクションカード ── */
+html.theme-vogue .bg-white.rounded-xl {
+  background-color: #ffffff !important;
+}
+
+/* ── オレンジアクセント: 柔らかく ── */
+html.theme-vogue .bg-orange-50 {
+  background-color: #FEF8F4 !important;
+}
+html.theme-vogue .border-orange-200 {
+  border-color: #F0D8C0 !important;
+}
+html.theme-vogue .text-orange-500 {
+  color: #C4956A !important;
+}
+
+/* ── レッド: 柔らかく ── */
+html.theme-vogue .text-red-600 {
+  color: #C85050 !important;
+}
+html.theme-vogue .text-red-400 {
+  color: #D08080 !important;
+}
+html.theme-vogue .border-red-100 {
+  border-color: #F0D8D8 !important;
+}
+
+/* ── ミニタイムライン ── */
+html.theme-vogue .bg-stone-100.rounded-full {
+  background-color: #F5F5F5 !important;
+}
+
+/* ── グリッドライン ── */
+html.theme-vogue .bg-stone-200 {
+  background-color: #EEEEEE !important;
+}

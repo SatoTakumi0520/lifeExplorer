@@ -21,6 +21,7 @@ import { useRoutine } from './hooks/useRoutine';
 import { useSettings } from './hooks/useSettings';
 import { useOnboarding } from './hooks/useOnboarding';
 import { useDarkMode } from './hooks/useDarkMode';
+import { useTheme } from './hooks/useTheme';
 import { useBorrowHistory } from './hooks/useBorrowHistory';
 // useActivityStreak は Phase 2（タスク完了機能）実装後に復活予定
 import { usePublicRoutines } from './hooks/usePublicRoutines';
@@ -66,6 +67,7 @@ export default function App() {
   const { history: borrowHistory, recordBorrow } = useBorrowHistory();
   // useActivityStreak は Phase 2 で復活予定
   useDarkMode(); // アプリ起動時にダークモード状態を復元
+  const { theme, switchTheme } = useTheme();
   const { publicRoutines, isPublished, publish: publishRoutine, unpublish: unpublishRoutine, toggleLike } = usePublicRoutines(session);
   const { commentsByRoutine, loadingRoutineId: loadingComments, postingRoutineId: postingComment, fetchComments, postComment, deleteComment } = useComments(session);
   const { isFollowing, toggleFollow } = useFollows(session);
@@ -121,7 +123,7 @@ export default function App() {
   return (
     <>
     {showSplash && (
-      <SplashScreen isLoading={!isAppReady} onFinished={handleSplashFinished} />
+      <SplashScreen isLoading={!isAppReady} onFinished={handleSplashFinished} theme={theme} />
     )}
     <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#FDFCF8] overflow-hidden relative font-sans antialiased shadow-2xl border-x border-stone-200">
       {currentScreen === 'TOP' && (
@@ -197,6 +199,8 @@ export default function App() {
           onboardingPrefs={onboardingPrefs}
           onSaveOnboarding={saveOnboarding}
           onResetOnboarding={async () => { await resetOnboarding(); go('ONBOARDING'); }}
+          theme={theme}
+          onSwitchTheme={switchTheme}
         />
       )}
       {currentScreen === 'CALENDAR' && (

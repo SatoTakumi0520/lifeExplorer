@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import type { AppTheme } from '../hooks/useTheme';
 
 type SplashScreenProps = {
   /** true の間はスプラッシュを表示し続ける */
   isLoading: boolean;
   /** 退場アニメーション完了後に呼ばれる */
   onFinished: () => void;
+  /** 現在のテーマ */
+  theme?: AppTheme;
 };
 
-export const SplashScreen = ({ isLoading, onFinished }: SplashScreenProps) => {
+export const SplashScreen = ({ isLoading, onFinished, theme = 'classic' }: SplashScreenProps) => {
   const [phase, setPhase] = useState<'enter' | 'idle' | 'exit'>('enter');
+  const isVogue = theme === 'vogue';
 
   // 入場アニメーション（マウント後すぐに idle へ）
   useEffect(() => {
@@ -37,9 +41,9 @@ export const SplashScreen = ({ isLoading, onFinished }: SplashScreenProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center bg-[#FDFCF8] transition-opacity duration-500 ${
-        phase === 'exit' ? 'opacity-0' : 'opacity-100'
-      }`}
+      className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ${
+        isVogue ? 'bg-white' : 'bg-[#FDFCF8]'
+      } ${phase === 'exit' ? 'opacity-0' : 'opacity-100'}`}
     >
       <div className="flex flex-col items-center">
         {/* ロゴ */}
@@ -53,9 +57,15 @@ export const SplashScreen = ({ isLoading, onFinished }: SplashScreenProps) => {
           }`}
         >
           <div className="relative">
-            <p className="text-6xl select-none splash-pulse">🌱</p>
+            {isVogue ? (
+              <p className="text-5xl select-none splash-pulse" style={{ fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: 300, color: '#111' }}>✦</p>
+            ) : (
+              <p className="text-6xl select-none splash-pulse">🌱</p>
+            )}
             {/* 背景グロー */}
-            <div className="absolute inset-0 rounded-full bg-green-200/30 blur-2xl -z-10 scale-150 splash-glow" />
+            <div className={`absolute inset-0 rounded-full blur-2xl -z-10 scale-150 splash-glow ${
+              isVogue ? 'bg-[#B8877A]/20' : 'bg-green-200/30'
+            }`} />
           </div>
         </div>
 
@@ -70,13 +80,18 @@ export const SplashScreen = ({ isLoading, onFinished }: SplashScreenProps) => {
           }`}
         >
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-[2px] bg-stone-800 rounded-full" />
-            <span className="font-bold tracking-[0.2em] text-xs uppercase text-stone-800">
+            <div className={`h-[2px] rounded-full ${isVogue ? 'w-8 bg-[#111]' : 'w-6 bg-stone-800'}`} />
+            <span
+              className={`font-bold text-xs uppercase ${
+                isVogue ? 'tracking-[0.35em] text-[#111]' : 'tracking-[0.2em] text-stone-800'
+              }`}
+              style={isVogue ? { fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: 400 } : undefined}
+            >
               Life Explorer
             </span>
-            <div className="w-6 h-[2px] bg-stone-800 rounded-full" />
+            <div className={`h-[2px] rounded-full ${isVogue ? 'w-8 bg-[#111]' : 'w-6 bg-stone-800'}`} />
           </div>
-          <p className="text-[11px] text-stone-400 tracking-wide">
+          <p className={`text-[11px] tracking-wide ${isVogue ? 'text-[#AAA]' : 'text-stone-400'}`}>
             Borrow a Life, Try New Self.
           </p>
         </div>
@@ -87,9 +102,9 @@ export const SplashScreen = ({ isLoading, onFinished }: SplashScreenProps) => {
             phase === 'exit' ? 'opacity-0' : 'opacity-100'
           }`}
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-stone-300 splash-dot splash-dot-1" />
-          <div className="w-1.5 h-1.5 rounded-full bg-stone-300 splash-dot splash-dot-2" />
-          <div className="w-1.5 h-1.5 rounded-full bg-stone-300 splash-dot splash-dot-3" />
+          <div className={`w-1.5 h-1.5 rounded-full splash-dot splash-dot-1 ${isVogue ? 'bg-[#CCC]' : 'bg-stone-300'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full splash-dot splash-dot-2 ${isVogue ? 'bg-[#CCC]' : 'bg-stone-300'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full splash-dot splash-dot-3 ${isVogue ? 'bg-[#CCC]' : 'bg-stone-300'}`} />
         </div>
       </div>
 

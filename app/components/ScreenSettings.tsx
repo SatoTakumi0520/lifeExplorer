@@ -9,6 +9,7 @@ import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { JAPAN_PREFECTURES } from '../lib/eventService';
 import { usePushNotification } from '../hooks/usePushNotification';
 import { useDarkMode } from '../hooks/useDarkMode';
+import type { AppTheme } from '../hooks/useTheme';
 
 type ScreenSettingsProps = {
   go: (screen: Screen) => void;
@@ -20,9 +21,11 @@ type ScreenSettingsProps = {
   onboardingPrefs?: OnboardingPreferences;
   onSaveOnboarding?: (prefs: OnboardingPreferences) => void;
   onResetOnboarding?: () => void;
+  theme?: AppTheme;
+  onSwitchTheme?: (theme: AppTheme) => void;
 };
 
-export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings, onboardingPrefs, onSaveOnboarding, onResetOnboarding }: ScreenSettingsProps) => {
+export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, onSaveAISettings, onboardingPrefs, onSaveOnboarding, onResetOnboarding, theme = 'classic', onSwitchTheme }: ScreenSettingsProps) => {
   const { supported, permission, settings: notifSettings, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, isIOS, isStandalone } = usePushNotification(session);
   const [reminderTime, setReminderTime] = useState(
     `${String(notifSettings.reminderHour).padStart(2, '0')}:${String(notifSettings.reminderMinute).padStart(2, '0')}`,
@@ -311,14 +314,77 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
 
         <div className="p-4">
           <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">Appearance</h3>
-          <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
-            <div className="p-4 flex items-center justify-between">
+          <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden p-4 space-y-4">
+            {/* テーマ選択 */}
+            <div>
+              <h4 className="font-bold text-sm text-stone-800 mb-3">Theme</h4>
+              <p className="text-[11px] text-stone-400 mb-3">アプリ全体のデザインテーマを選択</p>
+              <div className="flex gap-3">
+                {/* Classic */}
+                <button
+                  onClick={() => {
+                    onSwitchTheme?.('classic');
+                  }}
+                  className={`flex-1 rounded-2xl border-2 overflow-hidden transition-all ${
+                    theme === 'classic' ? 'border-stone-800 ring-2 ring-stone-800/10' : 'border-stone-200 hover:border-stone-300'
+                  }`}
+                >
+                  <div className="bg-[#FDFCF8] p-3 pb-2.5">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                      <div className="w-8 h-1.5 rounded-full bg-stone-300" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="w-full h-2 rounded-full bg-amber-200/70" />
+                      <div className="w-3/4 h-2 rounded-full bg-blue-200/70" />
+                      <div className="w-5/6 h-2 rounded-full bg-violet-200/70" />
+                    </div>
+                  </div>
+                  <div className="bg-stone-50 px-3 py-2 text-center border-t border-stone-100">
+                    <span className={`text-xs font-bold ${theme === 'classic' ? 'text-stone-800' : 'text-stone-400'}`}>Classic</span>
+                  </div>
+                </button>
+
+                {/* Vogue */}
+                <button
+                  onClick={() => {
+                    // Vogue 選択時はダークモードをオフ
+                    if (darkMode) toggleDarkMode();
+                    onSwitchTheme?.('vogue');
+                  }}
+                  className={`flex-1 rounded-2xl border-2 overflow-hidden transition-all ${
+                    theme === 'vogue' ? 'border-[#111] ring-2 ring-[#111]/10' : 'border-stone-200 hover:border-stone-300'
+                  }`}
+                >
+                  <div className="bg-white p-3 pb-2.5">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#B8877A]" />
+                      <div className="w-8 h-1.5 rounded-full bg-[#DDD]" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="w-full h-2 rounded-full bg-[#F5EBE8]" />
+                      <div className="w-3/4 h-2 rounded-full bg-[#E8ECF0]" />
+                      <div className="w-5/6 h-2 rounded-full bg-[#EDE8F0]" />
+                    </div>
+                  </div>
+                  <div className="bg-[#FAFAFA] px-3 py-2 text-center border-t border-[#F0F0F0]">
+                    <span className={`text-xs font-bold ${theme === 'vogue' ? 'text-[#111]' : 'text-[#AAA]'}`}>Vogue</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* ダークモード（Classic テーマ時のみ） */}
+            <div className={`flex items-center justify-between pt-3 border-t border-stone-100 ${theme === 'vogue' ? 'opacity-40 pointer-events-none' : ''}`}>
               <div>
                 <h4 className="font-bold text-sm text-stone-800">Dark Mode</h4>
-                <p className="text-xs text-stone-400">ダークテーマを使用</p>
+                <p className="text-xs text-stone-400">
+                  {theme === 'vogue' ? 'Vogue テーマでは利用できません' : 'ダークテーマを使用'}
+                </p>
               </div>
               <button
                 onClick={toggleDarkMode}
+                disabled={theme === 'vogue'}
                 className={`w-12 h-7 rounded-full transition-colors relative ${darkMode ? 'bg-green-500' : 'bg-stone-200'}`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${darkMode ? 'right-1' : 'left-1'}`} />
