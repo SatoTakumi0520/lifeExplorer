@@ -356,19 +356,19 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                     theme === 'vogue' ? 'border-[#111] ring-2 ring-[#111]/10' : 'border-stone-200 hover:border-stone-300'
                   }`}
                 >
-                  <div className="bg-white p-3 pb-2.5">
+                  <div className="bg-[#F5F3F0] p-3 pb-2.5">
                     <div className="flex items-center gap-1.5 mb-2">
-                      <div className="w-2 h-2 rounded-full bg-[#B8877A]" />
-                      <div className="w-8 h-1.5 rounded-full bg-[#DDD]" />
+                      <div className="w-2 h-2 rounded-full bg-[#C4756A]" />
+                      <div className="w-8 h-1.5 rounded-full bg-[#C0B8B0]" />
                     </div>
                     <div className="space-y-1.5">
-                      <div className="w-full h-2 rounded-full bg-[#F5EBE8]" />
-                      <div className="w-3/4 h-2 rounded-full bg-[#E8ECF0]" />
-                      <div className="w-5/6 h-2 rounded-full bg-[#EDE8F0]" />
+                      <div className="w-full h-2 rounded-full bg-white" />
+                      <div className="w-3/4 h-2 rounded-full bg-white" />
+                      <div className="w-5/6 h-2 rounded-full bg-white" />
                     </div>
                   </div>
-                  <div className="bg-[#FAFAFA] px-3 py-2 text-center border-t border-[#F0F0F0]">
-                    <span className={`text-xs font-bold ${theme === 'vogue' ? 'text-[#111]' : 'text-[#AAA]'}`}>Vogue</span>
+                  <div className="bg-[#ECEAE6] px-3 py-2 text-center border-t border-[#1A1A1A]">
+                    <span className={`text-xs font-bold ${theme === 'vogue' ? 'text-[#1A1A1A]' : 'text-[#A09890]'}`}>Vogue</span>
                   </div>
                 </button>
               </div>

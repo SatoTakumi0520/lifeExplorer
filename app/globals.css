@@ -231,43 +231,51 @@ html.dark .bg-white.rounded-xl {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Vogue テーマ — Vogue Minimal
-   白ベース × シャープグレー × ローズアクセント × セリフ見出し
+   Vogue テーマ — Warm Gray Editorial
+   ウォームグレー背景 × 白カード浮き × 太黒ボーダー ×
+   Cormorant Garamond italic × ローズアクセント #C4756A
    ══════════════════════════════════════════════════════════════════ */
 
 html.theme-vogue {
-  --background: #ffffff;
-  --foreground: #111111;
+  --background: #F5F3F0;
+  --foreground: #1A1A1A;
 }
-
 html.theme-vogue body {
-  background: #ffffff;
-  color: #111111;
+  background: #F5F3F0;
+  color: #1A1A1A;
 }
 
-/* ── ベース背景: クリーム → ピュアホワイト ── */
+/* ── ベース背景: クリーム → ウォームグレー ── */
 html.theme-vogue .bg-\[\#FDFCF8\] {
-  background-color: #ffffff !important;
+  background-color: #F5F3F0 !important;
 }
 html.theme-vogue .bg-white\/80 {
-  background-color: rgba(255, 255, 255, 0.92) !important;
+  background-color: rgba(245, 243, 240, 0.94) !important;
 }
 html.theme-vogue .bg-stone-50 {
-  background-color: #FAFAFA !important;
+  background-color: #ECEAE6 !important;
 }
 html.theme-vogue .bg-stone-100 {
-  background-color: #F5F5F5 !important;
+  background-color: #E4E0DB !important;
 }
 html.theme-vogue .bg-stone-200 {
-  background-color: #EEEEEE !important;
+  background-color: #D8D4CE !important;
 }
 
-/* ── テキスト: シャープなグレースケール ── */
+/* ── カード背景: 白で浮かせる ── */
+html.theme-vogue .bg-white,
+html.theme-vogue .bg-white.rounded-2xl,
+html.theme-vogue .bg-white.rounded-xl {
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ── テキスト: シャープなグレースケール（視認性キープ） ── */
 html.theme-vogue .text-stone-900 {
-  color: #111111 !important;
+  color: #1A1A1A !important;
 }
 html.theme-vogue .text-stone-800 {
-  color: #111111 !important;
+  color: #1A1A1A !important;
 }
 html.theme-vogue .text-stone-700 {
   color: #333333 !important;
@@ -276,47 +284,58 @@ html.theme-vogue .text-stone-600 {
   color: #555555 !important;
 }
 html.theme-vogue .text-stone-500 {
-  color: #999999 !important;
+  color: #8A8580 !important;
 }
 html.theme-vogue .text-stone-400 {
-  color: #AAAAAA !important;
+  color: #A09890 !important;
 }
 html.theme-vogue .text-stone-300 {
-  color: #CCCCCC !important;
+  color: #C0B8B0 !important;
 }
 html.theme-vogue .text-stone-200 {
-  color: #DDDDDD !important;
+  color: #D8D4CE !important;
 }
 
 /* ── ボーダー: クリーンでシャープ ── */
 html.theme-vogue .border-stone-100 {
-  border-color: #F0F0F0 !important;
+  border-color: #E4E0DB !important;
 }
 html.theme-vogue .border-stone-200 {
-  border-color: #E8E8E8 !important;
+  border-color: #D8D4CE !important;
 }
 html.theme-vogue .border-stone-50 {
-  border-color: #F5F5F5 !important;
+  border-color: #ECEAE6 !important;
 }
 
-/* ── グリーン → ローズアクセント変換 ── */
+/* ── ヘッダー・ナビ: 太い黒ボーダーでエディトリアル感 ── */
+html.theme-vogue .border-b.border-stone-100,
+html.theme-vogue .border-b.border-stone-100\/80 {
+  border-bottom: 2px solid #1A1A1A !important;
+}
+html.theme-vogue nav {
+  background-color: #F5F3F0 !important;
+  border-top: 2px solid #1A1A1A !important;
+  border-color: #1A1A1A !important;
+}
+
+/* ── グリーン → ローズアクセント #C4756A ── */
 html.theme-vogue .text-green-600 {
-  color: #B8877A !important;
+  color: #C4756A !important;
 }
 html.theme-vogue .text-green-700 {
-  color: #B8877A !important;
+  color: #C4756A !important;
 }
 html.theme-vogue .bg-green-700 {
-  background-color: #111111 !important;
+  background-color: #1A1A1A !important;
 }
 html.theme-vogue .bg-green-500 {
-  background-color: #B8877A !important;
+  background-color: #C4756A !important;
 }
 html.theme-vogue .bg-green-50 {
-  background-color: #FBF6F4 !important;
+  background-color: #F8F0EE !important;
 }
 html.theme-vogue .bg-green-100 {
-  background-color: #F5EBE8 !important;
+  background-color: #F0E0DC !important;
 }
 html.theme-vogue .shadow-green-200 {
   --tw-shadow-color: transparent !important;
@@ -324,23 +343,25 @@ html.theme-vogue .shadow-green-200 {
 
 /* ── 選択状態ボタン ── */
 html.theme-vogue .bg-stone-800 {
-  background-color: #111111 !important;
+  background-color: #1A1A1A !important;
 }
 html.theme-vogue .border-stone-800 {
-  border-color: #111111 !important;
+  border-color: #1A1A1A !important;
 }
 
-/* ── シャドウ: ミニマル ── */
-html.theme-vogue .shadow-sm,
+/* ── シャドウ: カード用の微かなシャドウ ── */
+html.theme-vogue .shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
 html.theme-vogue .shadow-md,
 html.theme-vogue .shadow-lg {
-  box-shadow: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
 }
 html.theme-vogue .shadow-2xl {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: none !important;
 }
 
-/* ── セリフフォント（見出し・タイトル） ── */
+/* ── セリフフォント: Cormorant Garamond ── */
 html.theme-vogue .font-serif {
   font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif !important;
   font-weight: 300 !important;
@@ -349,63 +370,85 @@ html.theme-vogue .font-serif {
 html.theme-vogue h2 {
   font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif !important;
   font-weight: 300 !important;
+  font-style: italic !important;
   letter-spacing: -0.02em !important;
+}
+
+/* ── 時刻ラベル: セリフイタリック ── */
+html.theme-vogue .font-mono {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.02em !important;
 }
 
 /* ── セクションラベル: ワイドトラッキング ── */
 html.theme-vogue .tracking-wider {
   letter-spacing: 0.25em !important;
 }
+html.theme-vogue .tracking-wide {
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase;
+}
+
+/* ── 角丸: シャープに ── */
+html.theme-vogue .rounded-2xl {
+  border-radius: 8px !important;
+}
+html.theme-vogue .rounded-xl {
+  border-radius: 6px !important;
+}
+html.theme-vogue .rounded-t-3xl {
+  border-radius: 12px 12px 0 0 !important;
+}
 
 /* ── 入力フォーム ── */
 html.theme-vogue input,
 html.theme-vogue textarea,
 html.theme-vogue select {
-  border-color: #E8E8E8 !important;
-}
-
-/* ── ナビゲーション ── */
-html.theme-vogue nav {
-  background-color: #ffffff !important;
-  border-color: #F0F0F0 !important;
+  border-color: #D8D4CE !important;
+  border-radius: 6px !important;
 }
 
 /* ── ヘッダー背景（透過付き） ── */
 html.theme-vogue .backdrop-blur,
 html.theme-vogue .backdrop-blur-sm {
-  background-color: rgba(255, 255, 255, 0.92) !important;
+  background-color: rgba(245, 243, 240, 0.94) !important;
 }
 
 /* ── スケルトンローダー ── */
 html.theme-vogue .animate-pulse.bg-stone-200 {
-  background-color: #F0F0F0 !important;
+  background-color: #E4E0DB !important;
 }
 
-/* ── タスクカード背景: よりニュートラル ── */
+/* ── タスクカード背景: 白浮き + 左カラーバー ── */
 html.theme-vogue .bg-amber-50\/60 {
-  background-color: rgba(212, 184, 150, 0.08) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
 }
 html.theme-vogue .bg-blue-50\/60 {
-  background-color: rgba(160, 180, 200, 0.08) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
 }
 html.theme-vogue .bg-violet-50\/60 {
-  background-color: rgba(184, 160, 200, 0.08) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* タスクカードのボーダー */
 html.theme-vogue .border-stone-100\/80 {
-  border-color: rgba(240, 240, 240, 0.9) !important;
+  border-color: transparent !important;
 }
 
 /* ── タイプ別ドットカラー: ミュート ── */
 html.theme-vogue .bg-amber-400 {
-  background-color: #D4B896 !important;
+  background-color: #C4A265 !important;
 }
 html.theme-vogue .bg-blue-400 {
-  background-color: #A0B4C8 !important;
+  background-color: #8BACC4 !important;
 }
 html.theme-vogue .bg-violet-400 {
-  background-color: #B8A0C8 !important;
+  background-color: #A088BE !important;
 }
 
 /* タイプ別テキスト */
@@ -413,10 +456,10 @@ html.theme-vogue .text-amber-700 {
   color: #C4A265 !important;
 }
 html.theme-vogue .text-blue-700 {
-  color: #7B95B0 !important;
+  color: #7090A8 !important;
 }
 html.theme-vogue .text-violet-700 {
-  color: #9A7AB8 !important;
+  color: #8A70A8 !important;
 }
 
 /* タイプ別背景 */
@@ -430,101 +473,92 @@ html.theme-vogue .bg-violet-50 {
   background-color: #F5F0F8 !important;
 }
 
-/* タイプ別ボーダー */
+/* タイプ別ボーダー（左カラーバー） */
 html.theme-vogue .border-amber-200 {
-  border-color: #E8DCC8 !important;
+  border-color: #C4A265 !important;
 }
 html.theme-vogue .border-blue-200 {
-  border-color: #C8D4E0 !important;
+  border-color: #8BACC4 !important;
 }
 html.theme-vogue .border-violet-200 {
-  border-color: #D8C8E0 !important;
+  border-color: #A088BE !important;
 }
 
 /* ── モーダル背景 ── */
 html.theme-vogue .bg-\[\#FDFCF8\].rounded-t-3xl,
 html.theme-vogue .bg-\[\#FDFCF8\].rounded-3xl {
-  background-color: #ffffff !important;
+  background-color: #F5F3F0 !important;
 }
 
 /* ── Sticky ヘッダー ── */
 html.theme-vogue .bg-\[\#FDFCF8\]\/95 {
-  background-color: rgba(255, 255, 255, 0.96) !important;
+  background-color: rgba(245, 243, 240, 0.96) !important;
 }
 
 /* ── グラデーション ── */
 html.theme-vogue .from-\[\#FDFCF8\] {
-  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-from: #F5F3F0 !important;
 }
 
-/* タイムラインゾーングラデーション */
+/* タイムラインゾーングラデーション — 無効化（白カードで代替） */
 html.theme-vogue .from-amber-50\/30 {
-  --tw-gradient-from: rgba(212, 184, 150, 0.06) !important;
+  --tw-gradient-from: transparent !important;
 }
 html.theme-vogue .to-amber-50\/10 {
-  --tw-gradient-to: rgba(212, 184, 150, 0.02) !important;
+  --tw-gradient-to: transparent !important;
 }
 html.theme-vogue .from-sky-50\/20 {
-  --tw-gradient-from: rgba(160, 180, 200, 0.05) !important;
+  --tw-gradient-from: transparent !important;
 }
 html.theme-vogue .to-sky-50\/10 {
-  --tw-gradient-to: rgba(160, 180, 200, 0.02) !important;
+  --tw-gradient-to: transparent !important;
 }
 html.theme-vogue .from-violet-50\/20 {
-  --tw-gradient-from: rgba(184, 160, 200, 0.05) !important;
+  --tw-gradient-from: transparent !important;
 }
 html.theme-vogue .to-violet-50\/5 {
-  --tw-gradient-to: rgba(184, 160, 200, 0.01) !important;
+  --tw-gradient-to: transparent !important;
 }
 
 /* ── 現在時刻マーカー ── */
 html.theme-vogue .ring-\[\#FDFCF8\] {
-  --tw-ring-color: #ffffff !important;
+  --tw-ring-color: #F5F3F0 !important;
 }
 
 /* ── 空の状態カード ── */
 html.theme-vogue .bg-white\/90 {
   background-color: rgba(255, 255, 255, 0.96) !important;
-}
-
-/* ── Explore ペルソナカード ── */
-html.theme-vogue .bg-white.rounded-2xl {
-  background-color: #ffffff !important;
-}
-
-/* ── Profile セクションカード ── */
-html.theme-vogue .bg-white.rounded-xl {
-  background-color: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* ── オレンジアクセント: 柔らかく ── */
 html.theme-vogue .bg-orange-50 {
-  background-color: #FEF8F4 !important;
+  background-color: #FEF6F2 !important;
 }
 html.theme-vogue .border-orange-200 {
-  border-color: #F0D8C0 !important;
+  border-color: #E8C8B0 !important;
 }
 html.theme-vogue .text-orange-500 {
-  color: #C4956A !important;
+  color: #B8885A !important;
 }
 
 /* ── レッド: 柔らかく ── */
 html.theme-vogue .text-red-600 {
-  color: #C85050 !important;
+  color: #C45050 !important;
 }
 html.theme-vogue .text-red-400 {
-  color: #D08080 !important;
+  color: #D07070 !important;
 }
 html.theme-vogue .border-red-100 {
-  border-color: #F0D8D8 !important;
+  border-color: #EDD0D0 !important;
 }
 
 /* ── ミニタイムライン ── */
 html.theme-vogue .bg-stone-100.rounded-full {
-  background-color: #F5F5F5 !important;
+  background-color: #E4E0DB !important;
 }
 
 /* ── グリッドライン ── */
 html.theme-vogue .bg-stone-200 {
-  background-color: #EEEEEE !important;
+  background-color: #E4E0DB !important;
 }

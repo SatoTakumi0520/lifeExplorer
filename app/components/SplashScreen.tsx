@@ -42,7 +42,7 @@ export const SplashScreen = ({ isLoading, onFinished, theme = 'classic' }: Splas
   return (
     <div
       className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ${
-        isVogue ? 'bg-white' : 'bg-[#FDFCF8]'
+        isVogue ? 'bg-[#F5F3F0]' : 'bg-[#FDFCF8]'
       } ${phase === 'exit' ? 'opacity-0' : 'opacity-100'}`}
     >
       <div className="flex flex-col items-center">
@@ -58,13 +58,13 @@ export const SplashScreen = ({ isLoading, onFinished, theme = 'classic' }: Splas
         >
           <div className="relative">
             {isVogue ? (
-              <p className="text-5xl select-none splash-pulse" style={{ fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: 300, color: '#111' }}>✦</p>
+              <p className="text-5xl select-none splash-pulse" style={{ fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: 300, color: '#1A1A1A' }}>✦</p>
             ) : (
               <p className="text-6xl select-none splash-pulse">🌱</p>
             )}
             {/* 背景グロー */}
             <div className={`absolute inset-0 rounded-full blur-2xl -z-10 scale-150 splash-glow ${
-              isVogue ? 'bg-[#B8877A]/20' : 'bg-green-200/30'
+              isVogue ? 'bg-[#C4756A]/20' : 'bg-green-200/30'
             }`} />
           </div>
         </div>
@@ -80,18 +80,18 @@ export const SplashScreen = ({ isLoading, onFinished, theme = 'classic' }: Splas
           }`}
         >
           <div className="flex items-center gap-2 mb-2">
-            <div className={`h-[2px] rounded-full ${isVogue ? 'w-8 bg-[#111]' : 'w-6 bg-stone-800'}`} />
+            <div className={`h-[2px] rounded-full ${isVogue ? 'w-8 bg-[#1A1A1A]' : 'w-6 bg-stone-800'}`} />
             <span
               className={`font-bold text-xs uppercase ${
-                isVogue ? 'tracking-[0.35em] text-[#111]' : 'tracking-[0.2em] text-stone-800'
+                isVogue ? 'tracking-[0.35em] text-[#1A1A1A]' : 'tracking-[0.2em] text-stone-800'
               }`}
-              style={isVogue ? { fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: 400 } : undefined}
+              style={isVogue ? { fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic' } : undefined}
             >
               Life Explorer
             </span>
-            <div className={`h-[2px] rounded-full ${isVogue ? 'w-8 bg-[#111]' : 'w-6 bg-stone-800'}`} />
+            <div className={`h-[2px] rounded-full ${isVogue ? 'w-8 bg-[#1A1A1A]' : 'w-6 bg-stone-800'}`} />
           </div>
-          <p className={`text-[11px] tracking-wide ${isVogue ? 'text-[#AAA]' : 'text-stone-400'}`}>
+          <p className={`text-[11px] tracking-wide ${isVogue ? 'text-[#A09890]' : 'text-stone-400'}`}>
             Borrow a Life, Try New Self.
           </p>
         </div>
