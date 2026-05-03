@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Life Explorer – 第3テーマ候補</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;500;600&family=Caveat:wght@400;600&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #2A2A2A;
+    font-family: 'Inter', -apple-system, sans-serif;
+    padding: 32px 16px 64px;
+    min-height: 100vh;
+  }
+  .page-title {
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    color: #999;
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 40px;
+  }
+  .grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    max-width: 1700px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    justify-content: center;
+  }
+  .col { flex-shrink: 0; }
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .label {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .desc {
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 14px;
+    text-align: center;
+    max-width: 360px;
+    line-height: 1.5;
+  }
+  .phone {
+    width: 300px;
+    height: 620px;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    position: relative;
+  }
+
+  /* ========================================
+     CLASSIC (現状・参照用)
+     ======================================== */
+  .classic {
+    background: #FDFCF8;
+    color: #1c1917;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  .classic .header {
+    padding: 14px 20px 12px;
+    border-bottom: 1px solid #f5f5f4;
+    background: #FDFCF8;
+  }
+  .classic .h-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #78716c;
+    font-weight: 600;
+  }
+  .classic .h-date {
+    font-size: 13px;
+    color: #57534e;
+    margin-top: 2px;
+  }
+  .classic .toggle {
+    margin: 12px 20px 0;
+    display: flex;
+    background: #f5f5f4;
+    border-radius: 9999px;
+    padding: 3px;
+  }
+  .classic .toggle-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .classic .toggle-btn.active {
+    background: white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    font-weight: 600;
+  }
+  .classic .timeline {
+    padding: 16px 20px;
+  }
+  .classic .task-card {
+    background: white;
+    border: 1px solid #f5f5f4;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .classic .task-time {
+    font-size: 11px;
+    color: #a8a29e;
+    margin-bottom: 4px;
+    font-family: ui-monospace, monospace;
+  }
+  .classic .task-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1c1917;
+  }
+  .classic .task-desc {
+    font-size: 12px;
+    color: #78716c;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .classic .dot-1 { color: #f59e0b; }
+  .classic .dot-2 { color: #10b981; }
+  .classic .dot-3 { color: #8b5cf6; }
+  .classic .nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 1px solid #f5f5f4;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+  }
+  .classic .nav-item {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  .classic .nav-item.active {
+    background: #fef3c7;
+  }
+
+  /* ========================================
+     VOGUE (Warm Gray Editorial)
+     ======================================== */
+  .vogue {
+    background: #F5F3F0;
+    color: #1A1A1A;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  .vogue .header {
+    padding: 14px 20px 12px;
+    border-bottom: 2px solid #1A1A1A;
+    background: #F5F3F0;
+  }
+  .vogue .h-title {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: #1A1A1A;
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .vogue .h-date {
+    font-size: 14px;
+    color: #1A1A1A;
+    margin-top: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .vogue .toggle {
+    margin: 14px 20px 0;
+    display: flex;
+    gap: 8px;
+  }
+  .vogue .toggle-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #1A1A1A;
+    border-radius: 8px;
+    font-size: 11px;
+    text-align: center;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .vogue .toggle-btn.active {
+    background: #1A1A1A;
+    color: white;
+  }
+  .vogue .timeline {
+    padding: 16px 20px;
+  }
+  .vogue .task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .vogue .task-time {
+    font-size: 12px;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .vogue .task-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+  .vogue .task-desc {
+    font-size: 12px;
+    color: #A09890;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .vogue .dot-1 { color: #C4756A; }
+  .vogue .dot-2 { color: #1A1A1A; }
+  .vogue .dot-3 { color: #C4756A; }
+  .vogue .nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #F5F3F0;
+    border-top: 2px solid #1A1A1A;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+  }
+  .vogue .nav-item {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  .vogue .nav-item.active {
+    background: rgba(196, 117, 106, 0.15);
+    color: #C4756A;
+  }
+
+  /* ========================================
+     ZEN (和モダン)
+     ======================================== */
+  .zen {
+    background: #FAF7F0;
+    color: #1C1C1C;
+    font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+  }
+  .zen .header {
+    padding: 18px 24px 14px;
+    background: #FAF7F0;
+    position: relative;
+  }
+  .zen .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 24px;
+    right: 24px;
+    height: 1px;
+    background: #1C1C1C;
+  }
+  .zen .h-title {
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: #1C1C1C;
+    font-weight: 500;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .zen .h-date {
+    font-size: 16px;
+    color: #1C1C1C;
+    margin-top: 6px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+  .zen .h-jp {
+    font-size: 10px;
+    color: #7C9474;
+    margin-top: 2px;
+    letter-spacing: 0.2em;
+  }
+  .zen .toggle {
+    margin: 16px 24px 0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .zen .toggle-btn {
+    padding: 4px 0;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #999;
+    border-bottom: 1px solid transparent;
+  }
+  .zen .toggle-btn.active {
+    color: #1B3A5C;
+    border-bottom-color: #1B3A5C;
+    font-weight: 500;
+  }
+  .zen .timeline {
+    padding: 20px 24px;
+  }
+  .zen .task-card {
+    background: transparent;
+    padding: 12px 0 14px 18px;
+    margin-bottom: 4px;
+    position: relative;
+    border-bottom: 1px solid rgba(28,28,28,0.08);
+  }
+  .zen .task-card::before {
+    content: '○';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    color: #1C1C1C;
+    font-size: 8px;
+  }
+  .zen .task-card.active::before {
+    content: '●';
+    color: #1B3A5C;
+  }
+  .zen .task-card.zen-green::before {
+    content: '●';
+    color: #7C9474;
+  }
+  .zen .task-time {
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 3px;
+    letter-spacing: 0.15em;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .zen .task-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1C1C1C;
+    letter-spacing: 0.03em;
+  }
+  .zen .task-desc {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+  }
+  .zen .nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #FAF7F0;
+    border-top: 1px solid #1C1C1C;
+    padding: 12px 0;
+    display: flex;
+    justify-content: space-around;
+  }
+  .zen .nav-item {
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #999;
+  }
+  .zen .nav-item.active {
+    color: #1B3A5C;
+    border-bottom: 1px solid #1B3A5C;
+  }
+
+  /* ========================================
+     MIDNIGHT (深夜)
+     ======================================== */
+  .midnight {
+    background: #0E1320;
+    color: #E8E6E0;
+    font-family: 'Inter', sans-serif;
+  }
+  .midnight .header {
+    padding: 14px 20px 12px;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.3);
+    background: #0E1320;
+    background-image: radial-gradient(ellipse at top, rgba(155, 138, 196, 0.1) 0%, transparent 60%);
+  }
+  .midnight .h-title {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: #C9A961;
+    font-weight: 500;
+  }
+  .midnight .h-date {
+    font-size: 14px;
+    color: #E8E6E0;
+    margin-top: 4px;
+    font-weight: 300;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .midnight .toggle {
+    margin: 14px 20px 0;
+    display: flex;
+    background: #161B2D;
+    border-radius: 9999px;
+    padding: 3px;
+    border: 1px solid rgba(201, 169, 97, 0.2);
+  }
+  .midnight .toggle-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 11px;
+    text-align: center;
+    color: #8B8B95;
+    letter-spacing: 0.05em;
+  }
+  .midnight .toggle-btn.active {
+    background: linear-gradient(135deg, #C9A961, #B89048);
+    color: #0E1320;
+    font-weight: 600;
+  }
+  .midnight .timeline {
+    padding: 16px 20px;
+  }
+  .midnight .task-card {
+    background: #161B2D;
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .midnight .task-time {
+    font-size: 11px;
+    color: #C9A961;
+    margin-bottom: 4px;
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.1em;
+  }
+  .midnight .task-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #F4F2EA;
+  }
+  .midnight .task-desc {
+    font-size: 12px;
+    color: #8B8B95;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .midnight .dot-1 { color: #C9A961; }
+  .midnight .dot-2 { color: #9B8AC4; }
+  .midnight .dot-3 { color: #C9A961; }
+  .midnight .nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #08090C;
+    border-top: 1px solid rgba(201, 169, 97, 0.2);
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+  }
+  .midnight .nav-item {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #6B6B75;
+  }
+  .midnight .nav-item.active {
+    background: rgba(201, 169, 97, 0.15);
+    color: #C9A961;
+  }
+
+  /* ========================================
+     BOTANICAL (植物・スローライフ)
+     ======================================== */
+  .botanical {
+    background: #E8EDE3;
+    color: #2D3E2A;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  .botanical .header {
+    padding: 14px 20px 12px;
+    border-bottom: 1px solid rgba(63, 94, 58, 0.15);
+    background: #E8EDE3;
+  }
+  .botanical .h-title {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: #3F5E3A;
+    font-weight: 600;
+  }
+  .botanical .h-date {
+    font-size: 18px;
+    color: #2D3E2A;
+    margin-top: 4px;
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+  }
+  .botanical .toggle {
+    margin: 12px 20px 0;
+    display: flex;
+    background: #D8E0D2;
+    border-radius: 9999px;
+    padding: 3px;
+  }
+  .botanical .toggle-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    text-align: center;
+    color: #5A6E55;
+  }
+  .botanical .toggle-btn.active {
+    background: #F8F5EE;
+    color: #3F5E3A;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(63, 94, 58, 0.1);
+  }
+  .botanical .timeline {
+    padding: 16px 20px;
+  }
+  .botanical .task-card {
+    background: #F8F5EE;
+    border-radius: 20px;
+    padding: 14px;
+    margin-bottom: 10px;
+    border-left: 3px solid #7C9474;
+  }
+  .botanical .task-card.terracotta {
+    border-left-color: #C97B4F;
+  }
+  .botanical .task-card.forest {
+    border-left-color: #3F5E3A;
+  }
+  .botanical .task-time {
+    font-size: 13px;
+    color: #5A6E55;
+    margin-bottom: 4px;
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+  }
+  .botanical .task-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2D3E2A;
+  }
+  .botanical .task-desc {
+    font-size: 12px;
+    color: #5A6E55;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .botanical .dot-1 { color: #C97B4F; }
+  .botanical .dot-2 { color: #7C9474; }
+  .botanical .dot-3 { color: #3F5E3A; }
+  .botanical .nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #F8F5EE;
+    border-top: 1px solid rgba(63, 94, 58, 0.15);
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+  }
+  .botanical .nav-item {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #5A6E55;
+  }
+  .botanical .nav-item.active {
+    background: #DCE5D4;
+    color: #3F5E3A;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #C4756A;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .badge.recommend { background: #C4756A; }
+  .badge.current { background: #555; }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">第3テーマ候補 — Visual Compare</h1>
+<p class="page-subtitle">既存の Classic / Vogue に加える3つの提案</p>
+
+<div class="grid">
+
+  <!-- =================== CLASSIC (現状) =================== -->
+  <div class="col">
+    <span class="badge current">CURRENT</span>
+    <div class="label">Classic</div>
+    <p class="desc">クリーム背景・温かみ・親しみやすい</p>
+    <div class="phone classic">
+      <div class="header">
+        <div class="h-title">LIFE EXPLORER</div>
+        <div class="h-date">Sun, May 3</div>
+      </div>
+      <div class="toggle">
+        <div class="toggle-btn">📅 Weekday</div>
+        <div class="toggle-btn active">🌿 Weekend</div>
+      </div>
+      <div class="timeline">
+        <div class="task-card">
+          <div class="task-time">7:00 am</div>
+          <div class="task-title"><span class="dot-1">●</span> ゆっくり朝食</div>
+          <div class="task-desc">休日は時間をかけて朝食を楽しむ</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">9:00 am</div>
+          <div class="task-title"><span class="dot-2">●</span> 読書タイム</div>
+          <div class="task-desc">静かな朝に最高の読書タイム</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">3:00 pm</div>
+          <div class="task-title"><span class="dot-3">●</span> トレーニング</div>
+          <div class="task-desc">ジムでトレーニング、平日の疲れをリフレッシュ</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item active">🏠</div>
+        <div class="nav-item">🔍</div>
+        <div class="nav-item">📅</div>
+        <div class="nav-item">👤</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== VOGUE (現状) =================== -->
+  <div class="col">
+    <span class="badge current">CURRENT</span>
+    <div class="label">Vogue</div>
+    <p class="desc">Warm Gray・エディトリアル・ファッション</p>
+    <div class="phone vogue">
+      <div class="header">
+        <div class="h-title">Life Explorer</div>
+        <div class="h-date">Sun, May 3</div>
+      </div>
+      <div class="toggle">
+        <div class="toggle-btn">Weekday</div>
+        <div class="toggle-btn active">Weekend</div>
+      </div>
+      <div class="timeline">
+        <div class="task-card">
+          <div class="task-time">7:00</div>
+          <div class="task-title"><span class="dot-1">●</span> ゆっくり朝食</div>
+          <div class="task-desc">休日は時間をかけて朝食を楽しむ</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">9:00</div>
+          <div class="task-title"><span class="dot-2">●</span> 読書タイム</div>
+          <div class="task-desc">静かな朝に最高の読書タイム</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">15:00</div>
+          <div class="task-title"><span class="dot-3">●</span> トレーニング</div>
+          <div class="task-desc">ジムでトレーニング、平日の疲れをリフレッシュ</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item active">🏠</div>
+        <div class="nav-item">🔍</div>
+        <div class="nav-item">📅</div>
+        <div class="nav-item">👤</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== ZEN (候補A) =================== -->
+  <div class="col">
+    <span class="badge recommend">★ 候補 A</span>
+    <div class="label">Zen / 和モダン</div>
+    <p class="desc">和紙・墨・余白の美学。静謐な日本的ミニマリズム</p>
+    <div class="phone zen">
+      <div class="header">
+        <div class="h-title">Life Explorer</div>
+        <div class="h-date">May 3, Sunday</div>
+        <div class="h-jp">五月三日 ・ 日曜日</div>
+      </div>
+      <div class="toggle">
+        <div class="toggle-btn">平日</div>
+        <div class="toggle-btn active">休日</div>
+      </div>
+      <div class="timeline">
+        <div class="task-card active">
+          <div class="task-time">7:00</div>
+          <div class="task-title">ゆっくり朝食</div>
+          <div class="task-desc">休日は時間をかけて朝食を楽しむ</div>
+        </div>
+        <div class="task-card zen-green">
+          <div class="task-time">9:00</div>
+          <div class="task-title">読書タイム</div>
+          <div class="task-desc">静かな朝に最高の読書タイム</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">15:00</div>
+          <div class="task-title">トレーニング</div>
+          <div class="task-desc">ジムでトレーニング、平日の疲れをリフレッシュ</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item active">家</div>
+        <div class="nav-item">索</div>
+        <div class="nav-item">暦</div>
+        <div class="nav-item">己</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== MIDNIGHT (候補B) =================== -->
+  <div class="col">
+    <span class="badge">候補 B</span>
+    <div class="label">Midnight</div>
+    <p class="desc">深夜のエディトリアル。ネイビー × ゴールド × 藤色</p>
+    <div class="phone midnight">
+      <div class="header">
+        <div class="h-title">LIFE EXPLORER</div>
+        <div class="h-date">Sun, May 3</div>
+      </div>
+      <div class="toggle">
+        <div class="toggle-btn">WEEKDAY</div>
+        <div class="toggle-btn active">WEEKEND</div>
+      </div>
+      <div class="timeline">
+        <div class="task-card">
+          <div class="task-time">07:00</div>
+          <div class="task-title"><span class="dot-1">●</span> ゆっくり朝食</div>
+          <div class="task-desc">休日は時間をかけて朝食を楽しむ</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">09:00</div>
+          <div class="task-title"><span class="dot-2">●</span> 読書タイム</div>
+          <div class="task-desc">静かな朝に最高の読書タイム</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">15:00</div>
+          <div class="task-title"><span class="dot-3">●</span> トレーニング</div>
+          <div class="task-desc">ジムでトレーニング、平日の疲れをリフレッシュ</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item active">🏠</div>
+        <div class="nav-item">🔍</div>
+        <div class="nav-item">📅</div>
+        <div class="nav-item">👤</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== BOTANICAL (候補C) =================== -->
+  <div class="col">
+    <span class="badge">候補 C</span>
+    <div class="label">Botanical</div>
+    <p class="desc">セージグリーン・テラコッタ。スローライフ・自然回帰</p>
+    <div class="phone botanical">
+      <div class="header">
+        <div class="h-title">LIFE EXPLORER</div>
+        <div class="h-date">Sun, May 3</div>
+      </div>
+      <div class="toggle">
+        <div class="toggle-btn">Weekday</div>
+        <div class="toggle-btn active">Weekend</div>
+      </div>
+      <div class="timeline">
+        <div class="task-card terracotta">
+          <div class="task-time">7:00 am</div>
+          <div class="task-title"><span class="dot-1">●</span> ゆっくり朝食</div>
+          <div class="task-desc">休日は時間をかけて朝食を楽しむ</div>
+        </div>
+        <div class="task-card">
+          <div class="task-time">9:00 am</div>
+          <div class="task-title"><span class="dot-2">●</span> 読書タイム</div>
+          <div class="task-desc">静かな朝に最高の読書タイム</div>
+        </div>
+        <div class="task-card forest">
+          <div class="task-time">3:00 pm</div>
+          <div class="task-title"><span class="dot-3">●</span> トレーニング</div>
+          <div class="task-desc">ジムでトレーニング、平日の疲れをリフレッシュ</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item active">🏠</div>
+        <div class="nav-item">🔍</div>
+        <div class="nav-item">📅</div>
+        <div class="nav-item">👤</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:900px; margin:48px auto 0; color:#ccc; font-size:13px; line-height:1.7; padding:24px; background:#1a1a1a; border-radius:12px;">
+  <h3 style="color:white; margin-bottom:12px; font-size:15px;">特徴サマリー</h3>
+  <ul style="list-style: none; padding-left: 0;">
+    <li style="margin-bottom:10px;"><strong style="color:#7C9474;">Zen（和モダン）</strong> — 和紙背景 #FAF7F0 ／ 墨黒・藍・抹茶 ／ 縦の細線・○●記号 ／ 明朝体 ／ 余白を活かしたカード無し（ボーダーのみ）構成</li>
+    <li style="margin-bottom:10px;"><strong style="color:#C9A961;">Midnight</strong> — ディープネイビー #0E1320 ／ ゴールド + 藤色 ／ グラデーションで上品に ／ 深夜・集中作業向け</li>
+    <li><strong style="color:#3F5E3A;">Botanical</strong> — セージ #E8EDE3 ／ テラコッタ・フォレスト ／ 手書き風（Caveat）／ 左ボーダーで植物の茎を表現 ／ 丸み強め</li>
+  </ul>
+</div>
+
+</body>
+</html>
