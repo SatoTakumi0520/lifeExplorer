@@ -317,15 +317,15 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden p-4 space-y-4">
             {/* テーマ選択 */}
             <div>
-              <h4 className="font-bold text-sm text-stone-800 mb-3">Theme</h4>
+              <h4 className="font-bold text-sm text-stone-800 mb-1">Theme</h4>
               <p className="text-[11px] text-stone-400 mb-3">アプリ全体のデザインテーマを選択</p>
-              <div className="flex gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 {/* Classic */}
                 <button
                   onClick={() => {
                     onSwitchTheme?.('classic');
                   }}
-                  className={`flex-1 rounded-2xl border-2 overflow-hidden transition-all ${
+                  className={`rounded-2xl border-2 overflow-hidden transition-all ${
                     theme === 'classic' ? 'border-stone-800 ring-2 ring-stone-800/10' : 'border-stone-200 hover:border-stone-300'
                   }`}
                 >
@@ -352,7 +352,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                     if (darkMode) toggleDarkMode();
                     onSwitchTheme?.('vogue');
                   }}
-                  className={`flex-1 rounded-2xl border-2 overflow-hidden transition-all ${
+                  className={`rounded-2xl border-2 overflow-hidden transition-all ${
                     theme === 'vogue' ? 'border-[#111] ring-2 ring-[#111]/10' : 'border-stone-200 hover:border-stone-300'
                   }`}
                 >
@@ -371,20 +371,80 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                     <span className={`text-xs font-bold ${theme === 'vogue' ? 'text-[#1A1A1A]' : 'text-[#A09890]'}`}>Vogue</span>
                   </div>
                 </button>
+
+                {/* Midnight */}
+                <button
+                  onClick={() => {
+                    // Midnight 選択時はダークモードをオフ
+                    if (darkMode) toggleDarkMode();
+                    onSwitchTheme?.('midnight');
+                  }}
+                  className={`rounded-2xl border-2 overflow-hidden transition-all ${
+                    theme === 'midnight' ? 'border-[#C9A961] ring-2 ring-[#C9A961]/15' : 'border-stone-200 hover:border-stone-300'
+                  }`}
+                >
+                  <div
+                    className="p-3 pb-2.5"
+                    style={{
+                      backgroundColor: '#0E1320',
+                      backgroundImage: 'radial-gradient(ellipse at top, rgba(155, 138, 196, 0.18) 0%, transparent 70%)',
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#C9A961]" />
+                      <div className="w-8 h-1.5 rounded-full bg-[#9B8AC4]/60" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="w-full h-2 rounded-full bg-[#161B2D]" />
+                      <div className="w-3/4 h-2 rounded-full bg-[#161B2D]" />
+                      <div className="w-5/6 h-2 rounded-full bg-[#161B2D]" />
+                    </div>
+                  </div>
+                  <div className="bg-[#08090C] px-3 py-2 text-center border-t border-[#C9A961]/30">
+                    <span className={`text-xs font-bold ${theme === 'midnight' ? 'text-[#C9A961]' : 'text-[#6B6B75]'}`}>Midnight</span>
+                  </div>
+                </button>
+
+                {/* Botanical */}
+                <button
+                  onClick={() => {
+                    // Botanical 選択時はダークモードをオフ
+                    if (darkMode) toggleDarkMode();
+                    onSwitchTheme?.('botanical');
+                  }}
+                  className={`rounded-2xl border-2 overflow-hidden transition-all ${
+                    theme === 'botanical' ? 'border-[#3F5E3A] ring-2 ring-[#3F5E3A]/15' : 'border-stone-200 hover:border-stone-300'
+                  }`}
+                >
+                  <div className="bg-[#E8EDE3] p-3 pb-2.5">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#C97B4F]" />
+                      <div className="w-8 h-1.5 rounded-full bg-[#7C9474]/70" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="w-full h-2 rounded-full bg-[#F8F5EE] border-l-2 border-[#C97B4F]" />
+                      <div className="w-3/4 h-2 rounded-full bg-[#F8F5EE] border-l-2 border-[#7C9474]" />
+                      <div className="w-5/6 h-2 rounded-full bg-[#F8F5EE] border-l-2 border-[#3F5E3A]" />
+                    </div>
+                  </div>
+                  <div className="bg-[#DCE5D4] px-3 py-2 text-center border-t border-[#3F5E3A]/30">
+                    <span className={`text-xs font-bold ${theme === 'botanical' ? 'text-[#3F5E3A]' : 'text-[#92A48C]'}`}>Botanical</span>
+                  </div>
+                </button>
               </div>
             </div>
 
             {/* ダークモード（Classic テーマ時のみ） */}
-            <div className={`flex items-center justify-between pt-3 border-t border-stone-100 ${theme === 'vogue' ? 'opacity-40 pointer-events-none' : ''}`}>
+            <div className={`flex items-center justify-between pt-3 border-t border-stone-100 ${theme !== 'classic' ? 'opacity-40 pointer-events-none' : ''}`}>
               <div>
                 <h4 className="font-bold text-sm text-stone-800">Dark Mode</h4>
                 <p className="text-xs text-stone-400">
-                  {theme === 'vogue' ? 'Vogue テーマでは利用できません' : 'ダークテーマを使用'}
+                  {theme !== 'classic' ? `${theme.charAt(0).toUpperCase() + theme.slice(1)} テーマでは利用できません` : 'ダークテーマを使用'}
                 </p>
               </div>
               <button
                 onClick={toggleDarkMode}
-                disabled={theme === 'vogue'}
+                disabled={theme !== 'classic'}
                 className={`w-12 h-7 rounded-full transition-colors relative ${darkMode ? 'bg-green-500' : 'bg-stone-200'}`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${darkMode ? 'right-1' : 'left-1'}`} />

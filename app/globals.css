@@ -562,3 +562,292 @@ html.theme-vogue .bg-stone-100.rounded-full {
 html.theme-vogue .bg-stone-200 {
   background-color: #E4E0DB !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Midnight テーマ — 深夜のエディトリアル
+   ディープネイビー × ゴールド (#C9A961) × 藤色 (#9B8AC4) ×
+   Cormorant italic 見出し
+   ══════════════════════════════════════════════════════════════════ */
+
+html.theme-midnight {
+  --background: #0E1320;
+  --foreground: #E8E6E0;
+}
+html.theme-midnight body {
+  background: #0E1320;
+  color: #E8E6E0;
+}
+
+/* ── ベース背景 ── */
+html.theme-midnight .bg-\[\#FDFCF8\] {
+  background-color: #0E1320 !important;
+  background-image: radial-gradient(ellipse at top, rgba(155, 138, 196, 0.08) 0%, transparent 60%) !important;
+}
+html.theme-midnight .bg-\[\#FDFCF8\]\/95 {
+  background-color: rgba(14, 19, 32, 0.96) !important;
+}
+html.theme-midnight .from-\[\#FDFCF8\] {
+  --tw-gradient-from: #0E1320 !important;
+}
+html.theme-midnight .to-\[\#FDFCF8\] {
+  --tw-gradient-to: #0E1320 !important;
+}
+html.theme-midnight .bg-white\/80 {
+  background-color: rgba(14, 19, 32, 0.92) !important;
+  backdrop-filter: blur(8px);
+}
+html.theme-midnight .bg-white\/90 {
+  background-color: rgba(8, 9, 12, 0.92) !important;
+  backdrop-filter: blur(8px);
+}
+html.theme-midnight .bg-stone-50 {
+  background-color: #161B2D !important;
+}
+html.theme-midnight .bg-stone-100 {
+  background-color: #1A1F33 !important;
+}
+html.theme-midnight .bg-stone-200 {
+  background-color: #232842 !important;
+}
+
+/* ── カード背景 ── */
+html.theme-midnight .bg-white,
+html.theme-midnight .bg-white.rounded-2xl,
+html.theme-midnight .bg-white.rounded-xl {
+  background-color: #161B2D !important;
+  border-color: rgba(201, 169, 97, 0.15) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── テキスト: 暗背景でも読みやすく ── */
+html.theme-midnight .text-stone-900 { color: #F4F2EA !important; }
+html.theme-midnight .text-stone-800 { color: #F4F2EA !important; }
+html.theme-midnight .text-stone-700 { color: #E8E6E0 !important; }
+html.theme-midnight .text-stone-600 { color: #C8C4BA !important; }
+html.theme-midnight .text-stone-500 { color: #A8A49A !important; }
+html.theme-midnight .text-stone-400 { color: #8B8B95 !important; }
+html.theme-midnight .text-stone-300 { color: #6B6B75 !important; }
+html.theme-midnight .text-stone-200 { color: #4B4B55 !important; }
+
+/* ── ボーダー ── */
+html.theme-midnight .border-stone-100 { border-color: rgba(201, 169, 97, 0.12) !important; }
+html.theme-midnight .border-stone-200 { border-color: rgba(201, 169, 97, 0.2) !important; }
+html.theme-midnight .border-stone-200\/80 { border-color: rgba(201, 169, 97, 0.25) !important; }
+html.theme-midnight .border-stone-50 { border-color: rgba(201, 169, 97, 0.08) !important; }
+
+/* ── 見出し: Cormorant italic + ゴールド寄り ── */
+html.theme-midnight h1,
+html.theme-midnight h2,
+html.theme-midnight h3 {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+  color: #F4F2EA !important;
+}
+
+/* ── アクセント色: 緑 → ゴールド ── */
+html.theme-midnight .bg-green-50 { background-color: rgba(201, 169, 97, 0.15) !important; }
+html.theme-midnight .bg-green-100 { background-color: rgba(201, 169, 97, 0.22) !important; }
+html.theme-midnight .bg-green-200 { background-color: rgba(201, 169, 97, 0.3) !important; }
+html.theme-midnight .bg-green-500 { background-color: #C9A961 !important; }
+html.theme-midnight .bg-green-600 { background-color: #B89048 !important; }
+html.theme-midnight .text-green-500 { color: #C9A961 !important; }
+html.theme-midnight .text-green-600 { color: #C9A961 !important; }
+html.theme-midnight .text-green-700 { color: #D4B870 !important; }
+html.theme-midnight .text-green-800 { color: #E0C685 !important; }
+html.theme-midnight .border-green-100 { border-color: rgba(201, 169, 97, 0.3) !important; }
+
+/* ── アクセント色: オレンジ → ゴールド寄り ── */
+html.theme-midnight .bg-orange-50 { background-color: rgba(201, 169, 97, 0.12) !important; }
+html.theme-midnight .bg-orange-100 { background-color: rgba(201, 169, 97, 0.2) !important; }
+html.theme-midnight .text-orange-500 { color: #C9A961 !important; }
+html.theme-midnight .text-orange-600 { color: #B89048 !important; }
+
+/* ── アクセント色: 青 → 藤色 ── */
+html.theme-midnight .bg-blue-50 { background-color: rgba(155, 138, 196, 0.15) !important; }
+html.theme-midnight .bg-blue-100 { background-color: rgba(155, 138, 196, 0.22) !important; }
+html.theme-midnight .text-blue-500 { color: #9B8AC4 !important; }
+html.theme-midnight .text-blue-600 { color: #9B8AC4 !important; }
+
+/* ── アクセント色: 紫 → 藤色 ── */
+html.theme-midnight .bg-violet-50 { background-color: rgba(155, 138, 196, 0.15) !important; }
+html.theme-midnight .bg-violet-100 { background-color: rgba(155, 138, 196, 0.22) !important; }
+html.theme-midnight .text-violet-500 { color: #9B8AC4 !important; }
+html.theme-midnight .text-violet-600 { color: #9B8AC4 !important; }
+
+/* ── アンバー系 → ゴールドに ── */
+html.theme-midnight .bg-amber-50 { background-color: rgba(201, 169, 97, 0.12) !important; }
+html.theme-midnight .bg-amber-100 { background-color: rgba(201, 169, 97, 0.2) !important; }
+html.theme-midnight .text-amber-500 { color: #C9A961 !important; }
+html.theme-midnight .text-amber-600 { color: #B89048 !important; }
+
+/* ── レッド: 柔らかく ── */
+html.theme-midnight .text-red-600 { color: #D8898A !important; }
+html.theme-midnight .text-red-400 { color: #D8898A !important; }
+html.theme-midnight .border-red-100 { border-color: rgba(216, 137, 138, 0.3) !important; }
+
+/* ── ボトムナビのアクティブ色 ── */
+html.theme-midnight [data-nav-active="true"] {
+  background-color: rgba(201, 169, 97, 0.18) !important;
+  color: #C9A961 !important;
+}
+html.theme-midnight [data-nav-active="true"][data-nav-key="explore"] {
+  background-color: rgba(155, 138, 196, 0.18) !important;
+  color: #9B8AC4 !important;
+}
+html.theme-midnight [data-nav-active="true"][data-nav-key="calendar"] {
+  background-color: rgba(155, 138, 196, 0.18) !important;
+  color: #9B8AC4 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Botanical テーマ — 植物・スローライフ
+   セージグリーン (#E8EDE3) × クリーム (#F8F5EE) × フォレスト (#3F5E3A) ×
+   テラコッタ (#C97B4F) × 手書き Caveat
+   ══════════════════════════════════════════════════════════════════ */
+
+html.theme-botanical {
+  --background: #E8EDE3;
+  --foreground: #2D3E2A;
+}
+html.theme-botanical body {
+  background: #E8EDE3;
+  color: #2D3E2A;
+}
+
+/* ── ベース背景: クリーム → セージ ── */
+html.theme-botanical .bg-\[\#FDFCF8\] {
+  background-color: #E8EDE3 !important;
+}
+html.theme-botanical .bg-\[\#FDFCF8\]\/95 {
+  background-color: rgba(232, 237, 227, 0.96) !important;
+}
+html.theme-botanical .from-\[\#FDFCF8\] {
+  --tw-gradient-from: #E8EDE3 !important;
+}
+html.theme-botanical .to-\[\#FDFCF8\] {
+  --tw-gradient-to: #E8EDE3 !important;
+}
+html.theme-botanical .bg-white\/80 {
+  background-color: rgba(232, 237, 227, 0.94) !important;
+}
+html.theme-botanical .bg-white\/90 {
+  background-color: rgba(248, 245, 238, 0.94) !important;
+}
+html.theme-botanical .bg-stone-50 {
+  background-color: #DCE5D4 !important;
+}
+html.theme-botanical .bg-stone-100 {
+  background-color: #D0DCC6 !important;
+}
+html.theme-botanical .bg-stone-200 {
+  background-color: #BFCEB3 !important;
+}
+
+/* ── カード背景: クリームで浮かせる ── */
+html.theme-botanical .bg-white,
+html.theme-botanical .bg-white.rounded-2xl,
+html.theme-botanical .bg-white.rounded-xl {
+  background-color: #F8F5EE !important;
+  box-shadow: 0 1px 3px rgba(63, 94, 58, 0.06) !important;
+}
+
+/* ── テキスト: フォレスト寄り ── */
+html.theme-botanical .text-stone-900 { color: #2D3E2A !important; }
+html.theme-botanical .text-stone-800 { color: #2D3E2A !important; }
+html.theme-botanical .text-stone-700 { color: #3F5E3A !important; }
+html.theme-botanical .text-stone-600 { color: #5A6E55 !important; }
+html.theme-botanical .text-stone-500 { color: #768A70 !important; }
+html.theme-botanical .text-stone-400 { color: #92A48C !important; }
+html.theme-botanical .text-stone-300 { color: #A8B8A2 !important; }
+html.theme-botanical .text-stone-200 { color: #C0CEBB !important; }
+
+/* ── ボーダー ── */
+html.theme-botanical .border-stone-100 { border-color: rgba(63, 94, 58, 0.12) !important; }
+html.theme-botanical .border-stone-200 { border-color: rgba(63, 94, 58, 0.18) !important; }
+html.theme-botanical .border-stone-200\/80 { border-color: rgba(63, 94, 58, 0.22) !important; }
+html.theme-botanical .border-stone-50 { border-color: rgba(63, 94, 58, 0.08) !important; }
+
+/* ── 角丸を大きく(柔らかい印象) ── */
+html.theme-botanical .rounded-xl { border-radius: 18px !important; }
+html.theme-botanical .rounded-2xl { border-radius: 22px !important; }
+
+/* ── 見出し: Caveat 手書き風 ── */
+html.theme-botanical h1,
+html.theme-botanical h2 {
+  font-family: var(--font-caveat), 'Caveat', cursive !important;
+  font-weight: 700 !important;
+  color: #2D3E2A !important;
+}
+html.theme-botanical h3 {
+  font-family: var(--font-caveat), 'Caveat', cursive !important;
+  font-weight: 600 !important;
+  color: #3F5E3A !important;
+}
+
+/* ── 時刻系: 手書き風 Caveat ── */
+html.theme-botanical .font-mono {
+  font-family: var(--font-caveat), 'Caveat', cursive !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+}
+
+/* ── アクセント色: 緑 → フォレスト ── */
+html.theme-botanical .bg-green-50 { background-color: #DCE5D4 !important; }
+html.theme-botanical .bg-green-100 { background-color: #C8D6BD !important; }
+html.theme-botanical .bg-green-200 { background-color: #B0C2A2 !important; }
+html.theme-botanical .bg-green-500 { background-color: #7C9474 !important; }
+html.theme-botanical .bg-green-600 { background-color: #3F5E3A !important; }
+html.theme-botanical .text-green-500 { color: #7C9474 !important; }
+html.theme-botanical .text-green-600 { color: #3F5E3A !important; }
+html.theme-botanical .text-green-700 { color: #2D3E2A !important; }
+html.theme-botanical .text-green-800 { color: #2D3E2A !important; }
+html.theme-botanical .border-green-100 { border-color: rgba(63, 94, 58, 0.25) !important; }
+
+/* ── アクセント色: オレンジ → テラコッタ ── */
+html.theme-botanical .bg-orange-50 { background-color: rgba(201, 123, 79, 0.12) !important; }
+html.theme-botanical .bg-orange-100 { background-color: rgba(201, 123, 79, 0.2) !important; }
+html.theme-botanical .text-orange-500 { color: #C97B4F !important; }
+html.theme-botanical .text-orange-600 { color: #B05E33 !important; }
+
+/* ── アクセント色: 青 → セージグリーン ── */
+html.theme-botanical .bg-blue-50 { background-color: rgba(124, 148, 116, 0.15) !important; }
+html.theme-botanical .bg-blue-100 { background-color: rgba(124, 148, 116, 0.22) !important; }
+html.theme-botanical .text-blue-500 { color: #7C9474 !important; }
+html.theme-botanical .text-blue-600 { color: #5A7553 !important; }
+
+/* ── アクセント色: 紫 → テラコッタ寄り ── */
+html.theme-botanical .bg-violet-50 { background-color: rgba(201, 123, 79, 0.1) !important; }
+html.theme-botanical .bg-violet-100 { background-color: rgba(201, 123, 79, 0.15) !important; }
+html.theme-botanical .text-violet-500 { color: #C97B4F !important; }
+html.theme-botanical .text-violet-600 { color: #B05E33 !important; }
+
+/* ── アンバー系 → テラコッタに ── */
+html.theme-botanical .bg-amber-50 { background-color: rgba(201, 123, 79, 0.12) !important; }
+html.theme-botanical .bg-amber-100 { background-color: rgba(201, 123, 79, 0.2) !important; }
+html.theme-botanical .text-amber-500 { color: #C97B4F !important; }
+html.theme-botanical .text-amber-600 { color: #B05E33 !important; }
+
+/* ── レッド: 柔らかく ── */
+html.theme-botanical .text-red-600 { color: #B05E33 !important; }
+html.theme-botanical .text-red-400 { color: #C97B4F !important; }
+html.theme-botanical .border-red-100 { border-color: rgba(176, 94, 51, 0.3) !important; }
+
+/* ── ボトムナビのアクティブ色 ── */
+html.theme-botanical [data-nav-active="true"] {
+  background-color: #DCE5D4 !important;
+  color: #3F5E3A !important;
+}
+html.theme-botanical [data-nav-active="true"][data-nav-key="explore"] {
+  background-color: rgba(201, 123, 79, 0.18) !important;
+  color: #C97B4F !important;
+}
+html.theme-botanical [data-nav-active="true"][data-nav-key="calendar"] {
+  background-color: rgba(124, 148, 116, 0.25) !important;
+  color: #5A7553 !important;
+}
+
+/* ── ナビ背景・ボーダー ── */
+html.theme-botanical .bg-white\/90 { background-color: rgba(248, 245, 238, 0.94) !important; }
+

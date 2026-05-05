@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-export type AppTheme = 'classic' | 'vogue';
+export type AppTheme = 'classic' | 'vogue' | 'midnight' | 'botanical';
 
 const STORAGE_KEY = 'lifeExplorer_theme';
 const THEME_CLASSES: Record<AppTheme, string> = {
   classic: '',
   vogue: 'theme-vogue',
+  midnight: 'theme-midnight',
+  botanical: 'theme-botanical',
 };
 
 export function useTheme() {
