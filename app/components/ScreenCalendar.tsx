@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, CalendarDays, MapPin, ExternalLink, Trash2, 
 import { RoutineTask, ScheduledEvent, Screen } from '../lib/types';
 import { timeToMinutes } from '../lib/utils';
 
-const DOW_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
 
 const typeColor: Record<string, { dot: string; bg: string; border: string; text: string }> = {
   nature: { dot: 'bg-amber-400', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
@@ -112,7 +112,7 @@ export const ScreenCalendar = ({
       <div className="p-5 pb-3 bg-white/80 backdrop-blur border-b border-stone-100">
         <div className="flex items-center gap-2 mb-3">
           <CalendarDays size={18} className="text-green-600" />
-          <h2 className="text-xl font-serif font-bold">Calendar</h2>
+          <h2 className="text-xl font-serif font-bold">カレンダー</h2>
         </div>
 
         {/* 月ナビゲーション */}
@@ -124,7 +124,7 @@ export const ScreenCalendar = ({
             onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth() + 1); setSelectedDate(todayKey); }}
             className="text-base font-bold text-stone-800"
           >
-            {new Date(viewYear, viewMonth - 1).toLocaleString('en', { month: 'long' })} {viewYear}
+            {viewYear}年 {viewMonth}月
           </button>
           <button onClick={() => goMonth(1)} className="p-2 rounded-lg hover:bg-stone-100 transition-colors">
             <ChevronRight size={18} className="text-stone-400" />
@@ -178,24 +178,24 @@ export const ScreenCalendar = ({
             {/* 日付ラベル */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-stone-800">
-                {DOW_LABELS[selectedDayData.dow]}, {selectedDayData.date.toLocaleString('en', { month: 'short' })} {selectedDayData.date.getDate()}
+                {selectedDayData.date.getMonth() + 1}月{selectedDayData.date.getDate()}日（{DOW_LABELS[selectedDayData.dow]}）
               </span>
               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                 selectedDayData.isToday ? 'bg-green-100 text-green-700' :
                 selectedDayData.isPast ? 'bg-stone-100 text-stone-400' :
                 'bg-blue-50 text-blue-600'
               }`}>
-                {selectedDayData.isToday ? 'Today' : selectedDayData.isPast ? 'Past' : 'Upcoming'}
+                {selectedDayData.isToday ? '今日' : selectedDayData.isPast ? '過去' : '今後の予定'}
               </span>
               <span className="text-[10px] text-stone-300 ml-auto">
-                {selectedDayData.isWeekend ? 'Weekend Routine' : 'Weekday Routine'}
+                {selectedDayData.isWeekend ? '休日のルーティン' : '平日のルーティン'}
               </span>
             </div>
 
             {/* イベント（あれば） */}
             {selectedDayData.dayEvents.length > 0 && (
               <div className="space-y-2">
-                <p className="text-[10px] font-bold text-orange-500 uppercase tracking-wide">Scheduled Events</p>
+                <p className="text-[10px] font-bold text-orange-500 tracking-wide">予定のイベント</p>
                 {selectedDayData.dayEvents.map(event => (
                   <div key={event.id} className="bg-orange-50 border border-orange-200 rounded-xl p-3">
                     <div className="flex items-start justify-between">
@@ -233,7 +233,7 @@ export const ScreenCalendar = ({
 
             {/* タイムライン（ルーティン + イベント統合） */}
             <div className="space-y-1.5">
-              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wide">Timeline</p>
+              <p className="text-[10px] font-bold text-stone-400 tracking-wide">タイムライン</p>
               {selectedDayData.allTasks.length === 0 ? (
                 <p className="text-xs text-stone-300 py-4 text-center">この日のルーティンはまだありません</p>
               ) : (
@@ -256,9 +256,9 @@ export const ScreenCalendar = ({
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-mono text-stone-400">{task.time}</span>
                           {task.endTime && <span className="text-[10px] text-stone-300">— {task.endTime}</span>}
-                          {duration && <span className="text-[10px] text-stone-300">({duration}min)</span>}
+                          {duration && <span className="text-[10px] text-stone-300">({duration}分)</span>}
                           {isEvent && (
-                            <span className="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-bold ml-auto">Event</span>
+                            <span className="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-bold ml-auto">イベント</span>
                           )}
                         </div>
                         <p className={`text-sm font-bold mt-0.5 ${isEvent ? 'text-orange-800' : 'text-stone-700'}`}>{task.title}</p>

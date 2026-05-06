@@ -1,11 +1,11 @@
 export const formatDate = (date: Date) => {
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const days = ['日', '月', '火', '水', '木', '金', '土'];
+  const month = date.getMonth() + 1;
   return {
-    dow: days[date.getDay()],
-    month: months[date.getMonth()],
-    day: date.getDate(),
-    full: `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`,
+    dow: days[date.getDay()] + '曜日',
+    month: `${month}月`,
+    day: `${date.getDate()}日`,
+    full: `${date.getFullYear()}年${month}月${date.getDate()}日`,
     iso: date.toISOString().split('T')[0],
   };
 };

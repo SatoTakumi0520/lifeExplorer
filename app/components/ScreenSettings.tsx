@@ -46,34 +46,34 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800 relative">
       <div className="p-4 bg-white/80 backdrop-blur-sm sticky top-0 z-20 border-b border-stone-100 flex items-center justify-between">
         <button onClick={() => go('PROFILE')} className="flex items-center gap-1 text-stone-400 hover:text-stone-800 text-sm font-bold">
-          <ChevronLeft size={18} /> Back
+          <ChevronLeft size={18} /> 戻る
         </button>
-        <h2 className="font-bold text-stone-800">Settings</h2>
+        <h2 className="font-bold text-stone-800">設定</h2>
         <div className="w-16" />
       </div>
 
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="p-4">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">Account</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">アカウント</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <button onClick={() => setShowEditProfile(true)} className="w-full p-4 flex items-center gap-4 border-b border-stone-50 hover:bg-stone-50 transition-colors">
               <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center text-2xl">🌱</div>
               <div className="flex-1 text-left">
                 <h4 className="font-bold text-stone-800">{profileName}</h4>
-                <p className="text-xs text-stone-400">Edit Profile</p>
+                <p className="text-xs text-stone-400">プロフィールを編集</p>
               </div>
               <ChevronRight size={18} className="text-stone-300" />
             </button>
             <button onClick={() => setShowEditEmail(true)} className="w-full p-4 flex items-center justify-between border-b border-stone-50 hover:bg-stone-50 transition-colors">
               <div className="text-left">
-                <h4 className="font-bold text-sm text-stone-800">Email</h4>
+                <h4 className="font-bold text-sm text-stone-800">メールアドレス</h4>
                 <p className="text-xs text-stone-400">{email}</p>
               </div>
               <ChevronRight size={18} className="text-stone-300" />
             </button>
             <div className="p-4 flex items-center justify-between border-b border-stone-50">
               <div>
-                <h4 className="font-bold text-sm text-stone-800">Public Profile</h4>
+                <h4 className="font-bold text-sm text-stone-800">プロフィール公開</h4>
                 <p className="text-xs text-stone-400">ルーティンを他のユーザーと共有</p>
               </div>
               <button
@@ -88,18 +88,18 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               className="w-full p-4 flex items-center gap-3 hover:bg-stone-50 transition-colors"
             >
               <LogOut size={16} className="text-stone-400" />
-              <h4 className="font-bold text-sm text-stone-600">Sign Out</h4>
+              <h4 className="font-bold text-sm text-stone-600">サインアウト</h4>
             </button>
           </div>
         </div>
 
         {/* ── Explore Settings ── */}
         <div className="p-4">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">Explore</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">探す</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden p-4 space-y-4">
             {/* カテゴリ選択 */}
             <div>
-              <h4 className="font-bold text-sm text-stone-800 mb-2">Interests</h4>
+              <h4 className="font-bold text-sm text-stone-800 mb-2">興味のあるテーマ</h4>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(PERSONA_CATEGORY_LABELS)
                   .filter(([key]) => key !== 'all' && key !== 'custom')
@@ -130,12 +130,12 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             </div>
             {/* 生活リズム */}
             <div>
-              <h4 className="font-bold text-sm text-stone-800 mb-2">Lifestyle Rhythm</h4>
+              <h4 className="font-bold text-sm text-stone-800 mb-2">生活リズム</h4>
               <div className="flex gap-2">
                 {([
-                  { value: 'morning', label: '☀️ Morning' },
-                  { value: 'balanced', label: '⚖️ Balanced' },
-                  { value: 'night', label: '🌙 Night Owl' },
+                  { value: 'morning', label: '☀️ 朝型' },
+                  { value: 'balanced', label: '⚖️ バランス型' },
+                  { value: 'night', label: '🌙 夜型' },
                 ] as const).map(({ value, label }) => (
                   <button
                     key={value}
@@ -156,7 +156,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             </div>
             {/* 都道府県 */}
             <div>
-              <h4 className="font-bold text-sm text-stone-800 mb-1">Region</h4>
+              <h4 className="font-bold text-sm text-stone-800 mb-1">地域</h4>
               <p className="text-[11px] text-stone-400 mb-2">お住まいの地域のイベントが優先表示されます</p>
               <select
                 value={onboardingPrefs?.prefecture ?? ''}
@@ -179,7 +179,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                   onClick={onResetOnboarding}
                   className="w-full py-2.5 px-4 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl text-xs font-bold transition-colors"
                 >
-                  Redo Onboarding
+                  オンボーディングをやり直す
                 </button>
                 <p className="text-[10px] text-stone-400 mt-1.5 text-center">カテゴリと生活リズムを再選択</p>
               </div>
@@ -190,12 +190,12 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         {/* ── AI Settings ── */}
         <div className="p-4">
           <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <Sparkles size={12} className="text-orange-500" /> AI Settings
+            <Sparkles size={12} className="text-orange-500" /> AI 設定
           </h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             {/* Provider */}
             <div className="p-4 border-b border-stone-50">
-              <h4 className="font-bold text-sm text-stone-800 mb-2">AI Provider</h4>
+              <h4 className="font-bold text-sm text-stone-800 mb-2">AI プロバイダー</h4>
               <div className="flex gap-2">
                 {(['anthropic', 'openai'] as AIProvider[]).map((p) => (
                   <button
@@ -219,7 +219,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               className="w-full p-4 flex items-center justify-between hover:bg-stone-50 transition-colors"
             >
               <div className="text-left">
-                <h4 className="font-bold text-sm text-stone-800">API Key</h4>
+                <h4 className="font-bold text-sm text-stone-800">API キー</h4>
                 <p className="text-xs text-stone-400">
                   {aiSettings?.ai_api_key_encrypted ? '✓ 設定済み' : '未設定 — タップして設定'}
                 </p>
@@ -234,7 +234,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
 
         <div className="p-4">
           <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3 flex items-center gap-1.5">
-            <Bell size={12} className="text-stone-400" /> Notifications
+            <Bell size={12} className="text-stone-400" /> 通知
           </h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             {!supported ? (
@@ -258,7 +258,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                   <div className="flex items-center gap-3">
                     {notifSettings.enabled ? <Bell size={16} className="text-green-600" /> : <BellOff size={16} className="text-stone-300" />}
                     <div>
-                      <h4 className="font-bold text-sm text-stone-800">Morning Reminder</h4>
+                      <h4 className="font-bold text-sm text-stone-800">朝のリマインダー</h4>
                       <p className="text-xs text-stone-400">
                         {permission === 'denied' ? '⚠️ 通知がブロックされています' : 'ルーティン開始時に通知を受け取る'}
                       </p>
@@ -281,7 +281,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
                 </div>
                 <div className="p-4 flex items-center justify-between border-b border-stone-50">
                   <div>
-                    <h4 className="font-bold text-sm text-stone-800">Reminder Time</h4>
+                    <h4 className="font-bold text-sm text-stone-800">通知時刻</h4>
                     <p className="text-xs text-stone-400">毎朝この時刻にリマインダーを送信</p>
                   </div>
                   <input
@@ -313,12 +313,12 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         </div>
 
         <div className="p-4">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">Appearance</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">デザイン</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden p-4 space-y-4">
             {/* テーマ選択 */}
             <div>
-              <h4 className="font-bold text-sm text-stone-800 mb-1">Theme</h4>
-              <p className="text-[11px] text-stone-400 mb-3">アプリ全体のデザインテーマを選択</p>
+              <h4 className="font-bold text-sm text-stone-800 mb-1">テーマ</h4>
+              <p className="text-[11px] text-stone-400 mb-3">アプリ全体のデザインを選択</p>
               <div className="grid grid-cols-2 gap-3">
                 {/* Classic */}
                 <button
@@ -437,9 +437,9 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             {/* ダークモード（Classic テーマ時のみ） */}
             <div className={`flex items-center justify-between pt-3 border-t border-stone-100 ${theme !== 'classic' ? 'opacity-40 pointer-events-none' : ''}`}>
               <div>
-                <h4 className="font-bold text-sm text-stone-800">Dark Mode</h4>
+                <h4 className="font-bold text-sm text-stone-800">ダークモード</h4>
                 <p className="text-xs text-stone-400">
-                  {theme !== 'classic' ? `${theme.charAt(0).toUpperCase() + theme.slice(1)} テーマでは利用できません` : 'ダークテーマを使用'}
+                  {theme !== 'classic' ? `${theme.charAt(0).toUpperCase() + theme.slice(1)} テーマでは利用できません` : '画面を暗いトーンに切り替え'}
                 </p>
               </div>
               <button
@@ -454,25 +454,25 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         </div>
 
         <div className="p-4">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">Data</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">データ</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <button className="w-full p-4 flex items-center justify-between border-b border-stone-50 hover:bg-stone-50 transition-colors">
-              <h4 className="font-bold text-sm text-stone-800">Export Data</h4>
+              <h4 className="font-bold text-sm text-stone-800">データをエクスポート</h4>
               <ChevronRight size={18} className="text-stone-300" />
             </button>
             <button className="w-full p-4 flex items-center justify-between hover:bg-stone-50 transition-colors">
-              <h4 className="font-bold text-sm text-stone-800">Delete All Routines</h4>
+              <h4 className="font-bold text-sm text-stone-800">すべてのルーティンを削除</h4>
               <ChevronRight size={18} className="text-stone-300" />
             </button>
           </div>
         </div>
 
         <div className="p-4">
-          <h3 className="text-xs font-bold text-red-400 tracking-wider mb-3">Danger Zone</h3>
+          <h3 className="text-xs font-bold text-red-400 tracking-wider mb-3">注意エリア</h3>
           <div className="bg-white rounded-2xl border border-red-100 overflow-hidden">
             <button className="w-full p-4 flex items-center justify-between hover:bg-red-50 transition-colors">
               <div>
-                <h4 className="font-bold text-sm text-red-600">Delete Account</h4>
+                <h4 className="font-bold text-sm text-red-600">アカウントを削除</h4>
                 <p className="text-xs text-red-400">アカウントとすべてのデータを完全に削除</p>
               </div>
               <ChevronRight size={18} className="text-red-300" />
@@ -481,7 +481,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         </div>
 
         <div className="p-4">
-          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">Legal</h3>
+          <h3 className="text-xs font-bold text-stone-400 tracking-wider mb-3">規約</h3>
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
             <a
               href="/privacy"
@@ -489,7 +489,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               rel="noopener noreferrer"
               className="w-full p-4 flex items-center justify-between border-b border-stone-50 hover:bg-stone-50 transition-colors"
             >
-              <h4 className="font-bold text-sm text-stone-800">Privacy Policy</h4>
+              <h4 className="font-bold text-sm text-stone-800">プライバシーポリシー</h4>
               <ChevronRight size={18} className="text-stone-300" />
             </a>
             <a
@@ -498,7 +498,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               rel="noopener noreferrer"
               className="w-full p-4 flex items-center justify-between hover:bg-stone-50 transition-colors"
             >
-              <h4 className="font-bold text-sm text-stone-800">Terms of Service</h4>
+              <h4 className="font-bold text-sm text-stone-800">利用規約</h4>
               <ChevronRight size={18} className="text-stone-300" />
             </a>
           </div>
@@ -514,7 +514,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         <div className="absolute inset-0 z-50 bg-stone-900/20 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200">
           <div className="bg-[#FDFCF8] w-full rounded-t-3xl border-t border-stone-100 shadow-2xl p-6 animate-in slide-in-from-bottom-10">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-stone-800">Edit Profile</h3>
+              <h3 className="text-lg font-bold text-stone-800">プロフィールを編集</h3>
               <button onClick={() => setShowEditProfile(false)} className="p-2 bg-stone-100 rounded-full text-stone-400 hover:text-stone-800">
                 <X size={18} />
               </button>
@@ -523,11 +523,11 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             <div className="space-y-4">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-20 h-20 rounded-full bg-stone-100 flex items-center justify-center text-4xl">🌱</div>
-                <button className="text-xs text-green-700 font-bold">Change Avatar</button>
+                <button className="text-xs text-green-700 font-bold">アバターを変更</button>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">Display Name</label>
+                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">表示名</label>
                 <input
                   type="text"
                   value={profileName}
@@ -537,7 +537,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               </div>
 
               <div>
-                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">Bio</label>
+                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">自己紹介</label>
                 <textarea
                   value={profileBio}
                   onChange={(e) => setProfileBio(e.target.value)}
@@ -547,7 +547,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               </div>
 
               <div>
-                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">Timezone</label>
+                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">タイムゾーン</label>
                 <select className="w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors">
                   <option>Asia/Tokyo (GMT+9)</option>
                   <option>America/New_York (GMT-5)</option>
@@ -561,7 +561,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               onClick={() => setShowEditProfile(false)}
               className="w-full mt-6 py-4 bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors"
             >
-              Save
+              保存
             </button>
           </div>
         </div>
@@ -571,7 +571,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         <div className="absolute inset-0 z-50 bg-stone-900/20 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200">
           <div className="bg-[#FDFCF8] w-full rounded-t-3xl border-t border-stone-100 shadow-2xl p-6 animate-in slide-in-from-bottom-10">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-stone-800">API Key Setup</h3>
+              <h3 className="text-lg font-bold text-stone-800">API キーの設定</h3>
               <button onClick={() => setShowAISetup(false)} className="p-2 bg-stone-100 rounded-full text-stone-400 hover:text-stone-800">
                 <X size={18} />
               </button>
@@ -580,7 +580,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
             <div className="space-y-4">
               <div>
                 <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">
-                  {aiSettings?.ai_provider === 'openai' ? 'OpenAI' : 'Anthropic'} API Key
+                  {aiSettings?.ai_provider === 'openai' ? 'OpenAI' : 'Anthropic'} API キー
                 </label>
                 <div className="relative">
                   <input
@@ -626,7 +626,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               disabled={!apiKeyInput.trim() && !aiSettings?.ai_api_key_encrypted}
               className="w-full mt-6 py-4 bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {aiSaving ? 'Saving...' : 'Save API Key'}
+              {aiSaving ? '保存中…' : 'APIキーを保存'}
             </button>
           </div>
         </div>
@@ -636,7 +636,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
         <div className="absolute inset-0 z-50 bg-stone-900/20 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200">
           <div className="bg-[#FDFCF8] w-full rounded-t-3xl border-t border-stone-100 shadow-2xl p-6 animate-in slide-in-from-bottom-10">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-stone-800">Change Email</h3>
+              <h3 className="text-lg font-bold text-stone-800">メールアドレスの変更</h3>
               <button onClick={() => setShowEditEmail(false)} className="p-2 bg-stone-100 rounded-full text-stone-400 hover:text-stone-800">
                 <X size={18} />
               </button>
@@ -644,12 +644,12 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">Current Email</label>
+                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">現在のメールアドレス</label>
                 <div className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-500">{email}</div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">New Email</label>
+                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">新しいメールアドレス</label>
                 <input
                   type="email"
                   placeholder="新しいメールアドレスを入力"
@@ -658,7 +658,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               </div>
 
               <div>
-                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">Confirm Password</label>
+                <label className="text-xs font-bold text-stone-400 tracking-wider mb-1.5 block">パスワード（確認用）</label>
                 <input
                   type="password"
                   placeholder="確認のためパスワードを入力"
@@ -675,7 +675,7 @@ export const ScreenSettings = ({ go, session, onSignOut, aiSettings, aiSaving, o
               onClick={() => setShowEditEmail(false)}
               className="w-full mt-6 py-4 bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors"
             >
-              Update Email
+              メールアドレスを更新
             </button>
           </div>
         </div>

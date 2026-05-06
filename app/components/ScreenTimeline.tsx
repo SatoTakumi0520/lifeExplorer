@@ -145,7 +145,7 @@ export const ScreenTimeline = ({
     return acc + Math.max(end - timeToMinutes(t.time), 0);
   }, 0);
   const statsText = totalTasks > 0
-    ? `${totalTasks} tasks · ${formatDuration(totalMin)}`
+    ? `${totalTasks} タスク ・ ${formatDuration(totalMin)}`
     : null;
 
   return (
@@ -160,7 +160,7 @@ export const ScreenTimeline = ({
               onClick={() => go('EXPLORE')}
               className="flex items-center gap-1 text-xs font-bold text-stone-400 tracking-widest uppercase hover:text-stone-800"
             >
-              <ChevronLeft size={14} /> Back
+              <ChevronLeft size={14} /> 戻る
             </button>
           ) : (
             <span className="text-xs font-bold text-stone-300 tracking-[0.18em] uppercase select-none">
@@ -183,7 +183,7 @@ export const ScreenTimeline = ({
               }}
               className="px-4 py-1.5 bg-green-700 text-white rounded-full text-xs font-bold shadow-md"
             >
-              Borrow
+              借りる
             </button>
           )}
         </div>
@@ -193,14 +193,14 @@ export const ScreenTimeline = ({
           {isOther && selectedUser ? (
             <h2 className="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">
               <span className="text-xl">{selectedUser.avatar}</span>
-              {selectedUser.user.split(' ')[0]}&apos;s Day
+              {selectedUser.user.split(' ')[0]}さんの1日
             </h2>
           ) : (
             <>
               {/* 日付表示 */}
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-serif font-bold text-stone-900">
-                  {dayInfo.dow}, {dayInfo.month} {dayInfo.day}
+                  {dayInfo.month}{dayInfo.day}（{dayInfo.dow.charAt(0)}）
                 </h2>
                 <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
               </div>
@@ -216,7 +216,7 @@ export const ScreenTimeline = ({
                   }`}
                 >
                   <Briefcase size={12} />
-                  Weekday
+                  平日
                 </button>
                 <button
                   onClick={() => scheduleType !== 'weekend' && onToggleSchedule()}
@@ -227,14 +227,14 @@ export const ScreenTimeline = ({
                   }`}
                 >
                   <Palmtree size={12} />
-                  Weekend
+                  休日
                 </button>
               </div>
 
               {/* 統計 */}
               <div className="flex items-center gap-1.5">
                 <p className="text-xs text-stone-400">
-                  {loadingRoutine ? 'Syncing…' : scheduleType === 'weekday' ? 'Weekday Routine' : 'Weekend Routine'}
+                  {loadingRoutine ? '同期中…' : scheduleType === 'weekday' ? '平日のルーティン' : '休日のルーティン'}
                 </p>
                 {statsText && !loadingRoutine && (
                   <>
