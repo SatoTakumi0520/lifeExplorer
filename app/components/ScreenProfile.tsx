@@ -185,7 +185,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
                 onClick={() => go('CALENDAR')}
                 className="text-[10px] font-bold text-blue-500 hover:text-blue-600 transition-colors"
               >
-                カレンダー →
+                Calendar →
               </button>
             )}
           </div>

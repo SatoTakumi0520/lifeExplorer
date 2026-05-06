@@ -112,7 +112,7 @@ export const ScreenCalendar = ({
       <div className="p-5 pb-3 bg-white/80 backdrop-blur border-b border-stone-100">
         <div className="flex items-center gap-2 mb-3">
           <CalendarDays size={18} className="text-green-600" />
-          <h2 className="text-xl font-serif font-bold">カレンダー</h2>
+          <h2 className="text-xl font-serif font-bold">Calendar</h2>
         </div>
 
         {/* 月ナビゲーション */}
