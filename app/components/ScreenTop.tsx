@@ -162,21 +162,21 @@ const features = [
   {
     icon: <RoutineIcon />,
     label: '01',
-    title: 'My Routine',
-    desc: '理想の1日をデザインしよう',
+    title: 'マイルーティン',
+    desc: '理想の1日を自分の手でデザイン',
     iconBg: 'bg-green-100 text-green-700',
   },
   {
     icon: <BorrowIcon />,
     label: '02',
-    title: 'Borrow a Day',
-    desc: '誰かのルーティンを試して、新しい自分を発見',
+    title: '誰かの1日を借りる',
+    desc: '他のユーザーのルーティンを試して、新しい自分を発見',
     iconBg: 'bg-amber-100 text-amber-700',
   },
   {
     icon: <CatalogIcon />,
     label: '03',
-    title: 'Explore',
+    title: '探す',
     desc: '75以上のライフスタイルからあなたに合うものを',
     iconBg: 'bg-violet-100 text-violet-700',
   },
@@ -215,7 +215,7 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
 
     {/* フィーチャーリスト */}
     <div className="px-8 pt-9 z-10 relative">
-      <p className="text-[10px] font-bold text-stone-300 uppercase tracking-[0.18em] mb-4">Features</p>
+      <p className="text-[10px] font-bold text-stone-300 tracking-[0.25em] mb-4">できること</p>
       <div className="space-y-0">
         {features.map(({ icon, label, title, desc, iconBg }) => (
           <div key={title} className="flex items-center gap-4 py-3.5 border-b border-stone-100/80 last:border-0">
@@ -241,14 +241,14 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
         onClick={onSignUp}
         className="w-full py-[17px] bg-stone-900 text-white rounded-2xl font-bold text-base tracking-wide hover:bg-stone-700 active:scale-[0.98] transition-all"
       >
-        Get Started
+        はじめる
       </button>
       <button
         onClick={onSignIn}
         className="w-full py-3 text-stone-400 text-sm font-medium hover:text-stone-700 transition-colors"
       >
-        Already have an account?{' '}
-        <span className="text-stone-800 font-bold underline underline-offset-2">Sign In</span>
+        すでにアカウントをお持ちの方は{' '}
+        <span className="text-stone-800 font-bold underline underline-offset-2">ログイン</span>
       </button>
     </div>
   </div>

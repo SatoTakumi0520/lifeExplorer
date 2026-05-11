@@ -38,13 +38,28 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
     setLoading(true);
 
     if (mode === 'signup') {
-      const { error: authError } = await supabase.auth.signUp({ email, password });
+      const { data, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          // 確認メール内リンクのリダイレクト先を明示
+          // /auth/callback で code を session と交換してから / に戻す
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
       setLoading(false);
       if (authError) {
         setError(toJapaneseError(authError.message));
-      } else {
-        setSignupDone(true);
+        return;
       }
+      // Supabase の Email confirmation 設定によって挙動が変わる:
+      //  - 有効: data.session === null → 確認メール送信メッセージを表示
+      //  - 無効: data.session が即時返る → そのままサインイン扱いでオンボーディングへ
+      if (data?.session) {
+        onAuthSuccess();
+        return;
+      }
+      setSignupDone(true);
       return;
     }
 
@@ -90,10 +105,16 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
             <div className="py-4 text-center">
               <div className="text-3xl mb-3">✉️</div>
               <h3 className="text-xl font-serif font-bold text-stone-800 mb-2">確認メールを送信しました</h3>
-              <p className="text-stone-500 text-sm leading-relaxed mb-6">
-                <strong>{email}</strong> に確認メールを送りました。<br />
-                メール内のリンクをクリックしてアカウントを有効化してください。
+              <p className="text-stone-500 text-sm leading-relaxed mb-4">
+                <strong className="break-all">{email}</strong> 宛に確認メールを送りました。<br />
+                メール内のリンクをタップしてアカウントを有効化してください。
               </p>
+              <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 mb-6 text-left">
+                <p className="text-[11px] text-amber-700 leading-relaxed">
+                  ・メールが届かない場合は迷惑メールフォルダもご確認ください<br />
+                  ・リンクをタップすると、自動でこのアプリに戻りオンボーディングが始まります
+                </p>
+              </div>
               <button
                 onClick={onClose}
                 className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-sm hover:bg-stone-700 transition-all"
@@ -154,10 +175,10 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
             /* ─── ログイン / アカウント作成 ─── */
             <>
               <h3 className="text-2xl font-serif font-bold text-stone-800 mb-1">
-                {mode === 'signin' ? 'おかえりなさい' : 'Life Explorer をはじめよう'}
+                {mode === 'signin' ? 'ログイン' : 'はじめよう'}
               </h3>
               <p className="text-stone-400 text-xs mb-6">
-                {mode === 'signin' ? 'ルーティンを同期するにはログインしてください' : 'アカウントを作成してはじめましょう'}
+                {mode === 'signin' ? 'メールアドレスとパスワードを入力してください' : '無料でアカウントを作成できます'}
               </p>
 
               <form onSubmit={handleAuth} className="space-y-4">
