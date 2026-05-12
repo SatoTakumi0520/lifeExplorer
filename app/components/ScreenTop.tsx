@@ -203,13 +203,13 @@ export const ScreenTop = ({ onSignIn, onSignUp }: ScreenTopProps) => (
     {/* キャッチコピー */}
     <div className="pt-10 px-8 z-10 relative">
       <h1 className="text-5xl font-serif font-bold leading-[1.1] mb-4 text-stone-900">
-        Borrow a Life,<br />
-        <span className="text-green-700">Try</span>
-        <br />New Self.
+        Design<br />
+        your <span className="text-green-700">day,</span>
+        <br />your way.
       </h1>
       <p className="text-stone-400 text-sm leading-relaxed">
-        誰かのライフスタイルを借りて、<br />
-        まだ知らない自分に出会おう。
+        理想の1日を、自分の手で。<br />
+        新しい習慣を、自由にデザイン。
       </p>
     </div>
 

@@ -52,24 +52,30 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
         setError(toJapaneseError(authError.message));
         return;
       }
-      // Supabase の Email confirmation 設定によって挙動が変わる:
-      //  - 有効: data.session === null → 確認メール送信メッセージを表示
-      //  - 無効: data.session が即時返る → そのままサインイン扱いでオンボーディングへ
+      // メール認証が完了するまでアプリには入れない仕様。
+      // Supabase 側で Email confirmation が無効になっていて session が
+      // 返ってきた場合でも、即時サインアウトして必ず確認メール画面を出す。
       if (data?.session) {
-        onAuthSuccess();
-        return;
+        await supabase.auth.signOut();
       }
       setSignupDone(true);
       return;
     }
 
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (authError) {
       setError(toJapaneseError(authError.message));
-    } else {
-      onAuthSuccess();
+      return;
     }
+    // 防御的チェック: 何らかの理由でメール未認証のままセッションが
+    // 取れてしまった場合は強制サインアウトしてエラーを表示
+    if (data?.user && !data.user.email_confirmed_at) {
+      await supabase.auth.signOut();
+      setError('メールアドレスが確認されていません。確認メールをご確認ください。');
+      return;
+    }
+    onAuthSuccess();
   };
 
   const handleReset = async (e: React.FormEvent) => {
