@@ -38,7 +38,7 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
     setLoading(true);
 
     if (mode === 'signup') {
-      const { error: authError } = await supabase.auth.signUp({
+      const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -52,9 +52,21 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
         setError(toJapaneseError(authError.message));
         return;
       }
-      // 仕様: メール認証が完了するまでアプリには入れない。
-      // useAuth 側で未認証セッションは即遮断される（session=null として扱う）
-      // ため、ここでは確認メール送信メッセージを表示するだけでよい。
+      // 仕様: 必ずメール認証を踏ませる。
+      // Supabase 側で Email Confirmation が無効化されていると signUp が
+      // セッションを即時返してしまうため、ここで明示的に signOut して
+      // useAuth 経由で session=null になるよう強制する。
+      // （Supabase Dashboard の Auth → Sign In / Up → Confirm email を ON にしておくと
+      //   そもそも data.session === null で返ってくる）
+      if (data?.session) {
+        await supabase.auth.signOut();
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            '[AuthModal] signUp returned a session immediately. ' +
+            'Supabase の Auth → Sign In / Up → "Confirm email" を有効にしてください。',
+          );
+        }
+      }
       setSignupDone(true);
       return;
     }

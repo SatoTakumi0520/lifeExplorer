@@ -27,17 +27,15 @@ export function useOnboarding(session: Session | null, authLoading: boolean = fa
     if (authLoading) return;
 
     const load = async () => {
-      if (IS_DEMO) {
-        try {
-          const stored = localStorage.getItem(STORAGE_KEY);
-          if (stored) setPreferences(JSON.parse(stored));
-        } catch { /* ignore parse errors */ }
-        setLoading(false);
-        return;
-      }
-
+      // セッションがあれば常に DB を参照する（DEMO モードでも上書きしない）
+      // セッションが無い場合のみ、DEMO モードなら localStorage を覗く
       if (!session?.user?.id) {
-        // Auth 確定済みでセッションなし → 未ログイン
+        if (IS_DEMO) {
+          try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) setPreferences(JSON.parse(stored));
+          } catch { /* ignore parse errors */ }
+        }
         setLoading(false);
         return;
       }
@@ -75,12 +73,12 @@ export function useOnboarding(session: Session | null, authLoading: boolean = fa
     const completed = { ...prefs, completed: true };
     setPreferences(completed);
 
-    if (IS_DEMO) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
+    if (!session?.user?.id) {
+      if (IS_DEMO) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
+      }
       return;
     }
-
-    if (!session?.user?.id) return;
 
     const { error } = await supabase
       .from('user_settings')
@@ -102,12 +100,12 @@ export function useOnboarding(session: Session | null, authLoading: boolean = fa
     const skipped = { ...DEFAULT_PREFERENCES, completed: true };
     setPreferences(skipped);
 
-    if (IS_DEMO) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(skipped));
+    if (!session?.user?.id) {
+      if (IS_DEMO) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(skipped));
+      }
       return;
     }
-
-    if (!session?.user?.id) return;
 
     const { error } = await supabase
       .from('user_settings')
@@ -127,10 +125,9 @@ export function useOnboarding(session: Session | null, authLoading: boolean = fa
   // Reset onboarding — allows re-doing from settings
   const resetOnboarding = useCallback(async () => {
     setPreferences(DEFAULT_PREFERENCES);
-
+    // ローカルストレージのデモデータも常にクリア（残骸を残さない）
     if (IS_DEMO) {
-      localStorage.removeItem(STORAGE_KEY);
-      return;
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
     }
 
     if (!session?.user?.id) return;

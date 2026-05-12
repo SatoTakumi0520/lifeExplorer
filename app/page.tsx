@@ -97,22 +97,17 @@ export default function App() {
   const todayEventTasks = getTasksForDate(new Date());
   const mergedRoutine = [...myRoutine, ...todayEventTasks].sort((a, b) => a.time.localeCompare(b.time));
 
-  // ログイン済みユーザはTOP画面をスキップ
-  // セッションが存在する場合のみ自動遷移（デモモードでも session or onboarding 完了が必要）
-  // オンボーディング未完了 → ONBOARDING、完了済み → HOME
-  const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  // ログイン済み（= メール認証済みセッション持ち）のユーザだけ TOP をスキップ。
+  // useAuth が未認証セッションを null に丸めているので、ここに来る session は
+  // 必ず email_confirmed_at が立っているものだけ。
+  // セッションが無い場合は何があっても TOP に留める（デモモードでも同じ）。
   useEffect(() => {
     if (!loading && !onboardingLoading && currentScreen === 'TOP') {
       if (session) {
-        // 本番: セッション有 → オンボーディング状態で分岐
         setCurrentScreen(onboardingComplete ? 'HOME' : 'ONBOARDING');
-      } else if (IS_DEMO && onboardingComplete) {
-        // デモモード: オンボーディング完了済みなら HOME へ
-        setCurrentScreen('HOME');
       }
-      // それ以外（未ログイン＆デモ未完了 or 非デモ）→ TOP に留まる
     }
-  }, [session, loading, onboardingLoading, onboardingComplete, IS_DEMO]);
+  }, [session, loading, onboardingLoading, onboardingComplete]);
 
   // スプラッシュ完了コールバック
   const handleSplashFinished = useCallback(() => setShowSplash(false), []);
