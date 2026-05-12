@@ -4,31 +4,59 @@ import { useState, useEffect } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
+/**
+ * Supabase のセッションのうち「メール認証が完了していないもの」を弾く。
+ * 認証未完了のまま漏れ出たセッションは即座にバックグラウンドで signOut し、
+ * useAuth から見ると null セッションとして扱う。
+ *
+ * これにより以下のすべての経路で「メール認証が済むまでアプリに入れない」
+ * という仕様が保証される:
+ *  - signUp 直後（Supabase 側で confirmation 無効時に session が返ってくる場合）
+ *  - 既存セッションでのページ再読み込み
+ *  - signInWithPassword のレスポンス
+ *  - /auth/callback からのリダイレクト後
+ */
+function isVerified(s: Session | null): boolean {
+  return !!s?.user?.email_confirmed_at;
+}
+
 export const useAuth = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isRecovery, setIsRecovery] = useState(false);
 
   useEffect(() => {
+    // 最初のセッション取得
     supabase.auth.getSession().then(({ data: { session: s } }) => {
-      setSession(s);
+      if (s && !isVerified(s)) {
+        // 未認証セッションを破棄
+        void supabase.auth.signOut();
+        setSession(null);
+      } else {
+        setSession(s);
+      }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
-      setSession(s);
-      // Detect password recovery event from Supabase
+      // PASSWORD_RECOVERY は確認状態に関係なく検出する
       if (event === 'PASSWORD_RECOVERY') {
         setIsRecovery(true);
       }
+      // 未認証セッションは弾く（バックグラウンドで signOut してから null セット）
+      if (s && !isVerified(s)) {
+        void supabase.auth.signOut();
+        setSession(null);
+        return;
+      }
+      setSession(s);
     });
 
-    // Also check URL query param for recovery (from our auth callback route)
+    // URL クエリ経由でのリカバリーフラグ検出
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('type') === 'recovery') {
         setIsRecovery(true);
-        // Clean up the URL
         window.history.replaceState({}, '', window.location.pathname);
       }
     }

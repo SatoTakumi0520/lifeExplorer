@@ -38,12 +38,12 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
     setLoading(true);
 
     if (mode === 'signup') {
-      const { data, error: authError } = await supabase.auth.signUp({
+      const { error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          // 確認メール内リンクのリダイレクト先を明示
-          // /auth/callback で code を session と交換してから / に戻す
+          // 確認メール内リンクのリダイレクト先を明示。
+          // /auth/callback で code を session と交換してから / に戻す。
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
@@ -52,12 +52,9 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
         setError(toJapaneseError(authError.message));
         return;
       }
-      // メール認証が完了するまでアプリには入れない仕様。
-      // Supabase 側で Email confirmation が無効になっていて session が
-      // 返ってきた場合でも、即時サインアウトして必ず確認メール画面を出す。
-      if (data?.session) {
-        await supabase.auth.signOut();
-      }
+      // 仕様: メール認証が完了するまでアプリには入れない。
+      // useAuth 側で未認証セッションは即遮断される（session=null として扱う）
+      // ため、ここでは確認メール送信メッセージを表示するだけでよい。
       setSignupDone(true);
       return;
     }
@@ -68,11 +65,10 @@ export const AuthModal = ({ onClose, onAuthSuccess, initialMode = 'signin' }: Au
       setError(toJapaneseError(authError.message));
       return;
     }
-    // 防御的チェック: 何らかの理由でメール未認証のままセッションが
-    // 取れてしまった場合は強制サインアウトしてエラーを表示
+    // ログインに成功しても email_confirmed_at が null なら未認証。
+    // useAuth が強制 signOut するが、ここではユーザーへ明示的にエラーを返す。
     if (data?.user && !data.user.email_confirmed_at) {
-      await supabase.auth.signOut();
-      setError('メールアドレスが確認されていません。確認メールをご確認ください。');
+      setError('メールアドレスがまだ確認されていません。送信済みの確認メールをご確認ください。');
       return;
     }
     onAuthSuccess();
