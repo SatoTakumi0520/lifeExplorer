@@ -20,23 +20,64 @@ function isVerified(s: Session | null): boolean {
   return !!s?.user?.email_confirmed_at;
 }
 
+/**
+ * localStorage の session を信用しすぎず、サーバ側で JWT を検証する。
+ * - JWT が偽造/失効していたら getUser はエラーを返すので、その場合は false。
+ * - 返ってきた user に email_confirmed_at が無ければ未認証なので false。
+ * これで「Confirm email OFF 時代の残骸セッション」「壊れたトークン」を弾ける。
+ */
+async function verifyOnServer(): Promise<boolean> {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user?.email_confirmed_at) return false;
+  return true;
+}
+
 export const useAuth = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isRecovery, setIsRecovery] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     // 最初のセッション取得
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
-      if (s && !isVerified(s)) {
-        // 未認証セッションを破棄
-        void supabase.auth.signOut();
-        setSession(null);
-      } else {
-        setSession(s);
+    (async () => {
+      const { data: { session: s } } = await supabase.auth.getSession();
+
+      if (!s) {
+        if (!cancelled) {
+          setSession(null);
+          setLoading(false);
+        }
+        return;
       }
-      setLoading(false);
-    });
+
+      if (!isVerified(s)) {
+        await supabase.auth.signOut();
+        if (!cancelled) {
+          setSession(null);
+          setLoading(false);
+        }
+        return;
+      }
+
+      // localStorage の email_confirmed_at だけでなくサーバ側でも検証する。
+      // 偽造 JWT や Confirm email OFF 時代の残骸セッションをここで弾く。
+      const ok = await verifyOnServer();
+      if (!ok) {
+        await supabase.auth.signOut();
+        if (!cancelled) {
+          setSession(null);
+          setLoading(false);
+        }
+        return;
+      }
+
+      if (!cancelled) {
+        setSession(s);
+        setLoading(false);
+      }
+    })();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       // PASSWORD_RECOVERY は確認状態に関係なく検出する
@@ -47,6 +88,18 @@ export const useAuth = () => {
       if (s && !isVerified(s)) {
         void supabase.auth.signOut();
         setSession(null);
+        return;
+      }
+      // 認証済みに見えるセッションでもサーバ側で再検証する（捏造 JWT 対策）。
+      if (s) {
+        void verifyOnServer().then((ok) => {
+          if (!ok) {
+            void supabase.auth.signOut();
+            setSession(null);
+          } else {
+            setSession(s);
+          }
+        });
         return;
       }
       setSession(s);

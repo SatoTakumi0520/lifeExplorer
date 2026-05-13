@@ -177,7 +177,7 @@ const features = [
     icon: <CatalogIcon />,
     label: '03',
     title: '探す',
-    desc: '75以上のライフスタイルからあなたに合うものを',
+    desc: 'ライフスタイル、コミュニティ、イベントから新しい一日を発見',
     iconBg: 'bg-violet-100 text-violet-700',
   },
 ];

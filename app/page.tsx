@@ -97,17 +97,22 @@ export default function App() {
   const todayEventTasks = getTasksForDate(new Date());
   const mergedRoutine = [...myRoutine, ...todayEventTasks].sort((a, b) => a.time.localeCompare(b.time));
 
-  // ログイン済み（= メール認証済みセッション持ち）のユーザだけ TOP をスキップ。
-  // useAuth が未認証セッションを null に丸めているので、ここに来る session は
-  // 必ず email_confirmed_at が立っているものだけ。
-  // セッションが無い場合は何があっても TOP に留める（デモモードでも同じ）。
+  // 認証ガード。
+  // useAuth は email_confirmed_at が立っていない session を null に丸めるので、
+  // ここに来る非 null session は必ずメール認証済み。
+  // - session 有 + TOP → ONBOARDING or HOME に振り分け
+  // - session 無 + TOP 以外 → TOP に強制送還（signUp 直後の短い"verified session"窓で
+  //   いったん ONBOARDING に渡ってしまったケースなどを救済する）
   useEffect(() => {
-    if (!loading && !onboardingLoading && currentScreen === 'TOP') {
-      if (session) {
+    if (loading || onboardingLoading) return;
+    if (session) {
+      if (currentScreen === 'TOP') {
         setCurrentScreen(onboardingComplete ? 'HOME' : 'ONBOARDING');
       }
+    } else if (currentScreen !== 'TOP') {
+      setCurrentScreen('TOP');
     }
-  }, [session, loading, onboardingLoading, onboardingComplete]);
+  }, [session, loading, onboardingLoading, onboardingComplete, currentScreen]);
 
   // スプラッシュ完了コールバック
   const handleSplashFinished = useCallback(() => setShowSplash(false), []);
