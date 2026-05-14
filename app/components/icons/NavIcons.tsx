@@ -14,7 +14,7 @@ type IconProps = {
   strokeWidth?: number;
 };
 
-/** Home / Timeline — 地平線から昇る太陽（一日の始まり） */
+/** Home / Timeline — 時計（時間軸=ルーティンの象徴） */
 export const NavHomeIcon = ({ size = 22, className, strokeWidth = 1.6 }: IconProps) => (
   <svg
     width={size}
@@ -28,19 +28,16 @@ export const NavHomeIcon = ({ size = 22, className, strokeWidth = 1.6 }: IconPro
     className={className}
     aria-hidden="true"
   >
-    {/* 地平線 */}
-    <line x1="3" y1="18" x2="21" y2="18" />
-    {/* 半円の太陽 */}
-    <path d="M6 18 A6 6 0 0 1 18 18" />
-    {/* 太陽の中心ライン */}
-    <line x1="12" y1="13" x2="12" y2="15" />
-    {/* 短い光 */}
-    <line x1="3.5" y1="21" x2="6" y2="21" />
-    <line x1="18" y1="21" x2="20.5" y2="21" />
+    {/* 文字盤 */}
+    <circle cx="12" cy="12" r="9" />
+    {/* 短針(12時方向) */}
+    <line x1="12" y1="12" x2="12" y2="7.5" />
+    {/* 長針(2時方向) */}
+    <line x1="12" y1="12" x2="15" y2="13.5" />
   </svg>
 );
 
-/** Explore — ダイヤモンド型の方位磁針（探索の方向） */
+/** Explore — コンパス（探索の方位） */
 export const NavExploreIcon = ({ size = 22, className, strokeWidth = 1.6 }: IconProps) => (
   <svg
     width={size}
@@ -56,10 +53,10 @@ export const NavExploreIcon = ({ size = 22, className, strokeWidth = 1.6 }: Icon
   >
     {/* 外円 */}
     <circle cx="12" cy="12" r="9" />
-    {/* ダイヤ型のニードル（NE 方向） */}
-    <path d="M15.5 8.5 L12.5 12.5 L8.5 15.5 L11.5 11.5 Z" fill="currentColor" stroke="none" />
-    {/* 反対側の薄いダイヤ */}
-    <path d="M15.5 8.5 L12.5 12.5 L11.5 11.5 L14.5 7.5 Z" opacity="0.0" />
+    {/* 上向きニードル(N) — 塗り */}
+    <path d="M12 5 L14 12 L12 11 L10 12 Z" fill="currentColor" stroke="none" />
+    {/* 下向きニードル(S) — 線のみ薄く */}
+    <path d="M12 19 L14 12 L10 12 Z" opacity="0.35" />
   </svg>
 );
 
@@ -89,7 +86,7 @@ export const NavCalendarIcon = ({ size = 22, className, strokeWidth = 1.6 }: Ico
   </svg>
 );
 
-/** Profile / My Garden — 双葉の芽生え（成長・自分） */
+/** Profile — 人物シルエット（マイページの象徴） */
 export const NavProfileIcon = ({ size = 22, className, strokeWidth = 1.6 }: IconProps) => (
   <svg
     width={size}
@@ -103,13 +100,9 @@ export const NavProfileIcon = ({ size = 22, className, strokeWidth = 1.6 }: Icon
     className={className}
     aria-hidden="true"
   >
-    {/* 茎 */}
-    <line x1="12" y1="21" x2="12" y2="11" />
-    {/* 左の葉 */}
-    <path d="M12 13 C8.5 13 6 11 6 8 C9 8 12 10 12 13 Z" />
-    {/* 右の葉 */}
-    <path d="M12 11 C15.5 11 18 9 18 6 C15 6 12 8 12 11 Z" />
-    {/* 土台のライン */}
-    <line x1="8" y1="21" x2="16" y2="21" />
+    {/* 頭 */}
+    <circle cx="12" cy="8" r="3.5" />
+    {/* 肩 */}
+    <path d="M5 20 C5 16 8 14 12 14 C16 14 19 16 19 20" />
   </svg>
 );
