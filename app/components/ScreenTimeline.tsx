@@ -163,8 +163,8 @@ export const ScreenTimeline = ({
               <ChevronLeft size={14} /> 戻る
             </button>
           ) : (
-            <span className="text-xs font-bold text-stone-300 tracking-[0.18em] uppercase select-none">
-              Life Explorer
+            <span className="text-xs font-bold text-stone-400 tracking-[0.18em] uppercase select-none">
+              {today.toLocaleString('en-US', { month: 'long' })} {today.getFullYear()}
             </span>
           )}
           {!isOther && (
