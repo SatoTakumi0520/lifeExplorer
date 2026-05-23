@@ -16,19 +16,44 @@ import { EVENT_CATEGORY_LABELS, type EventItem } from '../lib/eventService';
 const MINI_START = 300;  // 5:00
 const MINI_RANGE = 1020; // 17h
 const typeBarColor: Record<string, string> = {
-  nature: 'bg-amber-400',
-  mind:   'bg-blue-400',
-  work:   'bg-violet-400',
+  work:    'bg-violet-400',
+  create:  'bg-orange-400',
+  study:   'bg-blue-400',
+  care:    'bg-green-400',
+  enjoy:   'bg-amber-400',
+  connect: 'bg-rose-400',
+  // 後方互換
+  nature:  'bg-amber-400',
+  mind:    'bg-blue-400',
 };
 const typeLabel: Record<string, string> = {
-  nature: 'Nature',
-  mind:   'Mind',
-  work:   'Work',
+  work:    '働く',
+  create:  '創る',
+  study:   '学ぶ',
+  care:    '整える',
+  enjoy:   '楽しむ',
+  connect: 'つながる',
+  // 後方互換
+  nature:  '楽しむ',
+  mind:    '学ぶ',
 };
 const typeDotColor: Record<string, string> = {
-  nature: 'bg-amber-400',
-  mind:   'bg-blue-400',
-  work:   'bg-violet-400',
+  work:    'bg-violet-400',
+  create:  'bg-orange-400',
+  study:   'bg-blue-400',
+  care:    'bg-green-400',
+  enjoy:   'bg-amber-400',
+  connect: 'bg-rose-400',
+  nature:  'bg-amber-400',
+  mind:    'bg-blue-400',
+};
+const typePillClass: Record<string, string> = {
+  work:    'bg-violet-50 text-violet-600',
+  create:  'bg-orange-50 text-orange-600',
+  study:   'bg-blue-50 text-blue-600',
+  care:    'bg-green-50 text-green-600',
+  enjoy:   'bg-amber-50 text-amber-600',
+  connect: 'bg-rose-50 text-rose-600',
 };
 
 type ScreenExploreProps = {
@@ -567,9 +592,7 @@ export const ScreenExplore = ({ go, setSelectedUser, personaTemplates, hasApiKey
                             <span className="text-xs font-mono text-stone-400">{task.time}</span>
                             <span className="text-xs font-bold text-stone-700">{task.title}</span>
                             <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-auto flex-shrink-0 ${
-                              task.type === 'nature' ? 'bg-amber-50 text-amber-600' :
-                              task.type === 'mind' ? 'bg-blue-50 text-blue-600' :
-                              'bg-violet-50 text-violet-600'
+                              typePillClass[task.type ?? 'work'] ?? 'bg-violet-50 text-violet-600'
                             }`}>
                               {typeLabel[task.type ?? 'work']}
                             </span>

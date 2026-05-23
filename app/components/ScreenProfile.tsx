@@ -22,19 +22,29 @@ type ScreenProfileProps = {
 
 /* ─── Static constants ─────────────────────────────────────────────── */
 
+// UI で表示する 6 カテゴリの設定。データは useRoutine で正規化済みなので
+// 'nature'/'mind' はここに含めない(typeBarColor 側のみ後方互換を残す)。
 const typeConfig = {
-  nature: { label: '自然', color: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50', dot: 'bg-amber-400' },
-  mind:   { label: '心',   color: 'bg-blue-400',  text: 'text-blue-600',  bg: 'bg-blue-50',  dot: 'bg-blue-400'  },
-  work:   { label: '仕事', color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50', dot: 'bg-violet-400' },
+  work:    { label: '働く',     color: 'bg-violet-400', text: 'text-violet-600', bg: 'bg-violet-50', dot: 'bg-violet-400' },
+  create:  { label: '創る',     color: 'bg-orange-400', text: 'text-orange-600', bg: 'bg-orange-50', dot: 'bg-orange-400' },
+  study:   { label: '学ぶ',     color: 'bg-blue-400',   text: 'text-blue-600',   bg: 'bg-blue-50',   dot: 'bg-blue-400'   },
+  care:    { label: '整える',   color: 'bg-green-400',  text: 'text-green-600',  bg: 'bg-green-50',  dot: 'bg-green-400'  },
+  enjoy:   { label: '楽しむ',   color: 'bg-amber-400',  text: 'text-amber-600',  bg: 'bg-amber-50',  dot: 'bg-amber-400'  },
+  connect: { label: 'つながる', color: 'bg-rose-400',   text: 'text-rose-600',   bg: 'bg-rose-50',   dot: 'bg-rose-400'   },
 } as const;
 
 // ミニタイムラインバー用
 const MINI_START = 300;  // 5:00
 const MINI_RANGE = 1020; // 17h
 const typeBarColor: Record<string, string> = {
-  nature: 'bg-amber-400',
-  mind:   'bg-blue-400',
-  work:   'bg-violet-400',
+  work:    'bg-violet-400',
+  create:  'bg-orange-400',
+  study:   'bg-blue-400',
+  care:    'bg-green-400',
+  enjoy:   'bg-amber-400',
+  connect: 'bg-rose-400',
+  nature:  'bg-amber-400',
+  mind:    'bg-blue-400',
 };
 
 function relativeTime(isoStr: string): string {
@@ -63,13 +73,19 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
 
   const typeBalance = useMemo(() => {
     const total = myRoutine.length;
-    if (total === 0) return { nature: 0, mind: 0, work: 0 };
-    const counts = { nature: 0, mind: 0, work: 0 };
-    myRoutine.forEach(task => { counts[task.type]++; });
+    const empty = { work: 0, create: 0, study: 0, care: 0, enjoy: 0, connect: 0 };
+    if (total === 0) return empty;
+    const counts = { ...empty };
+    myRoutine.forEach(task => {
+      if (task.type in counts) counts[task.type as keyof typeof counts]++;
+    });
     return {
-      nature: Math.round((counts.nature / total) * 100),
-      mind:   Math.round((counts.mind   / total) * 100),
-      work:   Math.round((counts.work   / total) * 100),
+      work:    Math.round((counts.work    / total) * 100),
+      create:  Math.round((counts.create  / total) * 100),
+      study:   Math.round((counts.study   / total) * 100),
+      care:    Math.round((counts.care    / total) * 100),
+      enjoy:   Math.round((counts.enjoy   / total) * 100),
+      connect: Math.round((counts.connect / total) * 100),
     };
   }, [myRoutine]);
 
@@ -153,7 +169,7 @@ export const ScreenProfile = ({ go, myRoutine, session, borrowHistory, upcomingE
               <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-xl">
                 <Users size={14} className="text-stone-400" />
                 <span className="text-xs text-stone-500">
-                  全{myRoutine.length}タスク ・ 自然{typeBalance.nature}% ・ 心{typeBalance.mind}% ・ 仕事{typeBalance.work}%
+                  全{myRoutine.length}タスク
                 </span>
               </div>
             </>

@@ -1,25 +1,42 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Briefcase, ChevronLeft, Coffee, Edit3, Palmtree, Sun } from 'lucide-react';
+import { BookOpen, Briefcase, ChevronLeft, Edit3, Heart, Palmtree, Smile, Sparkles, Users } from 'lucide-react';
 import { formatDate, timeToMinutes } from '../lib/utils';
 import { RoutineTask, ScheduleType, Screen, SocialPost } from '../lib/types';
 
 /* ─── タイプ別スタイル ────────────────────────────────────────────── */
+// 旧キー(nature/mind)は後方互換のため別名として残す。
 const typeLeftBorder: Record<string, string> = {
-  nature: 'border-l-amber-400',
-  mind:   'border-l-blue-400',
-  work:   'border-l-violet-400',
+  work:    'border-l-violet-400',
+  create:  'border-l-orange-400',
+  study:   'border-l-blue-400',
+  care:    'border-l-green-400',
+  enjoy:   'border-l-amber-400',
+  connect: 'border-l-rose-400',
+  // 後方互換
+  nature:  'border-l-amber-400',
+  mind:    'border-l-blue-400',
 };
 const typeIconColor: Record<string, string> = {
-  nature: 'text-amber-500',
-  mind:   'text-blue-500',
-  work:   'text-violet-500',
+  work:    'text-violet-500',
+  create:  'text-orange-500',
+  study:   'text-blue-500',
+  care:    'text-green-500',
+  enjoy:   'text-amber-500',
+  connect: 'text-rose-500',
+  nature:  'text-amber-500',
+  mind:    'text-blue-500',
 };
 const typeBg: Record<string, string> = {
-  nature: 'bg-amber-50/60',
-  mind:   'bg-blue-50/60',
-  work:   'bg-violet-50/60',
+  work:    'bg-violet-50/60',
+  create:  'bg-orange-50/60',
+  study:   'bg-blue-50/60',
+  care:    'bg-green-50/60',
+  enjoy:   'bg-amber-50/60',
+  connect: 'bg-rose-50/60',
+  nature:  'bg-amber-50/60',
+  mind:    'bg-blue-50/60',
 };
 
 /* ─── レイアウト計算（重なりレーン） ─────────────────────────────── */
@@ -339,9 +356,12 @@ export const ScreenTimeline = ({
                   >
                     <div className="px-3 pt-2.5 pb-2 h-full flex flex-col">
                       <div className="flex items-center gap-1.5 mb-1 min-w-0">
-                        {item.type === 'nature' && <Sun      size={11} className={`${iconClass} flex-shrink-0`} />}
-                        {item.type === 'mind'   && <BookOpen size={11} className={`${iconClass} flex-shrink-0`} />}
-                        {item.type === 'work'   && <Coffee   size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'work'    && <Briefcase size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'create'  && <Sparkles  size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'study'   && <BookOpen  size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'care'    && <Heart     size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'enjoy'   && <Smile     size={11} className={`${iconClass} flex-shrink-0`} />}
+                        {item.type === 'connect' && <Users     size={11} className={`${iconClass} flex-shrink-0`} />}
                         <span className="font-bold text-sm text-stone-800 truncate leading-tight">{item.title}</span>
                       </div>
                       {heightPx >= 58 && item.thought && (

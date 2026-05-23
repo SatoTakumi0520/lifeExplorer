@@ -49,7 +49,7 @@ type TransformedEvent = {
     endTime: string;
     title: string;
     thought: string;
-    type: 'nature' | 'mind' | 'work';
+    type: 'work' | 'create' | 'study' | 'care' | 'enjoy' | 'connect';
     url?: string;
   };
   url: string;
@@ -143,13 +143,13 @@ const thoughtMap: Record<string, string> = {
   culture: '文化に触れて感性を磨く。',
 };
 
-const typeMap: Record<string, 'nature' | 'mind' | 'work'> = {
-  wellness: 'nature',
-  outdoor: 'nature',
-  spiritual: 'mind',
-  learning: 'mind',
-  social: 'mind',
-  culture: 'mind',
+const typeMap: Record<string, 'work' | 'create' | 'study' | 'care' | 'enjoy' | 'connect'> = {
+  wellness:  'care',     // 心身の維持(ヨガ・瞑想)
+  outdoor:   'enjoy',    // 野外で楽しむ(ランニング・散策)
+  spiritual: 'care',     // 内面のケア
+  learning:  'study',    // 学習
+  social:    'connect',  // 人とのつながり
+  culture:   'study',    // 文化的体験(展示など知的体験)
 };
 
 function buildRoutineSuggestion(event: {
@@ -181,7 +181,7 @@ function buildRoutineSuggestion(event: {
     endTime,
     title,
     thought: thoughtMap[event.category] ?? 'イベントに参加して新しい体験を。',
-    type: typeMap[event.category] ?? ('mind' as const),
+    type: typeMap[event.category] ?? ('study' as const),
     url: event.url,
   };
 }

@@ -13,7 +13,20 @@ export type OnboardingPreferences = {
   prefecture: string | null; // 例: '東京都' | '大阪府' | null(未設定)
 };
 
-export type RoutineType = 'nature' | 'mind' | 'work';
+/**
+ * タスクの分類。「その時間で何が起きるか」を単一軸とした 6 カテゴリ MECE。
+ *
+ *  - work    働く     経済義務として外界に出す(本業/副業/業務)
+ *  - create  創る     自発的に外界に出す(創作/発信/ボランティア)
+ *  - study   学ぶ     外から取り込む(勉強/読書/講座)
+ *  - care    整える   自分を保つ(食事/睡眠/運動/瞑想/家事)
+ *  - enjoy   楽しむ   一人で解放する(趣味/エンタメ/ぼんやり)
+ *  - connect つながる 他者と共有する(家族/友人/コミュニティ)
+ *
+ * 旧型 ('nature' | 'mind') は後方互換のため受理し、内部で
+ *  nature → enjoy / mind → study に正規化する(useRoutine 等)。
+ */
+export type RoutineType = 'work' | 'create' | 'study' | 'care' | 'enjoy' | 'connect';
 
 export type ScheduleType = 'weekday' | 'weekend';
 

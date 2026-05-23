@@ -89,7 +89,7 @@ export default function App() {
       category: event.category,
       source: event.source,
       thought: event.routineSuggestion?.thought || '',
-      type: event.routineSuggestion?.type || 'mind',
+      type: event.routineSuggestion?.type || 'study',
     });
   }, [addScheduledEvent]);
 

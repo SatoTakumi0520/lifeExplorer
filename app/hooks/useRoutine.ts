@@ -3,8 +3,28 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { RoutineTask, ScheduleType } from '../lib/types';
+import { RoutineTask, RoutineType, ScheduleType } from '../lib/types';
 import { MOCK_MY_ROUTINE_WEEKDAY, MOCK_MY_ROUTINE_WEEKEND } from '../lib/mockData';
+
+/**
+ * 旧 type ('nature' | 'mind') を新 type ('enjoy' | 'study') に正規化する。
+ * 6 カテゴリ移行前に作られた DB レコードを互換読込するためのレイヤ。
+ */
+const normalizeType = (raw: unknown): RoutineType => {
+  switch (raw) {
+    case 'nature': return 'enjoy';
+    case 'mind':   return 'study';
+    case 'work':
+    case 'create':
+    case 'study':
+    case 'care':
+    case 'enjoy':
+    case 'connect':
+      return raw;
+    default:
+      return 'work';
+  }
+};
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 const DEMO_STORAGE_KEY = 'lifeExplorer_routines';
@@ -72,7 +92,7 @@ export const useRoutine = (session: Session | null) => {
             endTime: row.end_time,
             title: row.title,
             thought: row.thought,
-            type: row.type,
+            type: normalizeType(row.type),
           };
           if (row.schedule_type === 'weekend') {
             weekend.push(task);

@@ -1,18 +1,37 @@
 "use client";
 
 import React, { useState } from 'react';
-import { BookOpen, Coffee, Sun } from 'lucide-react';
-import { RoutineTask } from '../lib/types';
+import { Briefcase, Sparkles, BookOpen, Heart, Smile, Users } from 'lucide-react';
+import { RoutineTask, RoutineType } from '../lib/types';
 
 type AddTaskModalProps = {
   onClose: () => void;
   onAdd: (task: RoutineTask) => void;
 };
 
-const typeConfig = [
-  { value: 'nature' as const, label: '自然', icon: Sun,      activeClass: 'bg-amber-500 text-white',  inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
-  { value: 'mind'   as const, label: '思考',   icon: BookOpen, activeClass: 'bg-blue-500 text-white',   inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
-  { value: 'work'   as const, label: '仕事',   icon: Coffee,   activeClass: 'bg-violet-500 text-white', inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+/**
+ * 6 カテゴリ MECE:
+ *  軸 = その時間で何が起きるか
+ *  - 働く (work)    経済義務として外界に出す
+ *  - 創る (create)  自発的に外界に出す
+ *  - 学ぶ (study)   外から取り込む
+ *  - 整える (care)  自分を保つ
+ *  - 楽しむ (enjoy) 一人で解放する
+ *  - つながる (connect) 他者と共有する
+ */
+const typeConfig: {
+  value: RoutineType;
+  label: string;
+  icon: typeof Briefcase;
+  activeClass: string;
+  inactiveClass: string;
+}[] = [
+  { value: 'work',    label: '働く',     icon: Briefcase, activeClass: 'bg-violet-500 text-white',  inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'create',  label: '創る',     icon: Sparkles,  activeClass: 'bg-orange-500 text-white',  inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'study',   label: '学ぶ',     icon: BookOpen,  activeClass: 'bg-blue-500 text-white',    inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'care',    label: '整える',   icon: Heart,     activeClass: 'bg-green-500 text-white',   inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'enjoy',   label: '楽しむ',   icon: Smile,     activeClass: 'bg-amber-500 text-white',   inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
+  { value: 'connect', label: 'つながる', icon: Users,     activeClass: 'bg-rose-500 text-white',    inactiveClass: 'bg-stone-50 text-stone-500 hover:bg-stone-100' },
 ];
 
 const inputClass = 'w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors';
@@ -37,13 +56,13 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
         <div className="px-6 pb-10 pt-4">
           <h3 className="font-bold text-lg text-stone-800 mb-5">タスクを追加</h3>
 
-          {/* タイプ選択 */}
-          <div className="flex gap-2 mb-5">
+          {/* タイプ選択 (2行×3列) */}
+          <div className="grid grid-cols-3 gap-2 mb-5">
             {typeConfig.map(({ value, label, icon: Icon, activeClass, inactiveClass }) => (
               <button
                 key={value}
                 onClick={() => setTask({ ...task, type: value })}
-                className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl font-bold text-xs transition-all ${
+                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl font-bold text-xs transition-all ${
                   task.type === value ? activeClass : inactiveClass
                 }`}
               >

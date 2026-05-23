@@ -15,9 +15,15 @@ const fmtDur = (min: number): string | null => {
 };
 
 const typeLeftBorder: Record<string, string> = {
-  nature: 'border-l-amber-400',
-  mind:   'border-l-blue-400',
-  work:   'border-l-violet-400',
+  work:    'border-l-violet-400',
+  create:  'border-l-orange-400',
+  study:   'border-l-blue-400',
+  care:    'border-l-green-400',
+  enjoy:   'border-l-amber-400',
+  connect: 'border-l-rose-400',
+  // 後方互換
+  nature:  'border-l-amber-400',
+  mind:    'border-l-blue-400',
 };
 
 type ScreenEditProps = {
