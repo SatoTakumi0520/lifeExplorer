@@ -36,10 +36,27 @@ const typeConfig: {
 
 const inputClass = 'w-full p-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-stone-400 transition-colors';
 
+/** 現在時刻を次の30分単位に丸めて HH:mm を返す。例: 14:23 → 14:30 / 14:31 → 15:00 */
+function defaultStartTime(): string {
+  const now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
+  if (m < 30) m = 30;
+  else { m = 0; h = (h + 1) % 24; }
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+/** HH:mm に1時間を加算する(24時を跨ぐ場合は 0 始まりに戻す) */
+function plusOneHour(t: string): string {
+  const [h, m] = t.split(':').map(Number);
+  return `${String((h + 1) % 24).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
 export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
+  const initialStart = defaultStartTime();
   const [task, setTask] = useState<RoutineTask>({
-    time: '12:00',
-    endTime: '13:00',
+    time: initialStart,
+    endTime: plusOneHour(initialStart),
     title: '',
     thought: '',
     type: 'work',
