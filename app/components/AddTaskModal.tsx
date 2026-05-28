@@ -127,7 +127,7 @@ export const AddTaskModal = ({ onClose, onAdd }: AddTaskModalProps) => {
           <div className="mb-6">
             <label className="text-xs font-bold text-stone-400 tracking-wide mb-1.5 block">メモ</label>
             <textarea
-              placeholder="なぜこれが大切ですか？"
+              placeholder="例: 集中したい場所、目的、気持ち"
               value={task.thought}
               onChange={(e) => setTask({ ...task, thought: e.target.value })}
               className={`${inputClass} h-20 resize-none`}
