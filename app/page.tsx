@@ -167,6 +167,7 @@ export default function App() {
           onToggleSchedule={toggleScheduleType}
           setSelectedTask={setSelectedTask}
           recordBorrow={recordBorrow}
+          preferredCategories={onboardingPrefs.selectedCategories}
         />
       )}
       {currentScreen === 'ONBOARDING' && (

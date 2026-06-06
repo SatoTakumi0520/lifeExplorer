@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ArrowRight, Briefcase, Palmtree, Plus, X } from 'lucide-react';
-import { PersonaTemplate, RoutineTask, ScheduleType, Screen } from '../lib/types';
+import { PersonaCategory, PersonaTemplate, RoutineTask, ScheduleType, Screen } from '../lib/types';
 import { PERSONA_CATEGORY_LABELS } from '../lib/mockData';
 import { timeToMinutes } from '../lib/utils';
 
@@ -38,6 +38,8 @@ type ScreenEditProps = {
   onToggleSchedule: () => void;
   setSelectedTask: (task: RoutineTask | null) => void;
   recordBorrow?: (persona: { id: string | number; name: string; title: string; category?: string }) => void;
+  /** オンボーディングで選んだ興味カテゴリ。「おすすめ」タブのフィルタに使う。 */
+  preferredCategories?: PersonaCategory[];
 };
 
 export const ScreenEdit = ({
@@ -52,15 +54,26 @@ export const ScreenEdit = ({
   onToggleSchedule,
   setSelectedTask,
   recordBorrow,
+  preferredCategories = [],
 }: ScreenEditProps) => {
+  // 「おすすめ」タブは onboarding で 1 件以上選んでいる場合のみ表示する。
+  // ある場合は初期選択もそれ、無ければ「すべて」に自動フォールバック。
+  const hasRecommendation = preferredCategories.length > 0;
   const [selectedTemplate, setSelectedTemplate] = useState<PersonaTemplate | null>(null);
-  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>(hasRecommendation ? 'recommended' : 'all');
   const isAdded = (tplTask: RoutineTask) => myRoutine.find((task) => task.time === tplTask.time && task.title === tplTask.title);
 
-  const availableCategories: string[] = ['all', ...Array.from(new Set(personaTemplates.flatMap(p => p.category ? [p.category] : [])))];
-  const filteredTemplates = filterCategory === 'all'
-    ? personaTemplates
-    : personaTemplates.filter(p => p.category === filterCategory);
+  const availableCategories: string[] = [
+    ...(hasRecommendation ? ['recommended'] : []),
+    'all',
+    ...Array.from(new Set(personaTemplates.flatMap(p => p.category ? [p.category] : []))),
+  ];
+  const filteredTemplates =
+    filterCategory === 'recommended'
+      ? personaTemplates.filter(p => p.category && (preferredCategories as string[]).includes(p.category))
+      : filterCategory === 'all'
+        ? personaTemplates
+        : personaTemplates.filter(p => p.category === filterCategory);
 
   return (
     <div className="flex flex-col h-full bg-[#FDFCF8] text-stone-800">

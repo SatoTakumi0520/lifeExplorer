@@ -1081,6 +1081,7 @@ export const INITIAL_TEMPLATES: PersonaTemplate[] = [
 // ─── Persona categories for Explore screen ──────────────────────────
 
 export const PERSONA_CATEGORY_LABELS: Record<string, string> = {
+  recommended: 'おすすめ',
   all: 'すべて',
   morning: '朝活',
   wellness: '心身の健康',
